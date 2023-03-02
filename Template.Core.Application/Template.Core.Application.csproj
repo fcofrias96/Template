@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFramework>net6.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
+      <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.12" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.11">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <TreatAsUsed>true</TreatAsUsed>
+      </PackageReference>
+      <PackageReference Include="Selenium.WebDriver" Version="4.8.1" />
+      <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="109.0.5414.7400" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DTOs\Account\" />
+      <Folder Include="Heplers\" />
+      <Folder Include="Utils\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Template.Core.Domain\Template.Core.Domain.csproj" />
+    </ItemGroup>
+  
+  </Project>
+  
