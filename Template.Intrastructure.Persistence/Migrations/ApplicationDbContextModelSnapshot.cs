@@ -144,6 +144,10 @@ namespace Template.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("default");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -153,6 +157,9 @@ namespace Template.Infrastructure.Persistence.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("DECIMAL(13,2)");
 
                     b.HasKey("Id");
 

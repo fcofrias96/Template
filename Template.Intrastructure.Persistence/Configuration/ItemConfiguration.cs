@@ -4,7 +4,7 @@ using Template.Core.Domain.Entities;
 
 namespace Template.Infrastructure.Persistence.Configuration
 {
-    public class ItemConfiguration : AuditableBaseEntityConfiguration<Item>
+    public class ItemConfiguration : AuditableBaseEntityConfiguration<Item, Guid>
     {
         public override void Configure(EntityTypeBuilder<Item> builder)
         {
@@ -22,8 +22,15 @@ namespace Template.Infrastructure.Persistence.Configuration
             builder.Property(x => x.Name)
                     .HasColumnType("VARCHAR(50)")
                     .IsRequired();
+            
+            builder.Property(x => x.Price)
+                   .HasColumnType("DECIMAL(13,2)")
+                   .IsRequired();
+            
+            builder.Property(x => x.Description)
+                   .HasColumnType("VARCHAR(100)")
+                   .IsRequired();
 
-  
             #endregion Properties
 
             #region Keys

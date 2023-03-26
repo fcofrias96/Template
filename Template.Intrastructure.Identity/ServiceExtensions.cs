@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,14 +8,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
-using Template.Infrastructure.Identity.DbContext;
-using Template.Infrastructure.Identity.Models;
-using Template.Infrastructure.Identity.Services;
-using Template.Core.Application.Constants;
 using Template.Core.Application.Extensions;
-using Template.Core.Application.Interfaces.Services;
 using Template.Core.Application.Wrappers;
-using Template.Core.Domain.Settings;
+using Template.Core.Domain.Constants;
+using Template.Infrastructure.Identity.Authorization;
+using Template.Infrastructure.Identity.Contracts.Repositories;
+using Template.Infrastructure.Identity.Contracts.Services;
+using Template.Infrastructure.Identity.DbContext;
+using Template.Infrastructure.Identity.Entity;
+using Template.Infrastructure.Identity.Repositories;
+using Template.Infrastructure.Identity.Services;
+using Template.Infrastructure.Identity.Settings;
 
 namespace Template.Infrastructure.Identity
 {
@@ -35,7 +39,7 @@ namespace Template.Infrastructure.Identity
             {
                 services.AddDbContext<IdentityContext>(option =>
                 {
-                    option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                    option.UseSqlServer(configuration.GetConnectionString("IdentityConnection"),
                         optionAction => optionAction.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName));
                 });
             }
@@ -43,29 +47,28 @@ namespace Template.Infrastructure.Identity
             #endregion DbContext
 
             #region Configure
-
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
-
             #endregion Configure
 
             #region Identity
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
-                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(Token.Provider);
-
+                .AddTokenProvider<DataProtectorTokenProvider<User>>(Token.Provider);
             #endregion Identity
 
             #region Dependency injection
-
-            services.AddScoped<IAccountService, AccountService>();
-
+            services.AddScoped<IUserServiceAsync, UserServiceAsync>();
+            services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
+            services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
+            services.AddScoped<IAuthRepositoryAsync, AuthRepositoryAsync>();
+            services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
+            services.AddScoped<IRoleRepositoryAsync, RoleRepositoryAsync>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
             #endregion Dependency injection
 
             #region Authentication
-
-            var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:key"]);
+            var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:Key"]);
             services.AddAuthentication(auth =>
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -93,8 +96,6 @@ namespace Template.Infrastructure.Identity
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         Response<string> response;
-                        //string userName = context.HttpContext.GetUserName();
-
                         if (context.AuthenticateFailure == null)
                         {
                             string message = "You Are not Authenticated";
@@ -124,6 +125,17 @@ namespace Template.Infrastructure.Identity
             });
 
             #endregion Authentication
+
+            #region Authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Create", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Create)));
+                options.AddPolicy("Update", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Update)));
+                options.AddPolicy("Delete", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Delete)));
+                options.AddPolicy("Read", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Read)));
+            });
+            #endregion Authorization
+
         }
     }
 }

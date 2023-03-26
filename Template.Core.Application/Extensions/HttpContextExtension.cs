@@ -9,5 +9,11 @@ namespace Template.Core.Application.Extensions
         {
             return httpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "default";
         }
+
+        public static Guid GetUserId(this HttpContext httpContext)
+        {
+            var userId = httpContext?.User.FindFirstValue("uid") ?? string.Empty;
+            return Guid.Parse(userId);
+        }
     }
 }

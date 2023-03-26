@@ -1,15 +1,13 @@
-﻿using Template.Core.Domain.Common;
-
-namespace Template.Core.Domain.Entities
+﻿namespace Template.Core.Domain.Entities
 {
-    public class Item : AuditableBaseEntity
+    public class Item : AuditableEntity<Guid>
     {
-        public Guid Id { get; set; }
-
-        public int CategoryId { get; set; }
-
+        public override Guid Id { get; set ; }
         public string Name { get; set; }
-        public Category Category { get; set; }
-
+        public decimal Price { get; set; }
+        public string Description { get; set; }
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
+       
     }
 }

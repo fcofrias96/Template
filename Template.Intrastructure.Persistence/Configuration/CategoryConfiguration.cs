@@ -5,7 +5,7 @@ using Template.Core.Domain.Entities;
 
 namespace Template.Infrastructure.Persistence.Configuration
 {
-    public class CategoryConfiguration : AuditableBaseEntityConfiguration<Category>
+    public class CategoryConfiguration : AuditableBaseEntityConfiguration<Category, int>
     {
         public override void Configure(EntityTypeBuilder<Category> builder)
         {

@@ -1,11 +1,10 @@
-﻿using Template.Core.Domain.Common;
-
-namespace Template.Core.Domain.Entities
+﻿namespace Template.Core.Domain.Entities
 {
-    public class Category : AuditableBaseEntity
+    public class Category : AuditableEntity<int>
     {
-        public int Id { get; set; }
+        public override int Id { get; set;}
         public string Name { get; set; }
-        public ICollection<Item> Items { get; set; }
+        public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+        
     }
 }

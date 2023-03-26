@@ -18,9 +18,4 @@
     <ProjectReference Include="..\Template.Core.Domain\Template.Core.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

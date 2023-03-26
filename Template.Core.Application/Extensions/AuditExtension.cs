@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Template.Core.Application.Models;
+using Template.Core.Domain.Auditing;
 using Template.Core.Domain.Entities;
 
 namespace Template.Core.Application.Extensions

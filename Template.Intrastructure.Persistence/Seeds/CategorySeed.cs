@@ -1,5 +1,5 @@
-﻿using Template.Core.Domain.Entities;
-using Emuns = Template.Core.Application.Emuns;
+﻿using Category = Template.Core.Domain.Entities.Category;
+using Emuns = Template.Core.Domain.Enums;
 
 namespace Template.Infrastructure.Persistence.Seeds
 {
@@ -9,23 +9,23 @@ namespace Template.Infrastructure.Persistence.Seeds
         {
             new Category
             {
-                Id= (int) Emuns.Category.Clothes,
-                Name= Emuns.Category.Clothes.ToString()
+                Id= (int) Emuns.Categories.Clothes,
+                Name= Emuns.Categories.Clothes.ToString()
             },
             new Category
             {
-                Id= (int) Emuns.Category.Electrodomestic,
-                Name= Emuns.Category.Electrodomestic.ToString()
+                Id= (int) Emuns.Categories.Electrodomestic,
+                Name= Emuns.Categories.Electrodomestic.ToString()
             },
             new Category
             {
-                Id= (int) Emuns.Category.Fruit,
-                Name= Emuns.Category.Fruit.ToString()
+                Id= (int) Emuns.Categories.Fruit,
+                Name= Emuns.Categories.Fruit.ToString()
             },
             new Category
             {
-                Id= (int) Emuns.Category.Tool,
-                Name= Emuns.Category.Tool.ToString()
+                Id= (int) Emuns.Categories.Tool,
+                Name= Emuns.Categories.Tool.ToString()
             }
         };
     }

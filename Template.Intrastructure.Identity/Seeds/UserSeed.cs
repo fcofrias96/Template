@@ -1,26 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Template.Infrastructure.Identity.Models;
+using Template.Infrastructure.Identity.Entity;
 
 namespace Template.Infrastructure.Identity.Seeds
 {
     public static class UserSeed
     {
-        private static PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
+        private static PasswordHasher<User> hasher = new PasswordHasher<User>();
 
-        public static List<ApplicationUser> data = new List<ApplicationUser>
+        public static List<User> data = new List<User>
         {
-            new ApplicationUser
-            {
-                FirstName = "John",
-                LastName = "Doe",
-                UserName = "superuser",
-                NormalizedUserName = "SUPERUSER",
-                Email = "superuser@gmail.com",
-                NormalizedEmail = "SUPERUSER@GMAIL.COM",
-                EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(new ApplicationUser(),"123Pa$$word")
-            },
-             new ApplicationUser
+             new User
             {
                 FirstName = "John",
                 LastName = "Smith",
@@ -29,9 +18,9 @@ namespace Template.Infrastructure.Identity.Seeds
                 Email = "basicuser@gmail.com",
                 NormalizedEmail = "BASICUSER@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(new ApplicationUser(),"123Pa$$word")
+                PasswordHash = hasher.HashPassword(new User(),"123Pa$$word")
             },
-             new ApplicationUser
+             new User
             {
                 FirstName = "John",
                 LastName = "James",
@@ -40,8 +29,8 @@ namespace Template.Infrastructure.Identity.Seeds
                 Email = "admin@gmail.com",
                 NormalizedEmail = "ADMIN@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(new ApplicationUser(),"123Pa$$word")
-            },new ApplicationUser
+                PasswordHash = hasher.HashPassword(new User(),"123Pa$$word")
+            },new User
             {
                 FirstName = "John",
                 LastName = "Johnson",
@@ -50,7 +39,7 @@ namespace Template.Infrastructure.Identity.Seeds
                 Email = "moderator@gmail.com",
                 NormalizedEmail = "MODERATOR@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = hasher.HashPassword(new ApplicationUser(),"123Pa$$word")
+                PasswordHash = hasher.HashPassword(new User(),"123Pa$$word")
             }
 
         };

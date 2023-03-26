@@ -18,7 +18,11 @@ To start up the project:
 
 8. On the console type `Update-database -context ApplicationDbContext`, then press Enter.
 
-9. Done!, just run the project.
+9. On the console type `add-migration audit -context AuditDbContext`, then press Enter.
+
+10. On the console type `Update-database -context AuditDbContext`, then press Enter.
+
+11. Done!, just run the project.
 
 
 
@@ -37,5 +41,5 @@ To start up the project:
 * password: 123Pa$$word
 	
 **Basic User**
-* username: basicuser
+* username: basicser
 * password: 123Pa$$word

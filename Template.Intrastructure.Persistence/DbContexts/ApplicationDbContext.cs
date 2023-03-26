@@ -1,23 +1,28 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 using Template.Core.Application.Extensions;
-using Template.Core.Application.Models;
-using Template.Core.Domain.Common;
+using Template.Core.Domain.Auditing;
+using Template.Core.Domain.Contracts;
 using Template.Core.Domain.Entities;
 using Template.Infrastructure.Persistence.Configuration;
-using Action = Template.Core.Application.Emuns.Action;
-
+using Actions = Template.Core.Domain.Enums.Actions;
+using Category = Template.Core.Domain.Entities.Category;
 
 namespace Template.Infrastructure.Persistence.DbContexts
 {
     public class ApplicationDbContext : DbContext
     {
         private readonly string _userName = "default";
+        private readonly AuditDbContext _auditDbContext;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-            IHttpContextAccessor httpContext) : base(options)
+            IHttpContextAccessor httpContext,
+            AuditDbContext auditDbContext
+            ) : base(options)
         {
             _userName = httpContext.HttpContext.GetUserName();
+            _auditDbContext = auditDbContext;
         }
 
         public ApplicationDbContext()
@@ -28,7 +33,7 @@ namespace Template.Infrastructure.Persistence.DbContexts
 
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Audit> AuditLogs { get; set; }
+
 
         #endregion DbSets
 
@@ -54,8 +59,9 @@ namespace Template.Infrastructure.Persistence.DbContexts
         private void SetEntry()
         {
             var auditEntryList = new List<AuditEntry>();
+            var auditList = new ConcurrentBag<Audit>();
 
-            foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
             {
                 if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
                     continue;
@@ -100,12 +106,12 @@ namespace Template.Infrastructure.Persistence.DbContexts
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            auditEntry.Action = Action.Create;
+                            auditEntry.Action = Actions.Create;
                             auditEntry.NewValues[propertyName] = property.CurrentValue;
                             break;
 
                         case EntityState.Deleted:
-                            auditEntry.Action = Action.Delete;
+                            auditEntry.Action = Actions.Delete;
                             auditEntry.OldValues[propertyName] = property.OriginalValue;
                             break;
 
@@ -114,7 +120,7 @@ namespace Template.Infrastructure.Persistence.DbContexts
                                 property.OriginalValue?.ToString() != property.CurrentValue?.ToString())
                             {
                                 auditEntry.ChangedColumns.Add(propertyName);
-                                auditEntry.Action = Action.Update;
+                                auditEntry.Action = Actions.Update;
                                 auditEntry.OldValues[propertyName] = property.OriginalValue;
                                 auditEntry.NewValues[propertyName] = property.CurrentValue;
                             }
@@ -126,10 +132,17 @@ namespace Template.Infrastructure.Persistence.DbContexts
                 #endregion AuditLogs
             }
 
-            foreach (var auditEntry in auditEntryList)
+            
+
+            Parallel.ForEach(auditEntryList, auditEnitty =>
             {
-                AuditLogs.Add(auditEntry.ToAudit());
-            }
+                auditList.Add(auditEnitty.ToAudit());
+            });
+
+            _auditDbContext.AuditLogs.AddRange(auditList);  
+            _auditDbContext.SaveChanges();
+
+            
         }
     }
 }

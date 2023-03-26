@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Template.Core.Application.Filter;
 
 namespace Template.Core.Application.SetupOptions
 {
@@ -10,6 +11,8 @@ namespace Template.Core.Application.SetupOptions
         public static Action<SwaggerGenOptions> Options = options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = " TEMPLATE API", Version = "v1" });
+            options.EnableAnnotations();
+            options.ParameterFilter<SortablePropertiesParameterFilter> ();
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
             {
                 Description = @"JWT Authorization header using the Bearer scheme.

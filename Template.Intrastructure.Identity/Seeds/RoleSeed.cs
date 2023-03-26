@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Template.Core.Application.Constants;
+using Template.Core.Domain.Constants;
 
 namespace Template.Infrastructure.Identity.Seeds
 {
@@ -7,11 +7,6 @@ namespace Template.Infrastructure.Identity.Seeds
     {
         public static List<IdentityRole<string>> data = new List<IdentityRole<string>>
         {
-            new IdentityRole
-            {
-                Name = Role.SuperAdmin,
-                NormalizedName = Role.SuperAdmin.ToUpper()
-            },
             new IdentityRole
             {
                 Name = Role.Admin,

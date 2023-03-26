@@ -19,7 +19,26 @@ namespace Template.Infrastructure.Persistence.OptionActions
             return Options;
         };
 
+        public static Func<IConfiguration, Action<DbContextOptionsBuilder>> AuditDbOptions = configuration =>
+        {
+            Action<DbContextOptionsBuilder> Options = (options) =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("AuditConnection"),
+                            optionAction => optionAction.MigrationsAssembly(typeof(AuditDbContext).Assembly.FullName));
+
+                options.EnableSensitiveDataLogging();
+            };
+
+            return Options;
+        };
+
+
         public static Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
+        {
+            options.UseInMemoryDatabase("ApplicationDb");
+        };
+
+        public static Action<DbContextOptionsBuilder> AuditInMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");
         };

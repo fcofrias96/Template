@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Json;
 
 namespace Template.Core.Application.SetupOptions
 {
@@ -17,9 +19,9 @@ namespace Template.Core.Application.SetupOptions
                     return filterOptions.Level == Serilog.Events.LogEventLevel.Information;
                 })
                 .WriteTo.File(
-                    path: "./logs/log-.txt",
+                    path: "./logs/log-.json",
                     rollingInterval: RollingInterval.Day,
-                    rollOnFileSizeLimit: true
+                    formatter: new JsonFormatter()
                 );
 
             })
@@ -30,14 +32,22 @@ namespace Template.Core.Application.SetupOptions
                      return filterOptions.Level == Serilog.Events.LogEventLevel.Error;
                  })
                 .WriteTo.File(
-                     path: "./logs/error-.txt",
+                     path: "./logs/error-.json",
                      rollingInterval: RollingInterval.Day,
-                     rollOnFileSizeLimit: true
+                     formatter: new JsonFormatter()
                  );
 
              })
-            .WriteTo.Console()
-            .Enrich.FromLogContext();
+            .WriteTo.Console(new CompactJsonFormatter())
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("ApplicationName", "Template")
+            .Enrich.WithClientIp()
+            .Enrich.WithClientAgent()
+            .Enrich.WithEnvironmentName()
+            .Enrich.WithMachineName()
+            .Enrich.WithThreadName()
+            .Enrich.WithThreadId();
+
         };
     }
 }
