@@ -8,8 +8,10 @@ namespace Template.Core.Application.DTOs.Auth
         [BindRequired]
         [EmailAddress]
         public string Email { get; set; }
+
         [BindRequired]
         public string Token { get; set; }
+
         [BindRequired]
         [MinLength(6)]
         public string Password { get; set; }

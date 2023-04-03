@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Template.Api.Attributes;
+using Template.Core.Application;
+using Template.Core.Application.Contracts;
 using Template.Core.Application.Contracts.Services;
 using Template.Core.Application.DTOs.Item;
+using Template.Core.Application.Request;
+using Template.Core.Application.Specification;
+using Template.Core.Application.Wrappers;
 using Template.Core.Domain.Constants;
 using Template.Core.Domain.Entities;
 using ILogger = Serilog.ILogger;
@@ -16,21 +21,24 @@ namespace Template.Api.Controllers
     public class ItemsController : ControllerBase
     {
         #region Private Varible
+
         private readonly IItemServiceAsync _itemServiceAsync;
         private readonly ILogger _logger;
+
         #endregion Private Varible
 
         #region Constructor
+
         public ItemsController(IItemServiceAsync itemServiceAsync, ILogger logger)
         {
             _itemServiceAsync = itemServiceAsync;
             _logger = logger;
-
         }
 
         #endregion Constructor
 
         #region Actions
+
         // DELETE api/Items/{id}
         [Authorize(Permission.Delete)]
         [HttpDelete("{id}")]
@@ -43,28 +51,23 @@ namespace Template.Api.Controllers
         // GET api/Items/{id}
         [Authorize(Permission.Read)]
         [HttpGet("{id}")]
-        [CacheControl]
-        public async Task<ActionResult<ItemListDTO>> GetItemAsync(Guid id)
+        public async Task<ApiResponse<ItemDetailsDTO>> GetItemAsync(Guid id)
         {
-            var includeList = new List<string> { "Category" };
-            var (item, eTag) = await _itemServiceAsync.GetByIdWithETagAsync<Guid, ItemDetailsDTO>(id, includeList);
-            Response.Headers.Add("X-Validate-ETag", eTag);
-            return Ok(item);
+            var item = await _itemServiceAsync.GetByIdAsync<Guid, ItemDetailsDTO>(id);
+            return ApiResponse<ItemDetailsDTO>.Ok(item);
         }
 
         // GET api/Items/
         //[Authorize(Permission.Read)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemListDTO>>> GetAllItemsAsync([FromQuery] QueryParameters<ItemListDTO> queryParameters)
+        public async Task<ApiResponse<PagedResult<ItemListDTO>>> GetAllItemsAsync([FromQuery] ItemRequest request)
         {
-            var x = queryParameters.SortableProperties;
-            var includeList = new List<string> { "Category" };
-            var pagedItemsResult = await _itemServiceAsync.GetAllWithPaginationAsync<ItemListDTO>(queryParameters, includeList);
-            return Ok(pagedItemsResult);
+            var pagedItemsResult = await _itemServiceAsync.GetAllWithPaginationAsync<ItemListDTO, ItemSpecification>(request);
+            return ApiResponse<PagedResult<ItemListDTO>>.Ok(pagedItemsResult);
         }
 
         // POST api/Items/
-        [Authorize(Permission.Create)]
+        //[Authorize(Permission.Create)]
         [HttpPost]
         public async Task<ActionResult<ItemDetailsDTO>> CreateItemAsync([FromBody] ItemCreateDTO itemCreateDTO)
         {
@@ -80,6 +83,7 @@ namespace Template.Api.Controllers
             await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO);
             return NoContent();
         }
+
         #endregion Actions
     }
 }

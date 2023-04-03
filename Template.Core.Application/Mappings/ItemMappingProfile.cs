@@ -10,9 +10,7 @@ namespace Template.Core.Application.Mappings
         {            CreateMap<ItemListDTO, Item>().ReverseMap();
             CreateMap<ItemCreateDTO, Item>().ReverseMap();
             CreateMap<ItemUpdateDTO, Item>().ReverseMap();
-            CreateMap<ItemDetailsDTO, Item>()
-                   .ReverseMap()
-                   .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
+            CreateMap<ItemDetailsDTO, Item>().ReverseMap();
         }
     }
 }

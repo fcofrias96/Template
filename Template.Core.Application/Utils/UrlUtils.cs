@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Web;
-using Template.Core.Domain.Entities;
+﻿using System.Web;
 
 namespace Template.Core.Application.Utils
 {
     public static class UrlUtils
     {
-
         public static string? GetNextURL(string url, int limit, int offset, int total)
         {
             var newOffSet = limit + offset;
@@ -20,7 +17,6 @@ namespace Template.Core.Application.Utils
             query["offset"] = $"{newOffSet}";
             uriBuilder.Query = query.ToString();
             return uriBuilder.ToString();
-
         }
 
         public static string? GetPrevURL(string url, int limit, int offset, int total)
@@ -41,12 +37,10 @@ namespace Template.Core.Application.Utils
             else
             {
                 query["offset"] = $"{oldOffSet}";
-
             }
 
             uriBuilder.Query = query.ToString();
             return uriBuilder.ToString();
-
         }
     }
 }

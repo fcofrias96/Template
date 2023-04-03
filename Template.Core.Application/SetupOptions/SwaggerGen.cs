@@ -12,7 +12,7 @@ namespace Template.Core.Application.SetupOptions
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = " TEMPLATE API", Version = "v1" });
             options.EnableAnnotations();
-            options.ParameterFilter<SortablePropertiesParameterFilter> ();
+            options.ParameterFilter<SortablePropertiesParameterFilter>();
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
             {
                 Description = @"JWT Authorization header using the Bearer scheme.
@@ -39,7 +39,6 @@ namespace Template.Core.Application.SetupOptions
                     new List<string>()
                 }
             });
-
         };
     }
 }

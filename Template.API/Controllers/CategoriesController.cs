@@ -5,7 +5,6 @@ using Template.Api.Attributes;
 using Template.Core.Application.Contracts.Services;
 using Template.Core.Application.DTOs.Category;
 using Template.Core.Domain.Constants;
-using Template.Core.Domain.Entities;
 
 namespace Template.Api.Controllers
 {
@@ -15,15 +14,19 @@ namespace Template.Api.Controllers
     public class CategoriesController : ControllerBase
     {
         #region Private Varible
+
         private readonly IMemoryCache _cache;
         private readonly ICategoryServiceAsync _categoryServiceAsync;
+
         #endregion Private Varible
 
         #region Constructor
+
         public CategoriesController(ICategoryServiceAsync categoryServiceAsync)
         {
             _categoryServiceAsync = categoryServiceAsync;
         }
+
         #endregion Constructor
 
         #region Actions
@@ -60,14 +63,13 @@ namespace Template.Api.Controllers
         // GET api/Categories/{id}
         //[Authorize(Permission.Read)]
         [HttpGet("{id}")]
-        [CacheControl]
         public async Task<ActionResult<CategoryDetailsDTO>> GetCategoryAsync(int id)
         {
-            var (category, eTag) = await _categoryServiceAsync.GetByIdWithETagAsync<int, CategoryDetailsDTO>(id);
-            Response.Headers.Add("X-Validate-ETag", eTag);
+            var category = await _categoryServiceAsync.GetByIdAsync<int, CategoryDetailsDTO>(id);
             return Ok(category);
         }
-        // PUT api/Categories/{id}  
+
+        // PUT api/Categories/{id}
         [Authorize(Permission.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
@@ -75,9 +77,7 @@ namespace Template.Api.Controllers
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO);
             return NoContent();
         }
+
         #endregion Actions
-
-
-
     }
 }

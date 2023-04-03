@@ -47,17 +47,22 @@ namespace Template.Infrastructure.Identity
             #endregion DbContext
 
             #region Configure
+
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
+
             #endregion Configure
 
             #region Identity
+
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<User>>(Token.Provider);
+
             #endregion Identity
 
             #region Dependency injection
+
             services.AddScoped<IUserServiceAsync, UserServiceAsync>();
             services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
             services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
@@ -65,9 +70,11 @@ namespace Template.Infrastructure.Identity
             services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
             services.AddScoped<IRoleRepositoryAsync, RoleRepositoryAsync>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
             #endregion Dependency injection
 
             #region Authentication
+
             var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:Key"]);
             services.AddAuthentication(auth =>
             {
@@ -93,18 +100,23 @@ namespace Template.Infrastructure.Identity
                 {
                     OnChallenge = async (context) =>
                     {
+                        var statusCode = StatusCodes.Status401Unauthorized;
                         context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        Response<string> response;
+                        context.Response.StatusCode = statusCode;
+                        var response = new ApiResponse<Exception>
+                        {
+                            StatusCode = statusCode
+                        };
+
                         if (context.AuthenticateFailure == null)
                         {
                             string message = "You Are not Authenticated";
-                            response = new Response<string>(message);
+                            response.Message = message;
                             Log.Warning(message);
                         }
                         else
                         {
-                            response = new Response<string>($"{context?.Error}");
+                            response.Message = $"{context?.Error}";
                             Log.Warning(context?.Error);
                         }
 
@@ -112,9 +124,17 @@ namespace Template.Infrastructure.Identity
                     },
                     OnForbidden = async (context) =>
                     {
-                        context.Response.StatusCode = 403;
+                        var statusCode = StatusCodes.Status403Forbidden;
+
+                        context.Response.StatusCode = statusCode;
                         context.Response.ContentType = "application/json";
-                        var response = new Response<string>("You are not authorized to access this resource");
+
+                        var response = new ApiResponse<Exception>
+                        {
+                            StatusCode = statusCode,
+                            Message = "You are not authorized to access this resource",
+                        };
+
                         await context.Response.WriteAsJsonAsync(response);
                         string pathRequest = context.HttpContext.Request.Path;
                         string userName = context.HttpContext.GetUserName();
@@ -127,6 +147,7 @@ namespace Template.Infrastructure.Identity
             #endregion Authentication
 
             #region Authorization
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Create", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Create)));
@@ -134,8 +155,8 @@ namespace Template.Infrastructure.Identity
                 options.AddPolicy("Delete", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Delete)));
                 options.AddPolicy("Read", policy => policy.Requirements.Add(new PermissionRequirement(Permission.Read)));
             });
-            #endregion Authorization
 
+            #endregion Authorization
         }
     }
 }

@@ -28,6 +28,5 @@ namespace Template.Core.Application.Filter
                 }
             }
         }
-
     }
 }

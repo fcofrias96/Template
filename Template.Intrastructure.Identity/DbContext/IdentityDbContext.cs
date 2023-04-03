@@ -27,7 +27,6 @@ namespace Template.Infrastructure.Identity.DbContext
             builder.Entity<IdentityUserLogin<string>>(entity => entity.ToTable("UserLogins"));
             builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens"));
             builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims"));
-
         }
     }
 }

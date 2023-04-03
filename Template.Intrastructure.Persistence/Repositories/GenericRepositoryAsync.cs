@@ -1,30 +1,35 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Template.Core.Application.Contracts;
 using Template.Core.Application.Contracts.Repositories;
-using Template.Core.Application.Extensions;
 using Template.Core.Domain.Contracts;
-using Template.Core.Domain.Entities;
 using Template.Infrastructure.Persistence.DbContexts;
 
 namespace Template.Infrastructure.Persistence.Repositories
 {
-    public class GenericRepositoryAsync<TEntity>: IGenericRepositoryAsync<TEntity> where TEntity: class, IAuditableEntity
+    public class GenericRepositoryAsync<TEntity> : IGenericRepositoryAsync<TEntity> where TEntity : class, IAuditableEntity
     {
         #region Private Varible
+
         private readonly ApplicationDbContext _context;
-        private readonly IConfigurationProvider _mapperConfiguration;
+        private readonly IConfigurationProvider _configurationProvider;
+
         #endregion Private Varible
 
         #region Constructor
-        public GenericRepositoryAsync(ApplicationDbContext context, IConfigurationProvider mapperConfiguration) 
-        { 
+
+        public GenericRepositoryAsync(ApplicationDbContext context, IConfigurationProvider configurationProvider)
+        {
             _context = context;
-            _mapperConfiguration = mapperConfiguration;
+            _configurationProvider = configurationProvider;
         }
+
         #endregion Constructor
 
         #region Public MethodsT
+
+
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
             await _context.AddAsync(entity);
@@ -39,66 +44,14 @@ namespace Template.Infrastructure.Persistence.Repositories
         }
 
 
-
-        public async Task<List<TDestination>> GetAllAsync<TDestination>(List<string>? navigationPropertyToInclude = null)
+        public async Task<TDestination?> GetByIdAsync<TKey, TDestination>(TKey id)
         {
             var query = _context.Set<TEntity>().AsQueryable();
-            if (navigationPropertyToInclude != null)
-            {
-                foreach (var NavigationProperty in navigationPropertyToInclude)
-                {
-                    query = query.Include(NavigationProperty);
-                }
-            }
-
-            return await query.ProjectTo<TDestination>(_mapperConfiguration).ToListAsync();
+            return await query.Where(x => x.Id.Equals(id))
+                              .ProjectTo<TDestination>(_configurationProvider)
+                              .FirstOrDefaultAsync();
         }
 
-        public async Task<List<TDestination>> GetAllWithPaginationAsync<TDestination>(QueryParameters<TDestination> queryParameters, List<string>? navigationPropertyToInclude = default)
-        {
-            var query = _context.Set<TEntity>().AsQueryable();
-            if (navigationPropertyToInclude != null)
-            {
-                foreach (var NavigationProperty in navigationPropertyToInclude)
-                {
-                    query = query.Include(NavigationProperty);
-                }
-            }
-
-            if(queryParameters.SortableProperties.Count > 0)
-            {
-                foreach(string property in queryParameters.SortableProperties)
-                {
-                    query = query.OrderByProperty(property, queryParameters.Descending);
-                }
-            }
-
-            if(queryParameters.Filter != null)
-            {
-                query = query.SearchInStringProperties(queryParameters.Filter);
-            }
-
-
-            return await query
-                        .Skip(queryParameters.Offset)
-                        .Take(queryParameters.Limit)
-                        .ProjectTo<TDestination>(_mapperConfiguration)
-                        .ToListAsync();
-        }
-        public async Task<TEntity> GetByIdAsync<TKey>(TKey id, List<string>?  navigationPropertyToInclude = default)
-        {
-            var query = _context.Set<TEntity>().AsQueryable();
-            if(navigationPropertyToInclude != null)
-            {
-                foreach (var NavigationProperty in navigationPropertyToInclude)
-                {
-                    query = query.Include(NavigationProperty);
-                }
-            }
-
-            return await query.FirstOrDefaultAsync(x => x.Id.Equals(id));
-        }
-            
         public async Task<int> GetTotalCountAsync()
         {
             return await _context.Set<TEntity>().CountAsync();
@@ -109,7 +62,52 @@ namespace Template.Infrastructure.Persistence.Repositories
             _context.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+
+        public async Task<List<TDestination>> GetAllAsync<TDestination>(ISpecification<TEntity> spec)
+        {
+            var query = _context.Set<TEntity>().AsQueryable();
+
+            if (spec != null)
+            {
+                query = ApplySpecification(query, spec);
+            }
+
+
+            var x = query.ToQueryString();
+            var y = query.ProjectTo<TDestination>(_configurationProvider).ToQueryString();
+
+            return await query.ProjectTo<TDestination>(_configurationProvider)
+                              .ToListAsync();
+        }
+
+
         #endregion Public Methods
 
+        #region Private Methods
+        private IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec)
+        {
+            if (spec.Criteria != null)
+            {
+                query = query.Where(spec.Criteria);
+            }
+
+            if (spec.OrderBy != null)
+            {
+                query = query.OrderBy(spec.OrderBy);
+            }
+            else if (spec.OrderByDescending != null)
+            {
+                query = query.OrderByDescending(spec.OrderByDescending);
+            }
+
+            if (spec.IsPagingEnabled)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
+
+            return query;
+        }
+        #endregion Private Methods
     }
 }

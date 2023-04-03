@@ -10,13 +10,14 @@ using Template.Infrastructure.Identity.Entity;
 
 namespace Template.Infrastructure.Identity.Repositories
 {
-    public class UserRepositoryAsync: IUserRepositoryAsync
+    public class UserRepositoryAsync : IUserRepositoryAsync
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+
         public UserRepositoryAsync(UserManager<User> userManager, IMapper mapper)
         {
-            _userManager = userManager;   
+            _userManager = userManager;
             _mapper = mapper;
         }
 
@@ -42,14 +43,15 @@ namespace Template.Infrastructure.Identity.Repositories
 
         public Task<IdentityResult> CreateAsync(User user, string password)
         {
-           return _userManager.CreateAsync(user, password);
-        }
-        public async Task DeleteAsync(User entity)
-        {
-           await _userManager.DeleteAsync(entity);
+            return _userManager.CreateAsync(user, password);
         }
 
-        public async  Task<User> FindByEmailAsync(string email)
+        public async Task DeleteAsync(User entity)
+        {
+            await _userManager.DeleteAsync(entity);
+        }
+
+        public async Task<User> FindByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
@@ -63,6 +65,7 @@ namespace Template.Infrastructure.Identity.Repositories
         {
             return await _userManager.FindByNameAsync(userName);
         }
+
         public Task<List<TSource>> GetAllAsync<TSource>(QueryParameters<User> queryParameters, List<string>? navigationPropertyToInclude = null)
         {
             throw new NotImplementedException();
@@ -76,7 +79,6 @@ namespace Template.Infrastructure.Identity.Repositories
                         .ProjectTo<UserListDTO>(_mapper.ConfigurationProvider)
                         .ToListAsync();
         }
-
 
         public async Task<IList<Claim>> GetClaimsAsync(User user)
         {
@@ -95,7 +97,7 @@ namespace Template.Infrastructure.Identity.Repositories
 
         public async Task<IdentityResult> RemoveFromRolesAsync(User user, List<string> roles)
         {
-           return await _userManager.RemoveFromRolesAsync(user, roles);
+            return await _userManager.RemoveFromRolesAsync(user, roles);
         }
 
         public async Task UpdateAsync(User user)
@@ -107,6 +109,5 @@ namespace Template.Infrastructure.Identity.Repositories
         {
             await _userManager.AddClaimAsync(user, claims);
         }
-
     }
 }

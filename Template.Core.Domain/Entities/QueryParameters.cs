@@ -5,8 +5,7 @@
         public bool Descending { get; set; }
         public int Limit { get; set; } = 15;
         public int Offset { get; set; }
-        public string Filter { get; set; }
+        public string Search { get; set; }
         public List<string> SortableProperties { get; set; } = new List<string>();
-
     }
 }

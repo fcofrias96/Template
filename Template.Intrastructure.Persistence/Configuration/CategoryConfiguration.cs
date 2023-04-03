@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.Infrastructure.Persistence.Seeds;
 using Template.Core.Domain.Entities;
+using Template.Infrastructure.Persistence.Seeds;
 
 namespace Template.Infrastructure.Persistence.Configuration
 {

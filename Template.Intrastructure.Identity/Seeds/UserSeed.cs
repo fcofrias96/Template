@@ -41,7 +41,6 @@ namespace Template.Infrastructure.Identity.Seeds
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(new User(),"123Pa$$word")
             }
-
         };
     }
 }

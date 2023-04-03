@@ -15,7 +15,6 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <TreatAsUsed>true</TreatAsUsed>
       </PackageReference>
-      <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
     </ItemGroup>
 
@@ -24,10 +23,6 @@
       <ProjectReference Include="..\Template.Intrastructure.Email\Template.Infrastructure.Email.csproj" />
       <ProjectReference Include="..\Template.Intrastructure.Identity\Template.Infrastructure.Identity.csproj" />
       <ProjectReference Include="..\Template.Intrastructure.Persistence\Template.Infrastructure.Persistence.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="logs\" />
     </ItemGroup>
   
   </Project>

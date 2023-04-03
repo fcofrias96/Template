@@ -12,6 +12,7 @@ namespace Template.Core.Application.SetupOptions
             loggerContiguration
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+            .MinimumLevel.Override("Serilog.AspNetCore.RequestLoggingMiddleware", Serilog.Events.LogEventLevel.Fatal)
             .WriteTo.Logger(options =>
             {
                 options.Filter.ByIncludingOnly(filterOptions =>
@@ -19,11 +20,11 @@ namespace Template.Core.Application.SetupOptions
                     return filterOptions.Level == Serilog.Events.LogEventLevel.Information;
                 })
                 .WriteTo.File(
-                    path: "./logs/log-.json",
+                    path: "./Logs/Info/log-.json",
                     rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7,
                     formatter: new JsonFormatter()
                 );
-
             })
              .WriteTo.Logger(options =>
              {
@@ -32,22 +33,17 @@ namespace Template.Core.Application.SetupOptions
                      return filterOptions.Level == Serilog.Events.LogEventLevel.Error;
                  })
                 .WriteTo.File(
-                     path: "./logs/error-.json",
+                     path: "./Logs/Erros/error-.json",
                      rollingInterval: RollingInterval.Day,
+                     retainedFileCountLimit: 7,
                      formatter: new JsonFormatter()
                  );
-
              })
             .WriteTo.Console(new CompactJsonFormatter())
             .Enrich.FromLogContext()
             .Enrich.WithProperty("ApplicationName", "Template")
-            .Enrich.WithClientIp()
-            .Enrich.WithClientAgent()
-            .Enrich.WithEnvironmentName()
-            .Enrich.WithMachineName()
-            .Enrich.WithThreadName()
-            .Enrich.WithThreadId();
-
+            .Enrich.WithThreadId()
+            .Enrich.WithMachineName();
         };
     }
 }

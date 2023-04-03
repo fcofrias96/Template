@@ -17,6 +17,7 @@ namespace Template.Infrastructure.Identity.Contracts.Repositories
         Task<IdentityResult> ChangePasswordAsync(User user, string currentPassword, string newPassword);
 
         Task<IdentityResult> CreateAsync(User user, string password);
+
         Task DeleteAsync(User entity);
 
         Task<User> FindByEmailAsync(string email);
@@ -34,6 +35,7 @@ namespace Template.Infrastructure.Identity.Contracts.Repositories
         Task<int> GetTotalRecordsAsync();
 
         Task<IdentityResult> RemoveFromRolesAsync(User user, List<string> roles);
+
         Task UpdateAsync(User user);
 
         Task AddClaimAsync(User user, Claim claims);

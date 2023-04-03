@@ -9,12 +9,13 @@ namespace Template.Core.Application.Contracts.Services
         Task DeleteAsync<TKey>(TKey id);
 
         Task<bool> ExistsAsync<TKey>(TKey id);
-        Task<List<TSource>> GetAllAsync<TSource>(List<string>?  navigationPropertyToInclude = default);
-        Task<(List<TSource>, string)> GetAllWithETagAsync<TSource>(List<string>?  navigationPropertyToInclude = default);
-        Task<PagedResult<TDestination>> GetAllWithPaginationAsync<TDestination>(QueryParameters<TDestination> queryParameters, List<string>?  navigationPropertyToInclude = default);
 
-        Task<TDestination> GetByIdAsync<TKey, TDestination>(TKey id, List<string>?  navigationPropertyToInclude = default);
-        Task<(TDestination, string)> GetByIdWithETagAsync<TKey, TDestination>(TKey id, List<string>?  navigationPropertyToInclude = default);
+        Task<List<TDestination>> GetAllAsync<TDestination>();
+        Task<PagedResult<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IRequest request) where TSpecification : ISpecification<TEntity>;
+
+        Task<(List<TSource>, string)> GetAllWithETagAsync<TSource>();
+
+        Task<TDestination> GetByIdAsync<TKey, TDestination>(TKey id);
 
         Task UpdateAsync<TKey, TSource>(TKey id, TSource source);
     }

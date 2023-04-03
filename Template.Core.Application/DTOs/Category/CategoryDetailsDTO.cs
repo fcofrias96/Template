@@ -1,5 +1,4 @@
-﻿using Template.Core.Application.Contracts;
-using Template.Core.Application.DTOs.Item;
+﻿using Template.Core.Application.DTOs.Item;
 
 namespace Template.Core.Application.DTOs.Category
 {
@@ -8,7 +7,6 @@ namespace Template.Core.Application.DTOs.Category
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public List<ItemListDTO> Items { get; set; } 
-
+        public List<ItemListDTO> Items { get; set; }
     }
 }

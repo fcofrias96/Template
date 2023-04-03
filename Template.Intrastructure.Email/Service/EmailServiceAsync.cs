@@ -10,7 +10,7 @@ namespace Template.Infrastructure.Email.Service
 {
     public class EmailServiceAsync : IEmailServiceAsync
     {
-        readonly private MailSettings _mailSetttings;
+        private readonly MailSettings _mailSetttings;
 
         public EmailServiceAsync(IOptions<MailSettings> option)
         {
@@ -19,7 +19,6 @@ namespace Template.Infrastructure.Email.Service
 
         public async Task SendAsync(EmailDTO emailSendDTO)
         {
-
             BodyBuilder body = new() { HtmlBody = emailSendDTO.Body };
             MimeMessage email = new()
             {
@@ -37,12 +36,7 @@ namespace Template.Infrastructure.Email.Service
                 smtp.Authenticate(_mailSetttings.SmtpUser, _mailSetttings.SmtpPass);
                 await smtp.SendAsync(email);
                 smtp.Disconnect(true);
-
             }
         }
-
-
-
     }
 }
-

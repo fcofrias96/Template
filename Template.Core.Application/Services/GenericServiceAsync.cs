@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
+using Template.Core.Application.Contracts;
 using Template.Core.Application.Contracts.Repositories;
 using Template.Core.Application.Contracts.Services;
 using Template.Core.Application.Utils;
@@ -11,16 +12,19 @@ using Template.Core.Domain.Exceptions;
 
 namespace Template.Core.Application.Services
 {
-    public class GenericServiceAsync<TEntity> : IGenericServiceAsync<TEntity> where TEntity : class
+    public class GenericServiceAsync<TEntity> : IGenericServiceAsync<TEntity>
     {
         #region Private Varible
+
         private readonly IMemoryCache _cache;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
         private readonly IGenericRepositoryAsync<TEntity> _repository;
+
         #endregion Private Varible
 
         #region Constructor
+
         public GenericServiceAsync(IGenericRepositoryAsync<TEntity> repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
         {
             _repository = repository;
@@ -28,9 +32,12 @@ namespace Template.Core.Application.Services
             _httpContext = httpContext;
             _cache = cache;
         }
+
         #endregion Constructor
 
         #region Public Methods
+
+
         public virtual async Task<TDestination> CreateAsync<TSource, TDestination>(TSource source)
         {
             var entity = _mapper.Map<TEntity>(source);
@@ -58,29 +65,56 @@ namespace Template.Core.Application.Services
             return entity != null;
         }
 
-        public async Task<List<TDestination>> GetAllAsync<TDestination>(List<string>? navigationPropertyToInclude)
+        public virtual async Task<List<TDestination>> GetAllAsync<TDestination>()
         {
-            string cacheKey = $"List_{typeof(TEntity).FullName}";
-
-            if (!_cache.TryGetValue(cacheKey, out List<TDestination> mappedEntities))
-            {
-                mappedEntities = await _repository.GetAllAsync<TDestination>(navigationPropertyToInclude);
-                _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
-            }
-
-            return mappedEntities;
-
+            return await _repository.GetAllAsync<TDestination>();
         }
 
+        public virtual async Task<PagedResult<TDestination>> GetAllWithPaginationAsync<TDestination, TSpecification>(IRequest request)
+        where TSpecification : ISpecification<TEntity>
+        {
+
+            var type = typeof(TSpecification);
+            object[] constructorArguments = new object[] { request };
+            var spec = (TSpecification)Activator.CreateInstance(type, constructorArguments);
 
 
-        public async Task<(List<TDestination>, string)> GetAllWithETagAsync<TDestination>(List<string>? navigationPropertyToInclude = null)
+            if (spec.Skip % spec.Take != 0)
+            {
+                throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
+            }
+
+            var total = await _repository.GetTotalCountAsync();
+
+            if (total < spec.Skip)
+            {
+                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
+            }
+
+            var items = await _repository.GetAllAsync<TDestination>(spec);
+            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl();
+            var next = UrlUtils.GetNextURL(href, spec.Take, spec.Skip, total);
+            var prev = UrlUtils.GetPrevURL(href, spec.Take, spec.Skip, total);
+
+            return new PagedResult<TDestination>
+            {
+                Href = href,
+                Items = items,
+                Limit = spec.Take,
+                Next = next,
+                Offset = spec.Skip,
+                Prev = prev,
+                Total = total
+            };
+        }
+
+        public async Task<(List<TDestination>, string)> GetAllWithETagAsync<TDestination>()
         {
             string cacheKey = $"List_{typeof(TEntity).FullName}";
 
             if (!_cache.TryGetValue(cacheKey, out List<TDestination> mappedEntities))
             {
-                mappedEntities = await _repository.GetAllAsync<TDestination>(navigationPropertyToInclude);
+                mappedEntities = await _repository.GetAllAsync<TDestination>();
 
                 _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
             }
@@ -88,77 +122,15 @@ namespace Template.Core.Application.Services
             var eTag = CacheUtils.GenerateETag(mappedEntities);
             return (mappedEntities, eTag);
         }
-
-        public virtual async Task<PagedResult<TDestination>> GetAllWithPaginationAsync<TDestination>(QueryParameters<TDestination> queryParameters, List<string>? navigationPropertyToInclude = default)
+        public virtual async Task<TDestination> GetByIdAsync<TKey, TDestination>(TKey id)
         {
-
-            if(queryParameters.Offset % queryParameters.Limit != 0)
+            var mappedEntity = await _repository.GetByIdAsync<TKey, TDestination> (id);
+            if (mappedEntity is null)
             {
-                throw new BadRequestException($"The 'offset' value ({queryParameters.Offset}) must be either zero or a multiple of the 'limit' value({queryParameters.Limit}).");
+                throw new NotFoundException(typeof(TEntity).Name, id != null ? id : "No Key Provided");
             }
 
-            var total = await _repository.GetTotalCountAsync();
-
-            if(total < queryParameters.Offset)
-            {
-                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({queryParameters.Limit}).");
-            }
-
-            var items = await _repository.GetAllWithPaginationAsync(queryParameters, navigationPropertyToInclude);
-            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl();
-            var next = UrlUtils.GetNextURL(href, queryParameters.Limit, queryParameters.Offset, total);
-            var prev = UrlUtils.GetPrevURL(href, queryParameters.Limit, queryParameters.Offset, total);
-
-            return new PagedResult<TDestination>
-            {
-                Href = href,
-                Items = items,
-                Limit = queryParameters.Limit,
-                Next = next,
-                Offset = queryParameters.Offset,
-                Prev = prev,
-                Total = total
-
-            };
-        }
-        public virtual async Task<TDestination> GetByIdAsync<TKey, TDestination>(TKey id, List<string>? navigationPropertyToInclude = default)
-        {
-            string cacheKey = $"{typeof(TEntity).FullName}";
-
-            if (!_cache.TryGetValue(cacheKey, out TDestination mappedEntity))
-            {
-                var entity = await _repository.GetByIdAsync(id, navigationPropertyToInclude);
-                if (entity is null)
-                {
-                    throw new NotFoundException(typeof(TEntity).Name, id != null ? id : "No Key Provided");
-                }
-                mappedEntity = _mapper.Map<TDestination>(entity);
-
-                _cache.Set(cacheKey, mappedEntity, TimeSpan.FromHours(24));
-
-            }
             return mappedEntity;
-        }
-
-        public async Task<(TDestination, string)> GetByIdWithETagAsync<TKey, TDestination>(TKey id, List<string>? navigationPropertyToInclude = null)
-        {
-            string cacheKey = $"{typeof(TEntity).FullName}";
-
-            if (!_cache.TryGetValue(cacheKey, out TDestination mappedEntity))
-            {
-                var entity = await _repository.GetByIdAsync(id, navigationPropertyToInclude);
-                if (entity is null)
-                {
-                    throw new NotFoundException(typeof(TEntity).Name, id != null ? id : "No Key Provided");
-                }
-                mappedEntity = _mapper.Map<TDestination>(entity);
-
-                _cache.Set(cacheKey, mappedEntity, TimeSpan.FromHours(24));
-
-            }
-
-            var eTag = CacheUtils.GenerateETag(mappedEntity);
-            return (mappedEntity, eTag);
         }
 
         public virtual async Task UpdateAsync<TKey, TSource>(TKey id, TSource source)
@@ -187,6 +159,8 @@ namespace Template.Core.Application.Services
             CacheUtils.InvalidateCache<TEntity>(_cache);
             await _repository.UpdateAsync(entity);
         }
+
+
         #endregion Public Methods
     }
 }

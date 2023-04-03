@@ -14,7 +14,7 @@ namespace Template.Infrastructure.Persistence
             #region DbContext
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-            {   
+            {
                 services.AddDbContext<ApplicationDbContext>(DbContextAction.InMemoryOptions);
                 services.AddDbContext<AuditDbContext>(DbContextAction.AuditInMemoryOptions);
             }
@@ -23,12 +23,15 @@ namespace Template.Infrastructure.Persistence
                 services.AddDbContext<ApplicationDbContext>(DbContextAction.DbOptions(configuration));
                 services.AddDbContext<AuditDbContext>(DbContextAction.AuditDbOptions(configuration));
             }
+
             #endregion DbContext
 
             #region Dependency Injection
+
             services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             services.AddScoped<IItemRepositoryAsync, ItemRepository>();
             services.AddScoped<ICategoryRepositoryAsync, CategoryRepository>();
+
             #endregion Dependency Injection
         }
     }

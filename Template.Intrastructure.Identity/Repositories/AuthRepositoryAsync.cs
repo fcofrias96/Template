@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Template.Infrastructure.Identity.Contracts.Repositories;
 using Template.Infrastructure.Identity.Entity;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
@@ -10,6 +9,7 @@ namespace Template.Infrastructure.Identity.Repositories
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _singInManager;
+
         public AuthRepositoryAsync(UserManager<User> userManager, SignInManager<User> singInManager)
         {
             _userManager = userManager;

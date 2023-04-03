@@ -2,7 +2,7 @@
 
 namespace Template.Core.Application.Contracts.Services
 {
-    public interface IItemServiceAsync: IGenericServiceAsync<Item>
+    public interface IItemServiceAsync : IGenericServiceAsync<Item>
     {
     }
 }

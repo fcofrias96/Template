@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using Template.Core.Application.DTOs.Role;
 using Template.Core.Application.Utils;
@@ -10,7 +9,6 @@ namespace Template.Infrastructure.Identity.Services
 {
     public class RoleServiceAsync : IRoleServiceAsync
     {
-
         private readonly IRoleRepositoryAsync _roleRepositoryAsync;
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
@@ -20,7 +18,6 @@ namespace Template.Infrastructure.Identity.Services
             _roleRepositoryAsync = roleRepositoryAsync;
             _cache = cache;
             _mapper = mapper;
-          
         }
 
         public async Task<(IList<RoleListDTO>, string)> GetAllWithETagAsync()

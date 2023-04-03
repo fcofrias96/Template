@@ -6,5 +6,4 @@
         public const string Moderator = "Moderator";
         public const string Basic = "Basic";
     }
-
 }

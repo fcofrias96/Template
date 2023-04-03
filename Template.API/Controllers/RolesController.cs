@@ -14,11 +14,11 @@ namespace Template.Api.Controllers
     public class RolesController : ControllerBase
     {
         private readonly IRoleServiceAsync _roleService;
+
         public RolesController(IRoleServiceAsync roleService)
         {
             _roleService = roleService;
         }
-
 
         [HttpGet]
         [CacheControl]
@@ -28,6 +28,5 @@ namespace Template.Api.Controllers
             Response.Headers.Add("X-Validate-ETag", eTag);
             return Ok(roles);
         }
-
     }
 }

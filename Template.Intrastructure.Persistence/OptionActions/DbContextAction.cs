@@ -32,7 +32,6 @@ namespace Template.Infrastructure.Persistence.OptionActions
             return Options;
         };
 
-
         public static Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");

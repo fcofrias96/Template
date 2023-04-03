@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Template.Core.Application.DTOs.User;
-using Template.Core.Application.Wrappers;
 using Template.Core.Domain.Constants;
 using Template.Core.Domain.Entities;
 using Template.Infrastructure.Identity.Contracts.Services;
@@ -10,25 +9,28 @@ using Template.Infrastructure.Identity.Entity;
 
 namespace Template.Api.Controllers
 {
-
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
     public class UsersController : ControllerBase
     {
         #region Private Variable
+
         private readonly IUserServiceAsync _userServiceAsync;
 
         #endregion Private Variable
 
         #region Constructor
+
         public UsersController(IUserServiceAsync userService)
         {
             _userServiceAsync = userService;
         }
+
         #endregion Constructor
 
         #region Actions
+
         // POST api/users/{id}/roles
         [Authorize(Permission.Create, Roles = Role.Admin)]
         [HttpPost("{id}/permissions")]
@@ -59,7 +61,7 @@ namespace Template.Api.Controllers
         // POST api/users/
         [AllowAnonymous]
         [HttpPost]
-        public async Task<Response<string>> CreateAsync([FromBody] UserCreateDTO userCreateDTO)
+        public async Task<string> CreateAsync([FromBody] UserCreateDTO userCreateDTO)
         {
             return await _userServiceAsync.AddAsync(userCreateDTO);
         }
@@ -90,6 +92,7 @@ namespace Template.Api.Controllers
             var user = await _userServiceAsync.GetByIdAsync(id);
             return Ok(user);
         }
+
         // GET api/users/{id}/roles
         [Authorize(Permission.Read, Roles = Role.Admin)]
         [HttpGet("{id}/roles")]
@@ -98,6 +101,7 @@ namespace Template.Api.Controllers
             var roles = await _userServiceAsync.GetRolesAsync(id);
             return Ok(roles);
         }
+
         // POST api/users/{id}/roles
         [Authorize(Permission.Delete, Roles = Role.Admin)]
         [HttpDelete("{id}/roles")]
@@ -115,7 +119,7 @@ namespace Template.Api.Controllers
             await _userServiceAsync.UpdateAsync(id, userUpdateDTO);
             return NoContent();
         }
-        #endregion Actions
 
+        #endregion Actions
     }
 }

@@ -8,6 +8,7 @@ namespace Template.Infrastructure.Identity.Seeds
         public static List<IdentityRoleClaim<string>> data = new List<IdentityRoleClaim<string>>
         {
             #region Admin
+
             new IdentityRoleClaim<string>
             {   Id = -1,
                 ClaimType = "Permission",
@@ -22,14 +23,14 @@ namespace Template.Infrastructure.Identity.Seeds
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Admin).Id
             },
             new IdentityRoleClaim<string>
-            {   
+            {
                 Id = -3,
                 ClaimType = "Permission",
                 ClaimValue= Permission.Update,
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Admin).Id
             },
             new IdentityRoleClaim<string>
-            {   
+            {
                 Id = -4,
                 ClaimType = "Permission",
                 ClaimValue= Permission.Delete,
@@ -48,7 +49,7 @@ namespace Template.Infrastructure.Identity.Seeds
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Moderator).Id
             },
             new IdentityRoleClaim<string>
-            {   
+            {
                 Id = -6,
                 ClaimType = "Permission",
                 ClaimValue= Permission.Update,
@@ -60,7 +61,7 @@ namespace Template.Infrastructure.Identity.Seeds
             #region Basic User
 
             new IdentityRoleClaim<string>
-            {   
+            {
                 Id = -7,
                 ClaimType = "Permission",
                 ClaimValue= Permission.Read,

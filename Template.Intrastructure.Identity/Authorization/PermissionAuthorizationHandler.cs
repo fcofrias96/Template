@@ -29,7 +29,4 @@ namespace Template.Infrastructure.Identity.Authorization
             return Task.CompletedTask;
         }
     }
-
 }
-
-

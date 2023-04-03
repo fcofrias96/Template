@@ -1,4 +1,5 @@
 ﻿using Serilog.Context;
+using System.Diagnostics;
 using Template.Core.Application.Extensions;
 using Template.Core.Application.Wrappers;
 using Template.Core.Domain.Exceptions;
@@ -19,38 +20,72 @@ namespace Template.Api.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception e)
-            {
-                #region StatusCode
+            var request = context.Request;
+            var clientIP = context.Connection.RemoteIpAddress;
+            var stopwatch = Stopwatch.StartNew();
 
-                switch (e)
+            using (LogContext.PushProperty("ClientIP", clientIP))
+            using (LogContext.PushProperty("Referer", request.Headers["Referer"]))
+            using (LogContext.PushProperty("RequestMethod", request.Method))
+            using (LogContext.PushProperty("RequestPath", request.Path))
+            using (LogContext.PushProperty("RequestProtocol", request.Protocol))
+            using (LogContext.PushProperty("RequestQueryString", request.QueryString))
+            using (LogContext.PushProperty("UserAgent", request.Headers["User-Agent"]))
+            using (LogContext.PushProperty("UserName", context.GetUserName()))
+            {
+                try
                 {
-                    case BadRequestException:
-                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                        break;
+                    await _next(context);
+                    stopwatch.Stop();
+                    var elapsed = stopwatch.ElapsedMilliseconds.ToString("0.0000");
+                    int statusCode = context.Response.StatusCode;
 
-                    case NotFoundException:
-                        context.Response.StatusCode = StatusCodes.Status404NotFound;
-                        break;
-
-                    default:
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        break;
+                    LogContext.PushProperty("StatusCode", statusCode);
+                    LogContext.PushProperty("Elapsed", elapsed);
+                    _logger.Information("Request processed");
                 }
+                catch (Exception e)
+                {
+                    stopwatch.Stop();
+                    int statusCode;
+                    string message = e.Message;
 
-                #endregion StatusCode
+                    #region StatusCode
 
-                var userName = context.GetUserName();
-                LogContext.PushProperty("UserName", userName);
-                _logger.Error(e, e.Message);
+                    switch (e)
+                    {
+                        case BadRequestException:
+                            statusCode = StatusCodes.Status400BadRequest;
 
-                var response = new Response<string>(e.Message);
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(response);
+                            break;
+
+                        case NotFoundException:
+                            statusCode = StatusCodes.Status404NotFound;
+                            break;
+
+                        default:
+                            statusCode = StatusCodes.Status500InternalServerError;
+                            message = "A problem occurred on the server, please contact the administrator";
+                            break;
+                    }
+
+                    #endregion StatusCode
+
+                    var elapsed = stopwatch.ElapsedMilliseconds.ToString("0.0000");
+                    LogContext.PushProperty("StatusCode", statusCode);
+                    LogContext.PushProperty("Elapsed", elapsed);
+                    _logger.Error(e, e.Message);
+
+                    var response = new ApiResponse<Exception>
+                    {
+                        StatusCode = statusCode,
+                        Message = message
+                    };
+
+                    context.Response.StatusCode = statusCode;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsJsonAsync(response);
+                }
             }
         }
     }

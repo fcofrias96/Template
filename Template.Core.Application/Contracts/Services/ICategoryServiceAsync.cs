@@ -2,7 +2,7 @@
 
 namespace Template.Core.Application.Contracts.Services
 {
-    public interface ICategoryServiceAsync: IGenericServiceAsync<Category>
+    public interface ICategoryServiceAsync : IGenericServiceAsync<Category>
     {
     }
 }

@@ -22,11 +22,11 @@ namespace Template.Infrastructure.Persistence.Configuration
             builder.Property(x => x.Name)
                     .HasColumnType("VARCHAR(50)")
                     .IsRequired();
-            
+
             builder.Property(x => x.Price)
                    .HasColumnType("DECIMAL(13,2)")
                    .IsRequired();
-            
+
             builder.Property(x => x.Description)
                    .HasColumnType("VARCHAR(100)")
                    .IsRequired();
@@ -41,7 +41,6 @@ namespace Template.Infrastructure.Persistence.Configuration
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.CategoryId)
             .HasConstraintName("FK_Item_Category");
-
 
             #endregion Keys
 

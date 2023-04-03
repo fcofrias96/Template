@@ -12,5 +12,3 @@ namespace Template.Infrastructure.Identity.Authorization
         }
     }
 }
-
-

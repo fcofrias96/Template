@@ -10,7 +10,6 @@ namespace Template.Core.Application.SetupOptions
                policy.AllowAnyOrigin()
                      .AllowAnyMethod()
                      .AllowAnyHeader());
-                     
         };
     }
 }

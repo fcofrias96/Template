@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Template.Core.Application.DTOs.Auth
 {
@@ -12,6 +10,7 @@ namespace Template.Core.Application.DTOs.Auth
         public List<string> Roles { get; set; }
         public bool IsVerified { get; set; }
         public string JWToken { get; set; }
+
         [JsonIgnore]
         public string RefreshToken { get; set; }
     }

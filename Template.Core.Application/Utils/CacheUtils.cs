@@ -7,7 +7,6 @@ namespace Template.Core.Application.Utils
 {
     public static class CacheUtils
     {
-
         public static string GenerateETag<TSource>(TSource source)
         {
             // Utiliza un algoritmo de hash, como SHA256, para generar un hash basado en el contenido del producto
@@ -25,6 +24,5 @@ namespace Template.Core.Application.Utils
             cache.Remove(cacheKey);
             cache.Remove(listCacheKey);
         }
-
     }
 }

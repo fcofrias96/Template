@@ -12,6 +12,7 @@ namespace Template.Infrastructure.Identity.Repositories
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
+
         public RoleRepositoryAsync(RoleManager<IdentityRole> roleManager, IMapper mapper)
         {
             _roleManager = roleManager;
@@ -28,7 +29,7 @@ namespace Template.Infrastructure.Identity.Repositories
         public async Task<IList<Claim>> GetClaims(string roleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
-            
+
             return await _roleManager.GetClaimsAsync(role);
         }
     }

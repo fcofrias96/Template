@@ -6,8 +6,9 @@ namespace Template.Infrastructure.Identity.Seeds
     public static class UserRoleSeed
     {
         public static List<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
-        {  
+        {
             #region Admin
+
                new IdentityUserRole<string>
             {
                 UserId = UserSeed.data.First(x => x.UserName =="admin").Id,
@@ -23,10 +24,11 @@ namespace Template.Infrastructure.Identity.Seeds
                 UserId = UserSeed.data.First(x => x.UserName =="admin").Id,
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Moderator).Id
             },
+
             #endregion Admin
 
             #region Moderator
-                              
+
              new IdentityUserRole<string>
             {
                 UserId = UserSeed.data.First(x => x.UserName =="moderator").Id,
@@ -37,16 +39,18 @@ namespace Template.Infrastructure.Identity.Seeds
                 UserId = UserSeed.data.First(x => x.UserName =="moderator").Id,
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Basic).Id
             },
+
             #endregion Moderator
 
             #region Basic User
+
             new IdentityUserRole<string>
             {
                 UserId = UserSeed.data.First(x => x.UserName =="basicuser").Id,
                 RoleId = RoleSeed.data.First(x=> x.Name == Role.Basic).Id
             }
-            #endregion Basic User
 
+            #endregion Basic User
         };
     }
 }

@@ -8,5 +8,4 @@
         string? LastModifiedBy { get; set; }
         DateTime? LastModified { get; set; }
     }
-
 }

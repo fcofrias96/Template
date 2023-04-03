@@ -1,8 +1,5 @@
-﻿using Template.Core.Application.Contracts;
-
-namespace Template.Core.Application.DTOs.Category
+﻿namespace Template.Core.Application.DTOs.Category
 {
-
     public class CategoryListDTO
     {
         public int Id { get; set; }

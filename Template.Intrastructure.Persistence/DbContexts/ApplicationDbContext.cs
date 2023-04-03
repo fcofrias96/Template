@@ -34,14 +34,12 @@ namespace Template.Infrastructure.Persistence.DbContexts
         public DbSet<Item> Items { get; set; }
         public DbSet<Category> Categories { get; set; }
 
-
         #endregion DbSets
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ItemConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -132,17 +130,13 @@ namespace Template.Infrastructure.Persistence.DbContexts
                 #endregion AuditLogs
             }
 
-            
-
             Parallel.ForEach(auditEntryList, auditEnitty =>
             {
                 auditList.Add(auditEnitty.ToAudit());
             });
 
-            _auditDbContext.AuditLogs.AddRange(auditList);  
+            _auditDbContext.AuditLogs.AddRange(auditList);
             _auditDbContext.SaveChanges();
-
-            
         }
     }
 }

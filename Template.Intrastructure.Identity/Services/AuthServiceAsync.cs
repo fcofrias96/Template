@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,7 +12,6 @@ using Template.Core.Application.Contracts.Services;
 using Template.Core.Application.DTOs.Auth;
 using Template.Core.Application.DTOs.Email;
 using Template.Core.Application.Extensions;
-using Template.Core.Application.Wrappers;
 using Template.Core.Domain.Exceptions;
 using Template.Infrastructure.Identity.Contracts.Repositories;
 using Template.Infrastructure.Identity.Contracts.Services;
@@ -34,6 +32,7 @@ namespace Template.Infrastructure.Identity.Services
         private readonly JWTSettings _jwtSettings;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
+
         public AuthServiceAsync(IUserRepositoryAsync userRepositoryAsync,
             IAuthRepositoryAsync authRepositoryAsync,
             IEmailServiceAsync emailServiceAsync,
@@ -54,16 +53,15 @@ namespace Template.Infrastructure.Identity.Services
             _configuration = configuration;
         }
 
-
-        public async Task<Response<string>> ConfirmEmailAsync(ConfirmEmailDTO confirmEmailDTO)
+        public async Task<string> ConfirmEmailAsync(ConfirmEmailDTO confirmEmailDTO)
         {
-            var user = await _userRepositoryAsync.FindByIdAsync( confirmEmailDTO.UserId);
+            var user = await _userRepositoryAsync.FindByIdAsync(confirmEmailDTO.UserId);
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailDTO.Code));
             var result = await _authRepositoryAsync.ConfirmEmailAsync(user, code);
             var baseUrl = _httpContext?.HttpContext?.Request.GetBaseUrl();
             if (result.Succeeded)
             {
-                return new Response<string>(user.Id, message: $"Account Confirmed for {user.Email}. You can now use the {baseUrl}auth/login endpoint.");
+                return $"Account Confirmed for {user.Email}. You can now use the {baseUrl}auth/login endpoint.";
             }
             else
             {
@@ -90,18 +88,17 @@ namespace Template.Infrastructure.Identity.Services
             await _emailServiceAsync.SendAsync(emailRequest);
         }
 
-        public async Task<Response<AuthenticationResponseDTO>> LoginAsync(LoginDTO request, string ipAddress)
+        public async Task<AuthenticationResponseDTO> LoginAsync(LoginDTO request, string ipAddress)
         {
             User user;
             user = await _userRepositoryAsync.FindByNameAsync(request.UserName);
             if (user == null)
             {
                 user = await _userRepositoryAsync.FindByEmailAsync(request.UserName);
-                if(user == null)
+                if (user == null)
                 {
                     throw new NotFoundException($"No Accounts Registered with {request.UserName}.");
                 }
-                
             }
             var result = await _authRepositoryAsync.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
             if (!result.Succeeded)
@@ -123,25 +120,23 @@ namespace Template.Infrastructure.Identity.Services
             response.IsVerified = user.EmailConfirmed;
             var refreshToken = GenerateRefreshToken(ipAddress);
             response.RefreshToken = refreshToken.Token;
-            return new Response<AuthenticationResponseDTO>(response, $"Authenticated {user.UserName}");
+            return response;
         }
 
-        public async Task<Response<string>> ResetPassword(ResetPasswordDTO model)
+        public async Task<string> ResetPassword(ResetPasswordDTO model)
         {
-
             var account = await _userRepositoryAsync.FindByEmailAsync(model.Email);
             if (account == null) throw new NotFoundException($"No Accounts Registered with {model.Email}.");
             var result = await _authRepositoryAsync.ResetPasswordAsync(account, model.Token, model.Password);
             if (result.Succeeded)
             {
-                return new Response<string>(model.Email, message: $"Password Resetted.");
+                return "Password Resetted.";
             }
             else
             {
                 throw new Exception($"Error occured while reseting the password.");
             }
         }
-
 
         private async Task<JwtSecurityToken> GenerateJWToken(User user)
         {
@@ -150,13 +145,13 @@ namespace Template.Infrastructure.Identity.Services
             var roleClaimList = new List<Claim>();
             var permissionClaimList = new List<Claim>();
 
-            foreach (var role in roles) 
+            foreach (var role in roles)
             {
                 roleClaimList.Add(new Claim("roles", role));
-                var roleclaims =  await _roleRepositoryAsync.GetClaims(role);
-                foreach(var claim in roleclaims) 
-                { 
-                    if(!permissionClaimList.Exists(x=> x.Value == claim.Value && x.Type == claim.Type))
+                var roleclaims = await _roleRepositoryAsync.GetClaims(role);
+                foreach (var claim in roleclaims)
+                {
+                    if (!permissionClaimList.Exists(x => x.Value == claim.Value && x.Type == claim.Type))
                     {
                         permissionClaimList.Add(claim);
                     }
@@ -177,7 +172,6 @@ namespace Template.Infrastructure.Identity.Services
             claims.AddRange(userClaimList);
             claims.AddRange(roleClaimList);
             claims.AddRange(permissionClaimList);
-
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
