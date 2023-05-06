@@ -22,12 +22,12 @@ namespace Template.Infrastructure.Email.Service
             BodyBuilder body = new() { HtmlBody = emailSendDTO.Body };
             MimeMessage email = new()
             {
-                Sender = MailboxAddress.Parse(_mailSetttings.DisplayName + " <" + _mailSetttings.EmailFrom + ">"),
                 Subject = emailSendDTO.Subject,
                 Body = body.ToMessageBody()
             };
 
             email.To.Add(MailboxAddress.Parse(emailSendDTO.To));
+            email.From.Add(new MailboxAddress(_mailSetttings.DisplayName, _mailSetttings.EmailFrom));
 
             using (SmtpClient smtp = new())
             {

@@ -74,9 +74,6 @@ namespace Template.Infrastructure.Persistence.Repositories
             }
 
 
-            var x = query.ToQueryString();
-            var y = query.ProjectTo<TDestination>(_configurationProvider).ToQueryString();
-
             return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
         }

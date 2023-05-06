@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Template.Api.Attributes;
-using Template.Core.Application;
-using Template.Core.Application.Contracts;
 using Template.Core.Application.Contracts.Services;
 using Template.Core.Application.DTOs.Item;
 using Template.Core.Application.Request;
@@ -20,12 +16,12 @@ namespace Template.Api.Controllers
     [ApiVersion("1.0")]
     public class ItemsController : ControllerBase
     {
-        #region Private Varible
+        #region Private Variable
 
         private readonly IItemServiceAsync _itemServiceAsync;
         private readonly ILogger _logger;
 
-        #endregion Private Varible
+        #endregion Private Variable
 
         #region Constructor
 
