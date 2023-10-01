@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ using Template.Core.Application.Wrappers;
 
 namespace Template.Core.Application
 {
-    public static class ServiceExtesions
+    public static class ServiceExtensions
     {
         public static void AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
@@ -27,7 +28,7 @@ namespace Template.Core.Application
                             kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
                         );
 
-                    var apiResponse = ApiResponse<Exception>.BadRequest(errors, "Error en los parámetros de entrada");
+                    var apiResponse = new ApiResponse<Exception>(StatusCodes.Status400BadRequest, "One or more validation errors occurred.", errors);
 
                     return new BadRequestObjectResult(apiResponse);
                 };
@@ -40,12 +41,9 @@ namespace Template.Core.Application
             services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
-                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.ReportApiVersions = true;
-                options.ApiVersionReader = ApiVersionReader.Combine(
-                     new QueryStringApiVersionReader("api-version"),
-                     new HeaderApiVersionReader("X-Version"),
-                     new MediaTypeApiVersionReader("v"));
+                options.ApiVersionReader = new MediaTypeApiVersionReader("v");
             });
 
             services.AddVersionedApiExplorer(

@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Template.Core.Domain.Entities;
 
 namespace Template.Core.Application.Contracts.Repositories
 {
@@ -13,7 +12,7 @@ namespace Template.Core.Application.Contracts.Repositories
    
         Task<TDestination?> GetByIdAsync<TKey, TDestination>(TKey id);
 
-        Task<int> GetTotalCountAsync();
+        Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>> criteria);
 
         Task UpdateAsync(TEntity entity);
 

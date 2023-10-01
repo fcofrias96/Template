@@ -2,7 +2,7 @@
 
 namespace Template.Core.Application.Utils
 {
-    public static class UrlUtils
+    public static class UrlUtile
     {
         public static string? GetNextURL(string url, int limit, int offset, int total)
         {

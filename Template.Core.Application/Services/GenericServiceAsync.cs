@@ -14,14 +14,14 @@ namespace Template.Core.Application.Services
 {
     public class GenericServiceAsync<TEntity> : IGenericServiceAsync<TEntity>
     {
-        #region Private Varible
+        #region Private Variable
 
         private readonly IMemoryCache _cache;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
         private readonly IGenericRepositoryAsync<TEntity> _repository;
 
-        #endregion Private Varible
+        #endregion Private Variable
 
         #region Constructor
 
@@ -74,9 +74,10 @@ namespace Template.Core.Application.Services
         where TSpecification : ISpecification<TEntity>
         {
 
+
             var type = typeof(TSpecification);
             object[] constructorArguments = new object[] { request };
-            var spec = (TSpecification)Activator.CreateInstance(type, constructorArguments);
+            var spec = (TSpecification)Activator.CreateInstance(type, constructorArguments)!;
 
 
             if (spec.Skip % spec.Take != 0)
@@ -84,7 +85,7 @@ namespace Template.Core.Application.Services
                 throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
             }
 
-            var total = await _repository.GetTotalCountAsync();
+            var total =  await _repository.GetTotalCountAsync(spec.Criteria);
 
             if (total < spec.Skip)
             {
@@ -92,9 +93,9 @@ namespace Template.Core.Application.Services
             }
 
             var items = await _repository.GetAllAsync<TDestination>(spec);
-            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl();
-            var next = UrlUtils.GetNextURL(href, spec.Take, spec.Skip, total);
-            var prev = UrlUtils.GetPrevURL(href, spec.Take, spec.Skip, total);
+            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl()!;
+            var next = UrlUtile.GetNextURL(href, spec.Take, spec.Skip, total);
+            var prev = UrlUtile.GetPrevURL(href, spec.Take, spec.Skip, total);
 
             return new PagedResult<TDestination>
             {

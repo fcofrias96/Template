@@ -12,8 +12,8 @@ using Template.Infrastructure.Persistence.DbContexts;
 namespace Template.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230305134902_first")]
-    partial class first
+    [Migration("20230606200037_fisrt")]
+    partial class fisrt
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,47 +23,6 @@ namespace Template.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Template.Core.Domain.Entities.Audit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AffectedColumns")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("NewValues")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OldValues")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PrimaryKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TableName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AuditLogs");
-                });
 
             modelBuilder.Entity("Template.Core.Domain.Entities.Category", b =>
                 {

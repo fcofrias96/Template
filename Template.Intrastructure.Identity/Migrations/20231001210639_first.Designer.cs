@@ -12,14 +12,13 @@ using Template.Infrastructure.Identity.DbContext;
 namespace Template.Infrastructure.Identity.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20230316214328_second-migration")]
-    partial class secondmigration
+    [Migration("20231001210639_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("Identity")
                 .HasAnnotation("ProductVersion", "6.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -49,27 +48,27 @@ namespace Template.Infrastructure.Identity.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Role", "Identity");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "43d20f06-f790-46ac-825c-2b8fa960d0fc",
-                            ConcurrencyStamp = "57ed217a-6253-4061-9a22-8c36d3ea14a3",
+                            Id = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8",
+                            ConcurrencyStamp = "e4ba2ef4-ae28-46b6-b28a-0075576410f8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "73878947-4166-4c4b-bb24-879de167170b",
-                            ConcurrencyStamp = "02523172-8c66-43b5-b051-01d63af9e19d",
+                            Id = "7856b6a7-aafc-4e73-9117-4f231b2c5662",
+                            ConcurrencyStamp = "4140f997-70e8-487d-8815-4acf8b5089b5",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "a24ccf74-fe44-4504-9c41-dbc04be897a8",
-                            ConcurrencyStamp = "0eadfcc7-1a9d-4d5d-a449-0a082704ae3a",
+                            Id = "9e86a3c4-f205-48c0-93fe-972d64130821",
+                            ConcurrencyStamp = "51d3316a-d051-4bf9-98cd-04939f606154",
                             Name = "Basic",
                             NormalizedName = "BASIC"
                         });
@@ -97,7 +96,7 @@ namespace Template.Infrastructure.Identity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", "Identity");
+                    b.ToTable("RoleClaims", (string)null);
 
                     b.HasData(
                         new
@@ -105,49 +104,49 @@ namespace Template.Infrastructure.Identity.Migrations
                             Id = -1,
                             ClaimType = "Permission",
                             ClaimValue = "Create",
-                            RoleId = "43d20f06-f790-46ac-825c-2b8fa960d0fc"
+                            RoleId = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8"
                         },
                         new
                         {
                             Id = -2,
                             ClaimType = "Permission",
                             ClaimValue = "Read",
-                            RoleId = "43d20f06-f790-46ac-825c-2b8fa960d0fc"
+                            RoleId = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8"
                         },
                         new
                         {
                             Id = -3,
                             ClaimType = "Permission",
                             ClaimValue = "Update",
-                            RoleId = "43d20f06-f790-46ac-825c-2b8fa960d0fc"
+                            RoleId = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8"
                         },
                         new
                         {
                             Id = -4,
                             ClaimType = "Permission",
                             ClaimValue = "Delete",
-                            RoleId = "43d20f06-f790-46ac-825c-2b8fa960d0fc"
+                            RoleId = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8"
                         },
                         new
                         {
                             Id = -5,
                             ClaimType = "Permission",
                             ClaimValue = "Read",
-                            RoleId = "73878947-4166-4c4b-bb24-879de167170b"
+                            RoleId = "7856b6a7-aafc-4e73-9117-4f231b2c5662"
                         },
                         new
                         {
                             Id = -6,
                             ClaimType = "Permission",
                             ClaimValue = "Update",
-                            RoleId = "73878947-4166-4c4b-bb24-879de167170b"
+                            RoleId = "7856b6a7-aafc-4e73-9117-4f231b2c5662"
                         },
                         new
                         {
                             Id = -7,
                             ClaimType = "Permission",
                             ClaimValue = "Read",
-                            RoleId = "a24ccf74-fe44-4504-9c41-dbc04be897a8"
+                            RoleId = "9e86a3c4-f205-48c0-93fe-972d64130821"
                         });
                 });
 
@@ -173,7 +172,7 @@ namespace Template.Infrastructure.Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", "Identity");
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -195,7 +194,7 @@ namespace Template.Infrastructure.Identity.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", "Identity");
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -210,38 +209,38 @@ namespace Template.Infrastructure.Identity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "Identity");
+                    b.ToTable("UserRoles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            UserId = "ee86f363-b6db-4971-b951-829a4a88852d",
-                            RoleId = "43d20f06-f790-46ac-825c-2b8fa960d0fc"
+                            UserId = "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16",
+                            RoleId = "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8"
                         },
                         new
                         {
-                            UserId = "ee86f363-b6db-4971-b951-829a4a88852d",
-                            RoleId = "a24ccf74-fe44-4504-9c41-dbc04be897a8"
+                            UserId = "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16",
+                            RoleId = "9e86a3c4-f205-48c0-93fe-972d64130821"
                         },
                         new
                         {
-                            UserId = "ee86f363-b6db-4971-b951-829a4a88852d",
-                            RoleId = "73878947-4166-4c4b-bb24-879de167170b"
+                            UserId = "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16",
+                            RoleId = "7856b6a7-aafc-4e73-9117-4f231b2c5662"
                         },
                         new
                         {
-                            UserId = "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805",
-                            RoleId = "73878947-4166-4c4b-bb24-879de167170b"
+                            UserId = "ca151d1a-6531-4831-af2a-515dc224f222",
+                            RoleId = "7856b6a7-aafc-4e73-9117-4f231b2c5662"
                         },
                         new
                         {
-                            UserId = "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805",
-                            RoleId = "a24ccf74-fe44-4504-9c41-dbc04be897a8"
+                            UserId = "ca151d1a-6531-4831-af2a-515dc224f222",
+                            RoleId = "9e86a3c4-f205-48c0-93fe-972d64130821"
                         },
                         new
                         {
-                            UserId = "c931bbd2-d059-40b5-b302-ed1ec47d01d1",
-                            RoleId = "a24ccf74-fe44-4504-9c41-dbc04be897a8"
+                            UserId = "1f9bc385-1f42-4846-bb9a-5b9791c728a9",
+                            RoleId = "9e86a3c4-f205-48c0-93fe-972d64130821"
                         });
                 });
 
@@ -261,7 +260,7 @@ namespace Template.Infrastructure.Identity.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", "Identity");
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Template.Infrastructure.Identity.Entity.User", b =>
@@ -334,14 +333,14 @@ namespace Template.Infrastructure.Identity.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("User", "Identity");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "c931bbd2-d059-40b5-b302-ed1ec47d01d1",
+                            Id = "1f9bc385-1f42-4846-bb9a-5b9791c728a9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b3cdaab-518a-4c63-9a5b-61f160eea776",
+                            ConcurrencyStamp = "78624413-aef1-4d5f-8544-f25bbb689a0e",
                             Email = "basicuser@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -349,17 +348,17 @@ namespace Template.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "BASICUSER@GMAIL.COM",
                             NormalizedUserName = "BASICUSER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFuLo46AwcGNS+MnMS9RyadC+/s91xD90mDWo+dr8ZBgkH1tbtOAR5tgCPdHPM3ofA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEA7dXGtz5IuR8S1Q0fJ/Z7RfptS4QPdPy/Wm6oFtk5/HUr0eEqfYqm699wl/h+wwA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d3bf7a58-58be-403f-ba76-93479871be22",
+                            SecurityStamp = "d9a8b255-3718-4373-962d-45c51eca6646",
                             TwoFactorEnabled = false,
                             UserName = "basicuser"
                         },
                         new
                         {
-                            Id = "ee86f363-b6db-4971-b951-829a4a88852d",
+                            Id = "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fa648e5b-a406-4c62-aaba-2ef60301cb61",
+                            ConcurrencyStamp = "f6307753-0b97-4de3-ad53-5aae5aadb1d7",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -367,17 +366,17 @@ namespace Template.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJ14AAtBVQt8fwYaWf4CxFBVokxkAUyn6LMXfAyJDDt3GQiMYRDheP3xV74I9l4d3A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJ68nt/YT4SYpseip33cXmPqSCXW+ACwPBWkuZ8HkEPDdigViNAX+i75PrEYANWtwA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "832fcca5-c61d-48e4-a25d-d637f763d626",
+                            SecurityStamp = "5c9889b1-43ea-4acf-b723-d133fa7f9f93",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
                         new
                         {
-                            Id = "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805",
+                            Id = "ca151d1a-6531-4831-af2a-515dc224f222",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d3abb3c1-6837-4bc1-b7df-cf51626a81bf",
+                            ConcurrencyStamp = "cea72633-6247-452d-994c-615be7e05b3e",
                             Email = "moderator@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
@@ -385,9 +384,9 @@ namespace Template.Infrastructure.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "MODERATOR@GMAIL.COM",
                             NormalizedUserName = "MODERATOR",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJlvrNKteMesd6vzcbH+pS0nYsoUIQSiULebIG1TNTPlqO5g4fIkwt7LsaPEPtPpOQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJunTl1Sf57dhCwP1RHWAiv19HPDDpd+/BMmeIKRtQm5XxQoWVhDwCrhHfoT6oKVPQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1f82fa7b-934c-4ee7-8e69-3439f9f75575",
+                            SecurityStamp = "141c39ba-30cc-45a3-b14f-8b3ad75bf7ed",
                             TwoFactorEnabled = false,
                             UserName = "moderator"
                         });

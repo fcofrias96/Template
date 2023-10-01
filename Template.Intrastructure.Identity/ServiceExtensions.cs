@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Diagnostics;
 using System.Text;
 using Template.Core.Application.Extensions;
 using Template.Core.Application.Wrappers;
@@ -24,8 +25,11 @@ namespace Template.Infrastructure.Identity
 {
     public static class ServiceExtensions
     {
+        public static string message = "";
         public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            
+
             #region DbContext
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
@@ -76,11 +80,14 @@ namespace Template.Infrastructure.Identity
             #region Authentication
 
             var key = Encoding.UTF8.GetBytes(configuration["JWTSettings:Key"]);
-            services.AddAuthentication(auth =>
+
+
+
+            services.AddAuthentication(options =>
             {
-                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                auth.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -101,47 +108,43 @@ namespace Template.Infrastructure.Identity
                     OnChallenge = async (context) =>
                     {
                         var statusCode = StatusCodes.Status401Unauthorized;
-                        context.HandleResponse();
                         context.Response.StatusCode = statusCode;
+                        context.HandleResponse();
+
                         var response = new ApiResponse<Exception>
                         {
-                            StatusCode = statusCode
+                            StatusCode = statusCode,
+                            Message = "You are not authenticated"
                         };
 
-                        if (context.AuthenticateFailure == null)
-                        {
-                            string message = "You Are not Authenticated";
-                            response.Message = message;
-                            Log.Warning(message);
-                        }
-                        else
-                        {
-                            response.Message = $"{context?.Error}";
-                            Log.Warning(context?.Error);
-                        }
-
                         await context.Response.WriteAsJsonAsync(response);
+                        Log.Warning(response.Message);
                     },
                     OnForbidden = async (context) =>
                     {
                         var statusCode = StatusCodes.Status403Forbidden;
-
                         context.Response.StatusCode = statusCode;
                         context.Response.ContentType = "application/json";
 
                         var response = new ApiResponse<Exception>
                         {
                             StatusCode = statusCode,
-                            Message = "You are not authorized to access this resource",
+                            Message = "You are not authorized to access this resource"
                         };
 
                         await context.Response.WriteAsJsonAsync(response);
                         string pathRequest = context.HttpContext.Request.Path;
                         string userName = context.HttpContext.GetUserName();
 
-                        Log.Warning($"User {userName} are not authorized to access to {pathRequest}");
-                    }
+                        Log.Warning($"User {userName} is not authorized to access {pathRequest}");
+                    }/*,
+                    OnAuthenticationFailed = async (context) =>
+                    {
+                        context.NoResult();
+                    }*/
                 };
+
+
             });
 
             #endregion Authentication
@@ -158,5 +161,8 @@ namespace Template.Infrastructure.Identity
 
             #endregion Authorization
         }
+
+
+       
     }
 }

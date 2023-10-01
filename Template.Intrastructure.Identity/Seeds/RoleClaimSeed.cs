@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Immutable;
 using Template.Core.Domain.Constants;
 
 namespace Template.Infrastructure.Identity.Seeds
 {
     public static class RoleClaimSeed
     {
-        public static List<IdentityRoleClaim<string>> data = new List<IdentityRoleClaim<string>>
+        public readonly static List<IdentityRoleClaim<string>> data = new List<IdentityRoleClaim<string>>
         {
             #region Admin
 

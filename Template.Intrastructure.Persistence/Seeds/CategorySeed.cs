@@ -3,9 +3,9 @@ using Emuns = Template.Core.Domain.Enums;
 
 namespace Template.Infrastructure.Persistence.Seeds
 {
-    public class CategorySeed
+    public static class CategorySeed
     {
-        public static List<Category> data = new List<Category>
+        public static List<Category> Data { get; } =  new List<Category>
         {
             new Category
             {

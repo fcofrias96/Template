@@ -16,14 +16,11 @@ namespace Template.Infrastructure.Identity.DbContext
         {
             base.OnModelCreating(builder);
 
-            builder.HasDefaultSchema("Identity");
-
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new UserRoleConfiguration());
             builder.ApplyConfiguration(new RoleClaimConfiguration());
 
-            builder.Entity<IdentityUserRole<string>>(entity => entity.ToTable("UserRoles"));
             builder.Entity<IdentityUserLogin<string>>(entity => entity.ToTable("UserLogins"));
             builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens"));
             builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims"));

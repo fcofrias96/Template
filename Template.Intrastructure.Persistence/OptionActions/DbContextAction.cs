@@ -6,7 +6,7 @@ namespace Template.Infrastructure.Persistence.OptionActions
 {
     public static class DbContextAction
     {
-        public static Func<IConfiguration, Action<DbContextOptionsBuilder>> DbOptions = configuration =>
+        public static readonly Func<IConfiguration, Action<DbContextOptionsBuilder>> DbOptions = configuration =>
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
@@ -19,7 +19,7 @@ namespace Template.Infrastructure.Persistence.OptionActions
             return Options;
         };
 
-        public static Func<IConfiguration, Action<DbContextOptionsBuilder>> AuditDbOptions = configuration =>
+        public static readonly Func<IConfiguration, Action<DbContextOptionsBuilder>> AuditDbOptions = configuration =>
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
@@ -32,12 +32,12 @@ namespace Template.Infrastructure.Persistence.OptionActions
             return Options;
         };
 
-        public static Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
+        public static readonly Action<DbContextOptionsBuilder> InMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");
         };
 
-        public static Action<DbContextOptionsBuilder> AuditInMemoryOptions = (options) =>
+        public static readonly Action<DbContextOptionsBuilder> AuditInMemoryOptions = (options) =>
         {
             options.UseInMemoryDatabase("ApplicationDb");
         };

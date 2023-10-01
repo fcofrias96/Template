@@ -1,21 +1,36 @@
-﻿using Template.Core.Application.DTOs.Item;
-using Template.Core.Domain.Entities;
+﻿
+using System.Text.Json.Serialization;
 
 namespace Template.Core.Application.Wrappers
 {
     public class ApiResponse<TSource>
     {
-        public int StatusCode { get; set; }
+        public int StatusCode { get; set; } = 200;
         public string Message { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public TSource Data { get; set; }
-        public Dictionary<string, string[]> Errors { get; set; } = new Dictionary<string, string[]>();
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, string[]> Errors { get; set; }
         public bool Success => StatusCode >= 200 && StatusCode < 300;
 
-        public ApiResponse(int statusCode, string message = null, TSource data = default, Dictionary<string, string[]> errors = default)
+        public ApiResponse( TSource data )
+        {
+
+            Data = data;
+            Message = "Successful Operation";
+        }
+
+
+        public ApiResponse(int statusCode, string message)
         {
             StatusCode = statusCode;
             Message = message;
-            Data = data;
+        }
+
+        public ApiResponse(int statusCode, string message, Dictionary<string, string[]> errors)
+        {
+            StatusCode = statusCode;
+            Message = message;
             Errors = errors;
         }
 
@@ -23,29 +38,6 @@ namespace Template.Core.Application.Wrappers
         {
         }
 
-        public static ApiResponse<TSource> Ok(TSource data = default, string message = default)
-        {
-            return new ApiResponse<TSource>(200, message, data);
-        }
-
-        public static ApiResponse<TSource> Created(TSource data = default, string message = null)
-        {
-            return new ApiResponse<TSource>(201, message, data);
-        }
-
-        public static ApiResponse<TSource> BadRequest(Dictionary<string, string[]> errors = null, string message = null)
-        {
-            return new ApiResponse<TSource>(400, message, default, errors);
-        }
-
-        public static ApiResponse<TSource> NotFound(string message = null)
-        {
-            return new ApiResponse<TSource>(404, message);
-        }
-
-        public static ApiResponse<TSource> InternalServerError(string message = null)
-        {
-            return new ApiResponse<TSource>(500, message);
-        }
+        
     }
 }

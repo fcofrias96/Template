@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Template.Infrastructure.Identity.Entity;
 
-//using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Template.Infrastructure.Identity.Contracts.Repositories
 {

@@ -5,7 +5,7 @@ namespace Template.Infrastructure.Identity.Seeds
 {
     public static class UserRoleSeed
     {
-        public static List<IdentityUserRole<string>> data = new List<IdentityUserRole<string>>
+        public static List<IdentityUserRole<string>> data { get; } = new List<IdentityUserRole<string>>
         {
             #region Admin
 

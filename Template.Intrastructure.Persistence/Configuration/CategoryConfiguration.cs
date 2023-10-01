@@ -31,7 +31,7 @@ namespace Template.Infrastructure.Persistence.Configuration
 
             #region Data Seeding
 
-            builder.HasData(CategorySeed.data);
+            builder.HasData(CategorySeed.Data);
 
             #endregion Data Seeding
 

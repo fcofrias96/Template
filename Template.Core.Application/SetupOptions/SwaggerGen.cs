@@ -8,7 +8,7 @@ namespace Template.Core.Application.SetupOptions
 {
     public static class SwaggerGen
     {
-        public static Action<SwaggerGenOptions> Options = options =>
+        public static readonly Action<SwaggerGenOptions> Options = options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = " TEMPLATE API", Version = "v1" });
             options.EnableAnnotations();

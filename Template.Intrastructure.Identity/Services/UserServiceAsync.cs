@@ -123,8 +123,8 @@ namespace Template.Infrastructure.Identity.Services
             var userList = await _userRepository.GetAllAsync(queryParameters);
             var total = await _userRepository.GetTotalRecordsAsync();
             var href = _httpContext?.HttpContext?.Request.GetEncodedUrl();
-            var next = UrlUtils.GetNextURL(href, queryParameters.Limit, queryParameters.Offset, total);
-            var prev = UrlUtils.GetPrevURL(href, queryParameters.Limit, queryParameters.Offset, total);
+            var next = UrlUtile.GetNextURL(href, queryParameters.Limit, queryParameters.Offset, total);
+            var prev = UrlUtile.GetPrevURL(href, queryParameters.Limit, queryParameters.Offset, total);
 
             return new PagedResult<UserListDTO>
             {

@@ -13,12 +13,12 @@ namespace Template.Api.Controllers
     [ApiVersion("1.0")]
     public class CategoriesController : ControllerBase
     {
-        #region Private Varible
+        #region Private Variable
 
         private readonly IMemoryCache _cache;
         private readonly ICategoryServiceAsync _categoryServiceAsync;
 
-        #endregion Private Varible
+        #endregion Private Variable
 
         #region Constructor
 

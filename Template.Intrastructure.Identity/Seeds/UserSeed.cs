@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Immutable;
 using Template.Infrastructure.Identity.Entity;
 
 namespace Template.Infrastructure.Identity.Seeds
@@ -7,7 +8,7 @@ namespace Template.Infrastructure.Identity.Seeds
     {
         private static PasswordHasher<User> hasher = new PasswordHasher<User>();
 
-        public static List<User> data = new List<User>
+        public static  List<User> data { get;} = new List<User>
         {
              new User
             {

@@ -38,9 +38,9 @@ namespace Template.Api.Middlewares
                     await _next(context);
                     stopwatch.Stop();
                     var elapsed = stopwatch.ElapsedMilliseconds.ToString("0.0000");
-                    int statusCode = context.Response.StatusCode;
+                  /*  int statusCode = context.Response.StatusCode;
 
-                    LogContext.PushProperty("StatusCode", statusCode);
+                    LogContext.PushProperty("StatusCode", statusCode);*/
                     LogContext.PushProperty("Elapsed", elapsed);
                     _logger.Information("Request processed");
                 }

@@ -1,33 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Template.Infrastructure.Persistence.Migrations
 {
-    public partial class first : Migration
+    public partial class fisrt : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AuditLogs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TableName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OldValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NewValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AffectedColumns = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrimaryKey = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Category",
                 columns: table => new
@@ -89,9 +70,6 @@ namespace Template.Infrastructure.Persistence.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AuditLogs");
-
             migrationBuilder.DropTable(
                 name: "Item");
 

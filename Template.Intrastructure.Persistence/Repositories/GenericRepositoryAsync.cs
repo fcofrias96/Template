@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Template.Core.Application.Contracts;
 using Template.Core.Application.Contracts.Repositories;
 using Template.Core.Domain.Contracts;
@@ -10,12 +11,12 @@ namespace Template.Infrastructure.Persistence.Repositories
 {
     public class GenericRepositoryAsync<TEntity> : IGenericRepositoryAsync<TEntity> where TEntity : class, IAuditableEntity
     {
-        #region Private Varible
+        #region Private Variable
 
         private readonly ApplicationDbContext _context;
         private readonly IConfigurationProvider _configurationProvider;
 
-        #endregion Private Varible
+        #endregion Private Variable
 
         #region Constructor
 
@@ -52,9 +53,16 @@ namespace Template.Infrastructure.Persistence.Repositories
                               .FirstOrDefaultAsync();
         }
 
-        public async Task<int> GetTotalCountAsync()
+        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>> criteria)
         {
-            return await _context.Set<TEntity>().CountAsync();
+            if(criteria == null)
+            {
+                return await _context.Set<TEntity>().CountAsync();
+            }
+            else
+            {
+                return await _context.Set<TEntity>().Where(criteria).CountAsync();
+            }
         }
 
         public async Task UpdateAsync(TEntity entity)
@@ -73,6 +81,7 @@ namespace Template.Infrastructure.Persistence.Repositories
                 query = ApplySpecification(query, spec);
             }
 
+            string x = query.ProjectTo<TDestination>(_configurationProvider).ToQueryString();
 
             return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
@@ -89,13 +98,13 @@ namespace Template.Infrastructure.Persistence.Repositories
                 query = query.Where(spec.Criteria);
             }
 
-            if (spec.OrderBy != null)
+            if (spec.Descending)
+            {
+                query = query.OrderByDescending(spec.OrderBy);
+            }
+            else
             {
                 query = query.OrderBy(spec.OrderBy);
-            }
-            else if (spec.OrderByDescending != null)
-            {
-                query = query.OrderByDescending(spec.OrderByDescending);
             }
 
             if (spec.IsPagingEnabled)

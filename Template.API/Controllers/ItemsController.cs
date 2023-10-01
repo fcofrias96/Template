@@ -45,21 +45,23 @@ namespace Template.Api.Controllers
         }
 
         // GET api/Items/{id}
-        [Authorize(Permission.Read)]
+        //[Authorize(Permission.Read)]
         [HttpGet("{id}")]
-        public async Task<ApiResponse<ItemDetailsDTO>> GetItemAsync(Guid id)
+        public async Task<ActionResult<ApiResponse<ItemDetailsDTO>>> GetItemAsync(Guid id)
         {
             var item = await _itemServiceAsync.GetByIdAsync<Guid, ItemDetailsDTO>(id);
-            return ApiResponse<ItemDetailsDTO>.Ok(item);
+            var response = new ApiResponse<ItemDetailsDTO>(item);
+            return Ok(response);
         }
 
         // GET api/Items/
         //[Authorize(Permission.Read)]
         [HttpGet]
-        public async Task<ApiResponse<PagedResult<ItemListDTO>>> GetAllItemsAsync([FromQuery] ItemRequest request)
+        public async Task<ActionResult<ApiResponse<PagedResult<ItemListDTO>>>> GetAllItemsAsync([FromQuery] ItemRequest request)
         {
-            var pagedItemsResult = await _itemServiceAsync.GetAllWithPaginationAsync<ItemListDTO, ItemSpecification>(request);
-            return ApiResponse<PagedResult<ItemListDTO>>.Ok(pagedItemsResult);
+            var data = await _itemServiceAsync.GetAllWithPaginationAsync<ItemListDTO, ItemSpecification>(request);
+            var response = new ApiResponse<PagedResult<ItemListDTO>>(data);
+            return Ok(response);
         }
 
         // POST api/Items/

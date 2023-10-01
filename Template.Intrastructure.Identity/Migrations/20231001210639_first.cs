@@ -1,19 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Template.Infrastructure.Identity.Migrations
 {
-    public partial class secondmigration : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "Identity");
-
             migrationBuilder.CreateTable(
-                name: "Role",
-                schema: "Identity",
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -23,12 +20,11 @@ namespace Template.Infrastructure.Identity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
-                schema: "Identity",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -51,12 +47,11 @@ namespace Template.Infrastructure.Identity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
-                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -69,17 +64,15 @@ namespace Template.Infrastructure.Identity.Migrations
                 {
                     table.PrimaryKey("PK_RoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleClaims_Role_RoleId",
+                        name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "Identity",
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserClaims",
-                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -92,17 +85,15 @@ namespace Template.Infrastructure.Identity.Migrations
                 {
                     table.PrimaryKey("PK_UserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserClaims_User_UserId",
+                        name: "FK_UserClaims_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserLogins",
-                schema: "Identity",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -114,17 +105,15 @@ namespace Template.Infrastructure.Identity.Migrations
                 {
                     table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_UserLogins_User_UserId",
+                        name: "FK_UserLogins_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserRoles",
-                schema: "Identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -134,24 +123,21 @@ namespace Template.Infrastructure.Identity.Migrations
                 {
                     table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_UserRoles_Role_RoleId",
+                        name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "Identity",
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_User_UserId",
+                        name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserTokens",
-                schema: "Identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -163,141 +149,122 @@ namespace Template.Infrastructure.Identity.Migrations
                 {
                     table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_UserTokens_User_UserId",
+                        name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                schema: "Identity",
-                table: "Role",
+                table: "Roles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "43d20f06-f790-46ac-825c-2b8fa960d0fc", "57ed217a-6253-4061-9a22-8c36d3ea14a3", "Admin", "ADMIN" },
-                    { "73878947-4166-4c4b-bb24-879de167170b", "02523172-8c66-43b5-b051-01d63af9e19d", "Moderator", "MODERATOR" },
-                    { "a24ccf74-fe44-4504-9c41-dbc04be897a8", "0eadfcc7-1a9d-4d5d-a449-0a082704ae3a", "Basic", "BASIC" }
+                    { "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8", "e4ba2ef4-ae28-46b6-b28a-0075576410f8", "Admin", "ADMIN" },
+                    { "7856b6a7-aafc-4e73-9117-4f231b2c5662", "4140f997-70e8-487d-8815-4acf8b5089b5", "Moderator", "MODERATOR" },
+                    { "9e86a3c4-f205-48c0-93fe-972d64130821", "51d3316a-d051-4bf9-98cd-04939f606154", "Basic", "BASIC" }
                 });
 
             migrationBuilder.InsertData(
-                schema: "Identity",
-                table: "User",
+                table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "c931bbd2-d059-40b5-b302-ed1ec47d01d1", 0, "7b3cdaab-518a-4c63-9a5b-61f160eea776", "basicuser@gmail.com", true, "John", "Smith", false, null, "BASICUSER@GMAIL.COM", "BASICUSER", "AQAAAAEAACcQAAAAEFuLo46AwcGNS+MnMS9RyadC+/s91xD90mDWo+dr8ZBgkH1tbtOAR5tgCPdHPM3ofA==", null, false, "d3bf7a58-58be-403f-ba76-93479871be22", false, "basicuser" },
-                    { "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805", 0, "d3abb3c1-6837-4bc1-b7df-cf51626a81bf", "moderator@gmail.com", true, "John", "Johnson", false, null, "MODERATOR@GMAIL.COM", "MODERATOR", "AQAAAAEAACcQAAAAEJlvrNKteMesd6vzcbH+pS0nYsoUIQSiULebIG1TNTPlqO5g4fIkwt7LsaPEPtPpOQ==", null, false, "1f82fa7b-934c-4ee7-8e69-3439f9f75575", false, "moderator" },
-                    { "ee86f363-b6db-4971-b951-829a4a88852d", 0, "fa648e5b-a406-4c62-aaba-2ef60301cb61", "admin@gmail.com", true, "John", "James", false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEJ14AAtBVQt8fwYaWf4CxFBVokxkAUyn6LMXfAyJDDt3GQiMYRDheP3xV74I9l4d3A==", null, false, "832fcca5-c61d-48e4-a25d-d637f763d626", false, "admin" }
+                    { "1f9bc385-1f42-4846-bb9a-5b9791c728a9", 0, "78624413-aef1-4d5f-8544-f25bbb689a0e", "basicuser@gmail.com", true, "John", "Smith", false, null, "BASICUSER@GMAIL.COM", "BASICUSER", "AQAAAAEAACcQAAAAEEA7dXGtz5IuR8S1Q0fJ/Z7RfptS4QPdPy/Wm6oFtk5/HUr0eEqfYqm699wl/h+wwA==", null, false, "d9a8b255-3718-4373-962d-45c51eca6646", false, "basicuser" },
+                    { "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16", 0, "f6307753-0b97-4de3-ad53-5aae5aadb1d7", "admin@gmail.com", true, "John", "James", false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEJ68nt/YT4SYpseip33cXmPqSCXW+ACwPBWkuZ8HkEPDdigViNAX+i75PrEYANWtwA==", null, false, "5c9889b1-43ea-4acf-b723-d133fa7f9f93", false, "admin" },
+                    { "ca151d1a-6531-4831-af2a-515dc224f222", 0, "cea72633-6247-452d-994c-615be7e05b3e", "moderator@gmail.com", true, "John", "Johnson", false, null, "MODERATOR@GMAIL.COM", "MODERATOR", "AQAAAAEAACcQAAAAEJunTl1Sf57dhCwP1RHWAiv19HPDDpd+/BMmeIKRtQm5XxQoWVhDwCrhHfoT6oKVPQ==", null, false, "141c39ba-30cc-45a3-b14f-8b3ad75bf7ed", false, "moderator" }
                 });
 
             migrationBuilder.InsertData(
-                schema: "Identity",
                 table: "RoleClaims",
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "RoleId" },
                 values: new object[,]
                 {
-                    { -7, "Permission", "Read", "a24ccf74-fe44-4504-9c41-dbc04be897a8" },
-                    { -6, "Permission", "Update", "73878947-4166-4c4b-bb24-879de167170b" },
-                    { -5, "Permission", "Read", "73878947-4166-4c4b-bb24-879de167170b" },
-                    { -4, "Permission", "Delete", "43d20f06-f790-46ac-825c-2b8fa960d0fc" },
-                    { -3, "Permission", "Update", "43d20f06-f790-46ac-825c-2b8fa960d0fc" },
-                    { -2, "Permission", "Read", "43d20f06-f790-46ac-825c-2b8fa960d0fc" },
-                    { -1, "Permission", "Create", "43d20f06-f790-46ac-825c-2b8fa960d0fc" }
+                    { -7, "Permission", "Read", "9e86a3c4-f205-48c0-93fe-972d64130821" },
+                    { -6, "Permission", "Update", "7856b6a7-aafc-4e73-9117-4f231b2c5662" },
+                    { -5, "Permission", "Read", "7856b6a7-aafc-4e73-9117-4f231b2c5662" },
+                    { -4, "Permission", "Delete", "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8" },
+                    { -3, "Permission", "Update", "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8" },
+                    { -2, "Permission", "Read", "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8" },
+                    { -1, "Permission", "Create", "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8" }
                 });
 
             migrationBuilder.InsertData(
-                schema: "Identity",
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "a24ccf74-fe44-4504-9c41-dbc04be897a8", "c931bbd2-d059-40b5-b302-ed1ec47d01d1" },
-                    { "73878947-4166-4c4b-bb24-879de167170b", "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805" },
-                    { "a24ccf74-fe44-4504-9c41-dbc04be897a8", "ec6fc4d5-dbb4-42f7-b89c-6ddb8a5f1805" },
-                    { "43d20f06-f790-46ac-825c-2b8fa960d0fc", "ee86f363-b6db-4971-b951-829a4a88852d" },
-                    { "73878947-4166-4c4b-bb24-879de167170b", "ee86f363-b6db-4971-b951-829a4a88852d" },
-                    { "a24ccf74-fe44-4504-9c41-dbc04be897a8", "ee86f363-b6db-4971-b951-829a4a88852d" }
+                    { "9e86a3c4-f205-48c0-93fe-972d64130821", "1f9bc385-1f42-4846-bb9a-5b9791c728a9" },
+                    { "4746a2ff-a9ff-4df0-939f-0d1f39cac5d8", "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16" },
+                    { "7856b6a7-aafc-4e73-9117-4f231b2c5662", "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16" },
+                    { "9e86a3c4-f205-48c0-93fe-972d64130821", "4b48a4ea-c9d9-4c0b-90bc-3558d2523d16" },
+                    { "7856b6a7-aafc-4e73-9117-4f231b2c5662", "ca151d1a-6531-4831-af2a-515dc224f222" },
+                    { "9e86a3c4-f205-48c0-93fe-972d64130821", "ca151d1a-6531-4831-af2a-515dc224f222" }
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_RoleClaims_RoleId",
+                table: "RoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "Identity",
-                table: "Role",
+                table: "Roles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleClaims_RoleId",
-                schema: "Identity",
-                table: "RoleClaims",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                schema: "Identity",
-                table: "User",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                schema: "Identity",
-                table: "User",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
-                schema: "Identity",
                 table: "UserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
-                schema: "Identity",
                 table: "UserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
-                schema: "Identity",
                 table: "UserRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "Users",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "Users",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RoleClaims",
-                schema: "Identity");
+                name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "UserClaims",
-                schema: "Identity");
+                name: "UserClaims");
 
             migrationBuilder.DropTable(
-                name: "UserLogins",
-                schema: "Identity");
+                name: "UserLogins");
 
             migrationBuilder.DropTable(
-                name: "UserRoles",
-                schema: "Identity");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "UserTokens",
-                schema: "Identity");
+                name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Role",
-                schema: "Identity");
+                name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "User",
-                schema: "Identity");
+                name: "Users");
         }
     }
 }
