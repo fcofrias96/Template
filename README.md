@@ -1,45 +1,65 @@
-# Template
 
-To start up the project:
+# Instrucciones de Configuración y Ejecución del Proyecto
 
-1. Sure to set the `Api project` as startup project.
+## Configuración de Variables de Entorno
 
-2. Go to Tools > NuGet Package Manager > Package Manager Console.
+Antes de ejecutar el API, es necesario configurar las variables de entorno. Estas variables son esenciales para conectar con las bases de datos y configurar aspectos de seguridad y servicios de correo electrónico.
 
-3. Then in Package Manager Console sure to set `Template.Infrastructure.Identity` as Default project.
+### Configuración de Conexiones a Bases de Datos
 
-4. On the console type `add-migration start -context IdentityContext`, then press Enter.
+```bash
+# Para Windows:
+setx ConnectionStrings__TemplateConnection "tu_cadena_de_conexion_aqui"
+setx ConnectionStrings__TemplateIdentityConnection "tu_cadena_de_conexion_de_identidad_aqui"
+setx ConnectionStrings__TemplateAuditConnection "tu_cadena_de_conexion_de_auditoria_aqui"
+```
 
-5. On the console type `Update-database -context IdentityContext`, then press Enter.
+### Configuración de JWT para Identity
 
-6. Then in Package Manager Console sure to set `Template.Infrastructure.Persistence` as Default project.
+```bash
+setx JwtSettings__Key "your-32-character-long-secret-key"
+setx JwtSettings__Issuer "your-issuer"
+setx JwtSettings__Audience "your-audience"
+setx JwtSettings__EmailConfirmationTokenDurationInHours "24"  # Ejemplo: token válido por 24 horas
+setx JwtSettings__PasswordResetTokenDurationInMinutes "120"  # Ejemplo: token válido por 120 minutos
+setx JwtSettings__LoginTokenDurationInMinutes "60"  # Ejemplo: token válido por 60 minutos
+setx JwtSettings__ChangeEmailTokenDurationInMinutes "30"  # Ejemplo: token válido por 30 minutos
+```
 
-7. On the console type `add-migration start -context ApplicationDbContext`, then press Enter.
+### Configuración del Servicio de Email
 
-8. On the console type `Update-database -context ApplicationDbContext`, then press Enter.
+```bash
+setx MailSettings__EmailFrom "your-email@example.com"
+setx MailSettings__SmtpHost "smtp.example.com"
+setx MailSettings__SmtpPort "587"  # Ejemplo: puerto para SMTP
+setx MailSettings__SmtpUser "your-smtp-username"
+setx MailSettings__SmtpPass "your-smtp-password"
+setx MailSettings__DisplayName "Your Display Name"
+```
 
-9. On the console type `add-migration audit -context AuditDbContext`, then press Enter.
+## Migraciones y Actualización de Bases de Datos
 
-10. On the console type `Update-database -context AuditDbContext`, then press Enter.
+Navega al directorio `src` y ejecuta los siguientes comandos en la línea de comando para gestionar las migraciones y actualizar las bases de datos para diferentes contextos.
 
-11. Done!, just run the project.
+### Migraciones para ApplicationDbContext
 
+```bash
+dotnet ef migrations add Initial --project src\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context ApplicationDbContext
+dotnet ef database update --project src\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context ApplicationDbContext
+```
 
+### Migraciones para AuditDbContext
 
-## Project Credentials
+```bash
+dotnet ef migrations add Initial --project src\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context AuditDbContext
+dotnet ef database update --project src\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context AuditDbContext
+```
 
-**Super User**
-* username: superuser
-* password: 123Pa$$word
-	
-**Admin**
-* username: admin
-* password: 123Pa$$word
+### Migraciones para IdentityContext
 
-**Moderator**
-* username: moderator
-* password: 123Pa$$word
-	
-**Basic User**
-* username: basicser
-* password: 123Pa$$word
+```bash
+dotnet ef migrations add Initial --project src\Infrastructure\Template.Intrastructure.Identity\Template.Identity.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context IdentityContext
+dotnet ef database update --project src\Infrastructure\Template.Intrastructure.Identity\Template.Identity.csproj --startup-project src\Presentation\Template.API\Template.API.csproj --context IdentityContext
+```
+
+Una vez completados estos pasos, el API estará listo para ser ejecutado.
