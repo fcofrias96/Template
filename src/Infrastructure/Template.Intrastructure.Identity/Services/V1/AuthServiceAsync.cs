@@ -1,14 +1,19 @@
 ﻿
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Template.Api.Controllers;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
@@ -59,7 +64,7 @@ namespace SimetricaConsulting.Api.Controllers
 
         public async Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto)
         {
-            var user = await FindByIdAsync(confirmEmailDto.UserId);
+            var user = await FindUserByIdAsync(confirmEmailDto.UserId);
 
             if (user.EmailConfirmed)
             {
@@ -125,22 +130,31 @@ namespace SimetricaConsulting.Api.Controllers
             return new ApiResponse(message);
         }
 
-        public async Task ForgotPassword(ForgotPasswordDto model)
+        public async Task<ApiResponse> ForgotPassword(ForgotPasswordDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            // always return ok response to prevent email enumeration
-            if (user == null || !user.EmailConfirmed) return;
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
-            var baseUrl = $"{_jwtSettings.Audience}/reset-password";
-            var resetPasswordUrl = QueryHelpers.AddQueryString(baseUrl, "token", encodedToken);
-            resetPasswordUrl = QueryHelpers.AddQueryString(resetPasswordUrl, "userId", user.Id);
-
-            var emailRequest = new EmailDto
+            if (user != null)
             {
-                Body = $@"
+
+                if (!user.EmailConfirmed)
+                {
+                    throw new BadRequestException($"Email for user '{model.Email}' is not confirmed.");
+                }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+                var baseUrl = $"{_jwtSettings.Audience}/reset-password";
+                var resetPasswordUrl = QueryHelpers.AddQueryString(baseUrl, "token", encodedToken);
+                resetPasswordUrl = QueryHelpers.AddQueryString(resetPasswordUrl, "userId", user.Id);
+
+
+                var tokenDuration = _jwtSettings.PasswordResetTokenDurationInHours;
+                string duration = $"{tokenDuration} hour{(tokenDuration >= 2 ? "s" : "")}";
+
+                var emailRequest = new EmailDto
+                {
+                    Body = $@"
                         <html>
                         <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
                             <h2>Reset Your Password</h2>
@@ -148,20 +162,25 @@ namespace SimetricaConsulting.Api.Controllers
                             <p>You requested a password reset.</p>
                             <p>Please click the following link to reset your password:</p>
                             <p><a href='{resetPasswordUrl}'>Reset Password</a></p>
+                            <p>This link is valid for {duration}.</p>
                             <p>If you did not request this, please ignore this email.</p>
                             <p>Best regards,<br>Your Company Team</p>
                         </body>
                         </html>",
-                To = model.Email,
-                Subject = "Reset Password",
-            };
-            await _emailServiceAsync.SendEmailAsync(emailRequest);
+                    To = model.Email,
+                    Subject = "Reset Password",
+                };
+                await _emailServiceAsync.SendEmailAsync(emailRequest);
+
+            }
+
+           return new ApiResponse("If an account with that email exists, a password reset link has been sent. Please check your email.");
         }
 
-        public async Task<ApiResponse<AuthenticationResponseDTO>> LoginAsync(LoginDto loginDto, string ipAddress)
+        public async Task<ApiResponse<AuthenticationResponseDTO>> LoginAsync(LoginDto loginDto)
         {
 
-            var user = await FindByEmailAsync(loginDto.Email);
+            var user = await FindUserByEmailAsync(loginDto.Email);
 
             if (!user.EmailConfirmed)
             {
@@ -192,7 +211,7 @@ namespace SimetricaConsulting.Api.Controllers
                 response.Roles = _userRoles;
                 response.Modules = await _userModulePermissionRepositoryAsync.GetModulePermissionsAsync(user.Id);
                 response.IsVerified = user.EmailConfirmed;
-                var refreshToken = GenerateRefreshToken(ipAddress);
+                var refreshToken = GenerateRefreshToken();
                 response.RefreshToken = refreshToken.Token;
                 return new ApiResponse<AuthenticationResponseDTO>(response);
             }
@@ -213,27 +232,26 @@ namespace SimetricaConsulting.Api.Controllers
 
         public async Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto)
         {
-
             var user = await _userManager.FindByEmailAsync(resendConfirmationEmailDto.Email);
-
-            if (user.EmailConfirmed)
+            if(user != null)
             {
-                throw new BadRequestException("Email is already confirmed.");
-            }
+                if (user.EmailConfirmed)
+                {
+                    throw new BadRequestException("Email is already confirmed.");
+                }
 
-            var emailVerificationLink =  await GenerateEmailVerificationLinkAsync(user);
-            var emailDto = CreateConfirmationEmail(user, emailVerificationLink);
+                var emailVerificationLink = await GenerateEmailVerificationLinkAsync(user);
+                var emailDto = CreateConfirmationEmail(user, emailVerificationLink);
 
-            await _emailServiceAsync.SendEmailAsync(emailDto);
-            return new ApiResponse("A new confirmation email has been sent. Please check your email.");
+                await _emailServiceAsync.SendEmailAsync(emailDto);
+            } 
+            return new ApiResponse("If an account with that email exists, a confirmation email has been resent. Please check your email.");
         }
 
 
         public async Task<ApiResponse> ResetPassword(ResetPasswordDto model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId.ToString());
-            if (user == null) throw new NotFoundException("User", model.UserId);
-
+            var user = await FindUserByIdAsync(model.UserId.ToString());
             var token = Encoding.UTF8.GetString(Convert.FromBase64String(model.Token));
             await _userManager.ResetPasswordAsync(user, token, model.Password);
             return new ApiResponse($"Password Reset Successful for {user.UserName}.");
@@ -264,7 +282,7 @@ namespace SimetricaConsulting.Api.Controllers
 
         }
 
-        private async Task<User> FindByIdAsync(string userId)
+        private async Task<User> FindUserByIdAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
@@ -275,7 +293,7 @@ namespace SimetricaConsulting.Api.Controllers
             return user;
         }
 
-        private async Task<User> FindByEmailAsync(string email)
+        private async Task<User> FindUserByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
@@ -300,6 +318,24 @@ namespace SimetricaConsulting.Api.Controllers
             emailVerificationLink = QueryHelpers.AddQueryString(emailVerificationLink, "token", encodedEmailConfirmationToken);
 
             return emailVerificationLink;
+        }
+
+
+        private async Task<string> GenerateChangeEmailLinkAsync(User user, string newEmail)
+        {
+            var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+            var encodedChangeEmailToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(changeEmailToken));
+            var httpRequest = _httpContext?.HttpContext?.Request;
+            var currentRequestUrl = httpRequest != null ? httpRequest.GetEncodedUrl() : string.Empty;
+
+            var apiBaseUrl = currentRequestUrl.Substring(0, currentRequestUrl.LastIndexOf("/auth", StringComparison.OrdinalIgnoreCase) + 5);
+            var changeEmailUrl = $"{apiBaseUrl}/confirm-change-email";
+
+            var changeEmailLink = QueryHelpers.AddQueryString(changeEmailUrl, "userId", user.Id);
+            changeEmailLink = QueryHelpers.AddQueryString(changeEmailLink, "token", encodedChangeEmailToken);
+            changeEmailLink = QueryHelpers.AddQueryString(changeEmailLink, "newEmail", newEmail);
+
+            return changeEmailLink;
         }
 
         private async Task<JwtSecurityToken> GenerateJWToken(User user)
@@ -339,14 +375,13 @@ namespace SimetricaConsulting.Api.Controllers
             return jwtSecurityToken;
         }
 
-        private RefreshToken GenerateRefreshToken(string ipAddress)
+        private RefreshToken GenerateRefreshToken()
         {
             return new RefreshToken
             {
                 Token = RandomTokenString(),
                 Expires = DateTime.UtcNow.AddDays(7),
                 Created = DateTime.UtcNow,
-                CreatedByIp = ipAddress
             };
         }
 
@@ -357,5 +392,91 @@ namespace SimetricaConsulting.Api.Controllers
             rngCryptoServiceProvider.GetBytes(randomBytes);
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
+
+
+        public async Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto)
+        {
+
+            var currentUserId = GetCurrentUserId();
+
+            if (currentUserId != changeEmailDto.UserId.ToString())
+            {
+                throw new ForbiddenException();
+            }
+
+
+            var user = await FindUserByIdAsync(changeEmailDto.UserId.ToString());
+            var passwordValid = await _userManager.CheckPasswordAsync(user, changeEmailDto.CurrentPassword);
+            if (!passwordValid)
+            {
+                throw new BadRequestException("Incorrect password.");
+            }
+            if(user.Email == changeEmailDto.NewEmail)
+            {
+                throw new BadRequestException("New email address is the same as the current email address.");
+            }   
+
+
+            var changeEmailLink = await GenerateChangeEmailLinkAsync(user, changeEmailDto.NewEmail);
+            var emailDto = CreateChangeEmailNotification(user, changeEmailDto.NewEmail, changeEmailLink);
+            await _emailServiceAsync.SendEmailAsync(emailDto);
+
+            return new ApiResponse("A confirmation email has been sent to your new email address. Please check your email to confirm the change.");
+        }
+
+        public async Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto)
+        {
+            var user = await FindUserByIdAsync(confirmChangeEmailDto.UserId.ToString());
+
+            if(user.Email == confirmChangeEmailDto.NewEmail)
+            {
+                throw new BadRequestException("New email address is the same as the current email address.");
+            }
+
+            var token = Encoding.UTF8.GetString(Convert.FromBase64String(confirmChangeEmailDto.Token));
+            var result = await _userManager.ChangeEmailAsync(user, confirmChangeEmailDto.NewEmail, token);
+
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Error changing email.");
+            }
+            return new ApiResponse("Your email address has been successfully changed.");
+
+        }
+
+
+        private string GetCurrentUserId()
+        {
+            return _httpContext.HttpContext?.User?.FindFirst("userId")?.Value ?? string.Empty;
+        }
+
+
+        private EmailDto CreateChangeEmailNotification(User user, string newEmail, string changeEmailLink)
+        {
+
+            var tokenDuration = _jwtSettings.ChangeEmailTokenDurationInHours;
+            string duration = $"{tokenDuration} hour{(tokenDuration >= 2 ? "s" : "")}";
+
+            return new EmailDto
+            {
+                To = newEmail,
+                Subject = "Confirm your new email address",
+                Body = $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
+                    <h2>Confirm Your Email Address</h2>
+                    <p>Dear {user.FirstName} {user.LastName},</p>
+                    <p>You have requested to update your email address.</p>
+                    <p>Please confirm your new email address by clicking the link below:</p>
+                    <p><a href='{changeEmailLink}'>Confirm Email</a></p>
+                    <p>This link is valid for {duration}.</p>
+                    <p>If you did not request this change, please ignore this email or contact support.</p>
+                    <p>Best regards,<br>Your Company Team</p>
+                </body>
+                </html>"
+            };
+            
+        }
     }
+
 }

@@ -54,7 +54,7 @@ namespace Template.Application.Services
         public async Task DeleteLogicalAsync<TKey>(TKey id)
         {
             var entity = await GetByIdAsync(id);
-            entity.Active = false;
+            entity.IsDeleted = false;
             await _repository.UpdateAsync(entity);
             _cache.InvalidateCache<TEntity>();
         }

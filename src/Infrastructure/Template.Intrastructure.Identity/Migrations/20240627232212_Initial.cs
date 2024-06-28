@@ -16,11 +16,11 @@ namespace Template.Identity.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(30)", nullable: false, defaultValue: "System"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -34,11 +34,11 @@ namespace Template.Identity.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "default"),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(30)", nullable: false, defaultValue: "System"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +66,7 @@ namespace Template.Identity.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -254,8 +254,8 @@ namespace Template.Identity.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4af1ec74-b861-4af0-9e37-b8211917911d", "8bc8a58b-fd08-4e5d-af2a-9833f2b76592", "User", "USER" },
-                    { "cb306fce-2825-47b5-8a9f-77a5071938aa", "ea6b97bd-42f9-49b4-a8a4-8ab1c65a334b", "Admin", "ADMIN" }
+                    { "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0", "490b053f-f3f3-446f-a4a8-5e4dee375130", "User", "USER" },
+                    { "ffe64122-cfc8-40be-8253-be96e7e3cf18", "61b0a51b-32c8-4879-922d-37d722f7d82d", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -263,8 +263,8 @@ namespace Template.Identity.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Active", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "581f356b-daa1-48e5-b93e-5781951665c5", 0, true, "f4d778e4-0ca7-4b9b-81a1-13fb79b500f5", "johnJames@gmail.com", true, "John", "James", false, null, "JOHNJAMES.COM", "JOHNJAMES", "AQAAAAEAACcQAAAAEDCbA/oc88WbNOC9jqIMSz7LyUVCQzrE3EOClgWvewPpKsAZvyY8tB+X4VmAnh7poQ==", null, false, "711f74aa-2e73-415c-8392-fbf40b673448", false, "johnJames" },
-                    { "6e746acd-4efd-444d-99a4-ad42fb92d57e", 0, true, "0ff24821-5528-4c92-90ed-b2c12c8343cb", "johnDoe@gmail.com", true, "John", "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAEAACcQAAAAED6Cx1U5KVE5S7Lro3hw3riv4GPBiLdQoHSTFiwYWDY4No2w/iQJeuC2OKv+w6+SyQ==", null, false, "25665351-9d62-4fce-a385-c092ff81af8a", false, "johnDoe" }
+                    { "5d951d76-efb7-47cd-a9d5-a6efdeae8201", 0, true, "94780040-cd35-4b33-ae09-60925168575a", "johnDoe@gmail.com", true, "John", "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAEAACcQAAAAEEpxHETryPGION7APTyJoBl4tTirwcgkUQ+Fs98c7s1/bcms7xEYTmMYFC6yy6U2ig==", null, false, "bb795e42-4d83-4662-a521-ac9c3ac96fbc", false, "johnDoe" },
+                    { "e42f4f6c-2903-4369-a798-2953af431d69", 0, true, "e12a3aef-cfec-4a23-aeaf-b3585d0bfb6c", "johnJames@gmail.com", true, "John", "James", false, null, "JOHNJAMES.COM", "JOHNJAMES", "AQAAAAEAACcQAAAAEB93yuaxWMXlguo42dI0TGUrxWRDQjAd6zx4rMZzyhaNV8ZHYNEd51pHAExQNqRZPQ==", null, false, "4db006a1-d3ae-4385-af44-e7bbb017681a", false, "johnJames" }
                 });
 
             migrationBuilder.InsertData(
@@ -272,13 +272,13 @@ namespace Template.Identity.Migrations
                 columns: new[] { "ModuleId", "PermissionId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 2, "581f356b-daa1-48e5-b93e-5781951665c5" },
-                    { 3, 2, "581f356b-daa1-48e5-b93e-5781951665c5" },
-                    { 4, 2, "581f356b-daa1-48e5-b93e-5781951665c5" },
-                    { 1, 6, "6e746acd-4efd-444d-99a4-ad42fb92d57e" },
-                    { 2, 6, "6e746acd-4efd-444d-99a4-ad42fb92d57e" },
-                    { 3, 6, "6e746acd-4efd-444d-99a4-ad42fb92d57e" },
-                    { 4, 6, "6e746acd-4efd-444d-99a4-ad42fb92d57e" }
+                    { 1, 6, "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { 2, 6, "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { 3, 6, "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { 4, 6, "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { 1, 2, "e42f4f6c-2903-4369-a798-2953af431d69" },
+                    { 3, 2, "e42f4f6c-2903-4369-a798-2953af431d69" },
+                    { 4, 2, "e42f4f6c-2903-4369-a798-2953af431d69" }
                 });
 
             migrationBuilder.InsertData(
@@ -286,9 +286,9 @@ namespace Template.Identity.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "4af1ec74-b861-4af0-9e37-b8211917911d", "581f356b-daa1-48e5-b93e-5781951665c5" },
-                    { "4af1ec74-b861-4af0-9e37-b8211917911d", "6e746acd-4efd-444d-99a4-ad42fb92d57e" },
-                    { "cb306fce-2825-47b5-8a9f-77a5071938aa", "6e746acd-4efd-444d-99a4-ad42fb92d57e" }
+                    { "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0", "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { "ffe64122-cfc8-40be-8253-be96e7e3cf18", "5d951d76-efb7-47cd-a9d5-a6efdeae8201" },
+                    { "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0", "e42f4f6c-2903-4369-a798-2953af431d69" }
                 });
 
             migrationBuilder.CreateIndex(

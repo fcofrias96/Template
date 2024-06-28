@@ -22,7 +22,7 @@ namespace Template.Identity.Configurations.V1
                 .IsRequired();
 
             builder.Property(p => p.Created)
-                .HasDefaultValueSql("GETDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Property(p => p.Active)
                 .HasDefaultValue(true);

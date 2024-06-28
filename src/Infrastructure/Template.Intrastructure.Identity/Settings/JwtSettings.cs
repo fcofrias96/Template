@@ -6,9 +6,9 @@
         public string Issuer { get; set; }
         public string Key { get; set; }
         public int EmailConfirmationTokenDurationInHours { get; set; }
-        public int PasswordResetTokenDurationInMinutes { get; set; }
+        public int PasswordResetTokenDurationInHours { get; set; }
         public int LoginTokenDurationInMinutes { get; set; }
-        public int ChangeEmailTokenDurationInMinutes { get; set; }
+        public int ChangeEmailTokenDurationInHours { get; set; }
     }
 
 }

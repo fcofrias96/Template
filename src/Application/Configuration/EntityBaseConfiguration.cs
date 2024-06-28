@@ -9,19 +9,21 @@ namespace Template.Application.Configuration
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             builder.Property(x => x.CreatedBy)
-                  .HasDefaultValue("default");
+                   .HasColumnType("nvarchar(30)")
+                   .HasDefaultValue("System");
 
             builder.Property(x => x.Created)
-                   .HasDefaultValueSql("GETDATE()");
+                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            builder.Property(x => x.LastModifiedBy);
+            builder.Property(x => x.LastModifiedBy)
+                .HasColumnType("nvarchar(30)");
 
             builder.Property(x => x.LastModified);
 
-            builder.Property(x => x.Active)
-                   .HasDefaultValue(true);
+            builder.Property(x => x.IsDeleted)
+                   .HasDefaultValue(false);
 
-            builder.HasQueryFilter(x => x.Active);
+            builder.HasQueryFilter(x => x.IsDeleted);
         }
     }
 }

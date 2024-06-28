@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Models.DTOs.V1.Auth;
+using Template.Application.Models.DTOs.V1.Email;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
+using Template.Identity.Entities;
 using Template.Identity.Services.V1;
 
 namespace Template.Api.Controllers
@@ -24,7 +26,7 @@ namespace Template.Api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse<AuthenticationResponseDTO>>> Login(LoginDto loginDTO)
         {
-            var response = await _authService.LoginAsync(loginDTO, GenerateIPAddress());
+            var response = await _authService.LoginAsync(loginDTO);
             return Ok(response);
         }
 
@@ -44,7 +46,7 @@ namespace Template.Api.Controllers
 
 
         [HttpPost("resend-confirmation-email")]
-        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailDto resendConfirmationEmail)
+        public async Task<ActionResult<ApiResponse>> ResendConfirmationEmail([FromBody] ResendConfirmationEmailDto resendConfirmationEmail)
         {
             var confirmaEmail = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail);
             return Ok(confirmaEmail);
@@ -56,8 +58,8 @@ namespace Template.Api.Controllers
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDTO)
         {
-            await _authService.ForgotPassword(forgotPasswordDTO);
-            return NoContent();
+            var response = await _authService.ForgotPassword(forgotPasswordDTO);
+            return Ok(response);
         }
 
         [HttpPost("reset-password")]
@@ -67,12 +69,23 @@ namespace Template.Api.Controllers
             return Ok(resetPassword);
         }
 
-        private string GenerateIPAddress()
+
+
+
+        [HttpPost("change-email")]
+        public async Task<ActionResult<ApiResponse>> ChangeEmailAsync([FromBody] ChangeEmailDto changeEmailDto)
         {
-            if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                return Request.Headers["X-Forwarded-For"];
-            else
-                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            var response = await _authService.ChangeEmailAsync(changeEmailDto);
+            return Ok(response);
         }
+
+        [HttpGet("confirm-change-email")]
+        public async Task<ActionResult<ApiResponse>> ConfirmChangeEmailAsync([FromQuery]ConfirmChangeEmailDto confirmChangeEmailDto)
+        {
+
+            var response = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto);
+            return Ok(response);
+        }
+
     }
 }

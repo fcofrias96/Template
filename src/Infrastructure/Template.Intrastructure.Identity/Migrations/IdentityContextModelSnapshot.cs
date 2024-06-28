@@ -51,15 +51,15 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cb306fce-2825-47b5-8a9f-77a5071938aa",
-                            ConcurrencyStamp = "ea6b97bd-42f9-49b4-a8a4-8ab1c65a334b",
+                            Id = "ffe64122-cfc8-40be-8253-be96e7e3cf18",
+                            ConcurrencyStamp = "61b0a51b-32c8-4879-922d-37d722f7d82d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4af1ec74-b861-4af0-9e37-b8211917911d",
-                            ConcurrencyStamp = "8bc8a58b-fd08-4e5d-af2a-9833f2b76592",
+                            Id = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0",
+                            ConcurrencyStamp = "490b053f-f3f3-446f-a4a8-5e4dee375130",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -154,18 +154,18 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
-                            RoleId = "cb306fce-2825-47b5-8a9f-77a5071938aa"
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            RoleId = "ffe64122-cfc8-40be-8253-be96e7e3cf18"
                         },
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
-                            RoleId = "4af1ec74-b861-4af0-9e37-b8211917911d"
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            RoleId = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0"
                         },
                         new
                         {
-                            UserId = "581f356b-daa1-48e5-b93e-5781951665c5",
-                            RoleId = "4af1ec74-b861-4af0-9e37-b8211917911d"
+                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
+                            RoleId = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0"
                         });
                 });
 
@@ -196,27 +196,27 @@ namespace Template.Identity.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -230,29 +230,29 @@ namespace Template.Identity.Migrations
                         new
                         {
                             Id = 1,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Users"
                         },
                         new
                         {
                             Id = 2,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Modules"
                         },
                         new
                         {
                             Id = 3,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Categories"
                         },
                         new
                         {
                             Id = 4,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Items"
                         });
                 });
@@ -265,27 +265,27 @@ namespace Template.Identity.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("default");
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -299,43 +299,43 @@ namespace Template.Identity.Migrations
                         new
                         {
                             Id = 1,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Create"
                         },
                         new
                         {
                             Id = 2,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Read"
                         },
                         new
                         {
                             Id = 3,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Update"
                         },
                         new
                         {
                             Id = 4,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Delete"
                         },
                         new
                         {
                             Id = 5,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "Export"
                         },
                         new
                         {
                             Id = 6,
-                            Active = false,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Name = "All"
                         });
                 });
@@ -360,7 +360,7 @@ namespace Template.Identity.Migrations
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -425,10 +425,10 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
+                            Id = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
                             AccessFailedCount = 0,
                             Active = true,
-                            ConcurrencyStamp = "0ff24821-5528-4c92-90ed-b2c12c8343cb",
+                            ConcurrencyStamp = "94780040-cd35-4b33-ae09-60925168575a",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -437,18 +437,18 @@ namespace Template.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAEAACcQAAAAED6Cx1U5KVE5S7Lro3hw3riv4GPBiLdQoHSTFiwYWDY4No2w/iQJeuC2OKv+w6+SyQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEpxHETryPGION7APTyJoBl4tTirwcgkUQ+Fs98c7s1/bcms7xEYTmMYFC6yy6U2ig==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "25665351-9d62-4fce-a385-c092ff81af8a",
+                            SecurityStamp = "bb795e42-4d83-4662-a521-ac9c3ac96fbc",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "581f356b-daa1-48e5-b93e-5781951665c5",
+                            Id = "e42f4f6c-2903-4369-a798-2953af431d69",
                             AccessFailedCount = 0,
                             Active = true,
-                            ConcurrencyStamp = "f4d778e4-0ca7-4b9b-81a1-13fb79b500f5",
+                            ConcurrencyStamp = "e12a3aef-cfec-4a23-aeaf-b3585d0bfb6c",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -457,9 +457,9 @@ namespace Template.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDCbA/oc88WbNOC9jqIMSz7LyUVCQzrE3EOClgWvewPpKsAZvyY8tB+X4VmAnh7poQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEB93yuaxWMXlguo42dI0TGUrxWRDQjAd6zx4rMZzyhaNV8ZHYNEd51pHAExQNqRZPQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "711f74aa-2e73-415c-8392-fbf40b673448",
+                            SecurityStamp = "4db006a1-d3ae-4385-af44-e7bbb017681a",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -487,43 +487,43 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
                             ModuleId = 1,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
                             ModuleId = 2,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
                             ModuleId = 4,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "6e746acd-4efd-444d-99a4-ad42fb92d57e",
+                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
                             ModuleId = 3,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "581f356b-daa1-48e5-b93e-5781951665c5",
+                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
                             ModuleId = 1,
                             PermissionId = 2
                         },
                         new
                         {
-                            UserId = "581f356b-daa1-48e5-b93e-5781951665c5",
+                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
                             ModuleId = 4,
                             PermissionId = 2
                         },
                         new
                         {
-                            UserId = "581f356b-daa1-48e5-b93e-5781951665c5",
+                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
                             ModuleId = 3,
                             PermissionId = 2
                         });

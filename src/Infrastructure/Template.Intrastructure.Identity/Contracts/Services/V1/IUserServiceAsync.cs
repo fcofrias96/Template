@@ -15,7 +15,6 @@ namespace Template.Identity.Contracts.Services.V1
         Task AddToRolesAsync(Guid userId, List<Guid> roles);
 
         Task AddToRolesAsync(Guid userId, Guid roleId);
-
         Task DeleteAsync(Guid userId);
 
         Task<ApiResponse<PagedCollection<UserListDTO>>> GetAllAsync(UserFilterRequest request);

@@ -9,7 +9,7 @@ namespace Template.Domain.Common
         public DateTime Created { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTime? LastModified { get; set; }
-        public bool Active { get; set; }
+        public bool IsDeleted { get; set; }
 
         object IEntityBase.Id { get => Id; set => Id = (TKey)value; }
     }

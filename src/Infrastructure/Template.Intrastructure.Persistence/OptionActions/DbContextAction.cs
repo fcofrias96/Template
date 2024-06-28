@@ -11,7 +11,7 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("TemplateConnection"),
+                options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                             .EnableRetryOnFailure(
                                 maxRetryCount: 3,

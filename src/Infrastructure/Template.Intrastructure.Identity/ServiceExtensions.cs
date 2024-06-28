@@ -92,12 +92,12 @@ namespace SimetricaConsulting.Api.Controllers
 
             services.Configure<PasswordResetTokenProviderOptions>(options =>
             {
-                options.TokenLifespan = TimeSpan.FromMinutes(jwtSettings.PasswordResetTokenDurationInMinutes);
+                options.TokenLifespan = TimeSpan.FromHours(jwtSettings.PasswordResetTokenDurationInHours);
             });
 
             services.Configure<ChangeEmailTokenProviderOptions>(options =>
             {
-                options.TokenLifespan = TimeSpan.FromMinutes(jwtSettings.ChangeEmailTokenDurationInMinutes);
+                options.TokenLifespan = TimeSpan.FromHours(jwtSettings.ChangeEmailTokenDurationInHours);
             });
 
 

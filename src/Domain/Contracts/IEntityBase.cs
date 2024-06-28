@@ -7,6 +7,6 @@
         DateTime Created { get; set; }
         string? LastModifiedBy { get; set; }
         DateTime? LastModified { get; set; }
-        bool Active { get; set; }
+        bool IsDeleted { get; set; }
     }
 }
