@@ -175,6 +175,11 @@ namespace Template.Identity.Services.V1
             return new ApiResponse<List<string>>(roles);
         }
 
+        public async Task<User> GetUserByRefreshToken(string refreshToken)
+        {
+            return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+        }
+
         public async Task<bool> IsAuthorized(string userId, string module, string permission)
         {
             return await _userModulePermissionRepositoryAsync.IsAuthorizedAsync(userId, module, permission);
@@ -228,18 +233,6 @@ namespace Template.Identity.Services.V1
             }
 
             var user = await GetUser(userId);
-
-            if (userUpdateDTO.CurrentPassword != null && userUpdateDTO.NewPassword != null && userUpdateDTO.ConfirmPassword != null)
-            {
-                var result = await _userManager.ChangePasswordAsync(user, userUpdateDTO.CurrentPassword, userUpdateDTO.NewPassword);
-
-                if (!result.Succeeded)
-                {
-                    var errorMessage = string.Join("; ", result.Errors.Select(e => e.Description));
-                    throw new BadRequestException($"User change password failed: {errorMessage}");
-                }
-            }
-
             _mapper.Map(userUpdateDTO, user);
             await _userManager.UpdateAsync(user);
         }

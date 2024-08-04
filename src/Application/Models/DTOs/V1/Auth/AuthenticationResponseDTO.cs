@@ -10,7 +10,6 @@ namespace Template.Application.Models.DTOs.V1.Auth
         public string Email { get; set; }
         public List<string> Roles { get; set; }
         public List<ModulePermissionDTO> Modules { get; set; }
-        public bool IsVerified { get; set; }
         public string AccessToken { get; set; }
 
         [JsonIgnore]

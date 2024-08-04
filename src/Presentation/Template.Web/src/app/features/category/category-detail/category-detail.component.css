@@ -1,0 +1,9 @@
+.category-detail {
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  mat-card {
+    margin-top: 20px;
+  }
+}

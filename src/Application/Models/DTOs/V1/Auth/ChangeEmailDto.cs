@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Template.Api.Controllers
+namespace Template.Application.Models.DTOs.V1.Auth
 {
     public class ChangeEmailDto
     {

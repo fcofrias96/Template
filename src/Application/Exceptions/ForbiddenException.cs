@@ -7,5 +7,9 @@
         public ForbiddenException() : base(message)
         {
         }
+
+        public ForbiddenException(string message) : base(message)
+        {
+        }
     }
 }

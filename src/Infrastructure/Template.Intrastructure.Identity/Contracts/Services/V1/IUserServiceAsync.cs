@@ -2,6 +2,7 @@
 using Template.Application.Models.DTOs.V1.ModulePermission;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
+using Template.Identity.Entities;
 using Template.Identity.Specification.V1;
 
 namespace Template.Identity.Contracts.Services.V1
@@ -26,7 +27,7 @@ namespace Template.Identity.Contracts.Services.V1
         Task<ApiResponse<List<ModulePermissionDTO>>> GetModulesAsync(Guid userId);
 
         Task<ApiResponse<List<string>>> GetRolesAsync(Guid userId);
-
+        Task<User> GetUserByRefreshToken(string refreshToken);
         Task<bool> IsAuthorized(string userId, string module, string permission);
 
         Task RemoveFromRolesAsync(Guid userId, List<Guid> roles);

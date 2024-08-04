@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Template.Application.Exceptions;
 
 namespace Template.Identity.TokenProviderConfigurations
@@ -31,7 +32,7 @@ namespace Template.Identity.TokenProviderConfigurations
                     if (expirationTime < DateTimeOffset.UtcNow)
                     {
                         _logger.LogWarning("The token has expired.");
-                        throw new BadRequestException("The token has expired.");
+                        throw new SecurityTokenException("The token has expired.");
                     }
 
                     var userId = reader.ReadString();
@@ -39,21 +40,21 @@ namespace Template.Identity.TokenProviderConfigurations
                     if (userId != actualUserId)
                     {
                         _logger.LogWarning("User IDs do not match.");
-                        throw new BadRequestException("Invalid token.");
+                        throw new SecurityTokenException("Invalid token.");
                     }
 
                     var purp = reader.ReadString();
                     if (!string.Equals(purp, purpose))
                     {
                         _logger.LogWarning("Token purpose mismatch: expected {ExpectedPurpose}, actual {ActualPurpose}.", purpose, purp);
-                        throw new BadRequestException("Invalid token.");
+                        throw new SecurityTokenException("Invalid token.");
                     }
 
                     var stamp = reader.ReadString();
                     if (reader.PeekChar() != -1)
                     {
                         _logger.LogWarning("Unexpected end of input.");
-                        throw new BadRequestException("Invalid token.");
+                        throw new SecurityTokenException("Invalid token.");
                     }
 
                     if (manager.SupportsUserSecurityStamp)

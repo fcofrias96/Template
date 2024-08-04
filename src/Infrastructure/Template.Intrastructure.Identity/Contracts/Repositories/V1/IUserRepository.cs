@@ -19,7 +19,7 @@ namespace Template.Identity.Contracts.Repositories.V1
 
 
         Task<int> GetTotalRecordsAsync(Expression<Func<User, bool>>? criteria);
-
+        Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
         Task RemoveFromRoleAsync(IdentityUserRole<string> userRoles);
 
         Task RemoveFromRolesAsync(List<IdentityUserRole<string>> identityUserRoles);

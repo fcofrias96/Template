@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.footer-section {
+  background-color: var(--mat-full-pseudo-checkbox-selected-icon-color);
+  color: white;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-container {
+  text-align: center;
+}

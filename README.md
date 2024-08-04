@@ -1,4 +1,3 @@
-
 # Instrucciones de Configuración y Ejecución del Proyecto
 
 ## Configuración de Variables de Entorno
@@ -23,6 +22,7 @@ setx JwtSettings__Audience "your-audience"
 setx JwtSettings__EmailConfirmationTokenDurationInHours "24"  # Ejemplo: token válido por 24 horas
 setx JwtSettings__PasswordResetTokenDurationInMinutes "120"  # Ejemplo: token válido por 120 minutos
 setx JwtSettings__LoginTokenDurationInMinutes "60"  # Ejemplo: token válido por 60 minutos
+setx JwtSettings__RefreshTokenDurationInDays "7"  # Ejemplo: token válido por 7 dias
 setx JwtSettings__ChangeEmailTokenDurationInMinutes "30"  # Ejemplo: token válido por 30 minutos
 ```
 

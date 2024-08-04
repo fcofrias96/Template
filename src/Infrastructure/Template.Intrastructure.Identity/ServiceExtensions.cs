@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,7 @@ using Template.Identity.TokenProviderConfigurations.ChangeEmail;
 using Template.Identity.TokenProviderConfigurations.EmailConfirmation;
 using Template.Identity.TokenProviderConfigurations.PasswordReset;
 
-namespace SimetricaConsulting.Api.Controllers  
+namespace Template.Identity
 {
     public static class ServiceExtensions
     {
@@ -175,6 +177,7 @@ namespace SimetricaConsulting.Api.Controllers
                     }
                 };
             });
+
 
             #endregion Authentication
 

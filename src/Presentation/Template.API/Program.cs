@@ -1,5 +1,4 @@
 using Serilog;
-using SimetricaConsulting.Api.Controllers;
 using Template.Api.Middlewares;
 using Template.Application;
 using Template.Application.SetupOptions;
@@ -32,11 +31,12 @@ using Template.Persistence;
         app.UseDeveloperExceptionPage();
     }
 
+
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseMiddleware<ETagMiddleware>();
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
-    app.UseCors("AllowAll");
+    app.UseCors("CorsPolicy");
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

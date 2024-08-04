@@ -1,4 +1,5 @@
-﻿using Serilog.Context;
+﻿using Microsoft.IdentityModel.Tokens;
+using Serilog.Context;
 using System.Diagnostics;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
@@ -55,7 +56,9 @@ namespace Template.Api.Middlewares
                         case BadRequestException:
                             statusCode = StatusCodes.Status400BadRequest;
                             break;
-
+                        case SecurityTokenException:
+                            statusCode = StatusCodes.Status401Unauthorized;
+                            break;
                         case ForbiddenException:
                             statusCode = StatusCodes.Status403Forbidden;
                             break;

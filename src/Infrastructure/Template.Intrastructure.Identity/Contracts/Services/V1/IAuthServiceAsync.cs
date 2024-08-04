@@ -1,8 +1,7 @@
-﻿using Template.Api.Controllers;
-using Template.Application.Models.DTOs.V1.Auth;
+﻿using Template.Application.Models.DTOs.V1.Auth;
+using Template.Application.Models.DTOs.V1.Token;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Services.V1;
 
 namespace Template.Identity.Contracts.Services.V1
 {
@@ -19,5 +18,7 @@ namespace Template.Identity.Contracts.Services.V1
         Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto);
         Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto);
         Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto);
+        Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken);
+        Task<ApiResponse> LogoutAsync();
     }
 }

@@ -12,7 +12,7 @@ using Template.Identity.DbContext.V1;
 namespace Template.Identity.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20240627232212_Initial")]
+    [Migration("20240628174420_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,15 +53,15 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ffe64122-cfc8-40be-8253-be96e7e3cf18",
-                            ConcurrencyStamp = "61b0a51b-32c8-4879-922d-37d722f7d82d",
+                            Id = "6ee79720-2d87-4681-aca2-b158742168f9",
+                            ConcurrencyStamp = "b9d717e8-f561-4b7a-ae3b-b555a0033fa7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0",
-                            ConcurrencyStamp = "490b053f-f3f3-446f-a4a8-5e4dee375130",
+                            Id = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab",
+                            ConcurrencyStamp = "4c449346-22a2-43f5-b12e-e2053b50a2b6",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -156,18 +156,18 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
-                            RoleId = "ffe64122-cfc8-40be-8253-be96e7e3cf18"
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
+                            RoleId = "6ee79720-2d87-4681-aca2-b158742168f9"
                         },
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
-                            RoleId = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0"
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
+                            RoleId = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab"
                         },
                         new
                         {
-                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
-                            RoleId = "aaafb7c4-cd1d-41b7-ac4e-a99a0c8f13d0"
+                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
+                            RoleId = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab"
                         });
                 });
 
@@ -375,6 +375,9 @@ namespace Template.Identity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsTokenRevoked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -402,8 +405,18 @@ namespace Template.Identity.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenRevokedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -427,41 +440,47 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            Id = "848f9783-00c7-419d-80a0-94e131cbfa21",
                             AccessFailedCount = 0,
                             Active = true,
-                            ConcurrencyStamp = "94780040-cd35-4b33-ae09-60925168575a",
+                            ConcurrencyStamp = "87bab729-de6b-4e25-9f09-06177af5e448",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
+                            IsTokenRevoked = false,
                             LastName = "Doe",
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEpxHETryPGION7APTyJoBl4tTirwcgkUQ+Fs98c7s1/bcms7xEYTmMYFC6yy6U2ig==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFkXBOmscJ9bK8oZhgo6TVZA/OMxW6pQwS6cZs6CiGeMBkrc95zqT5R5V++r+7Hj9w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bb795e42-4d83-4662-a521-ac9c3ac96fbc",
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "4585f5ae-0b41-4118-9673-0761e2606424",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "e42f4f6c-2903-4369-a798-2953af431d69",
+                            Id = "94586280-2a89-4042-9545-e1052d91f1f1",
                             AccessFailedCount = 0,
                             Active = true,
-                            ConcurrencyStamp = "e12a3aef-cfec-4a23-aeaf-b3585d0bfb6c",
+                            ConcurrencyStamp = "beaae018-7201-4d16-bb1d-c4e954cec780",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
+                            IsTokenRevoked = false,
                             LastName = "James",
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAEAACcQAAAAEB93yuaxWMXlguo42dI0TGUrxWRDQjAd6zx4rMZzyhaNV8ZHYNEd51pHAExQNqRZPQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMFDfuFf1s/uSB++EZhMjHOa+0E8tLDPk5aokQFEA9w6Op+47OSAGmReNmdPBFL30Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4db006a1-d3ae-4385-af44-e7bbb017681a",
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "3a59dbc3-22eb-47ec-8d8d-c264373a4b6d",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -489,43 +508,43 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
                             ModuleId = 1,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
                             ModuleId = 2,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
                             ModuleId = 4,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "5d951d76-efb7-47cd-a9d5-a6efdeae8201",
+                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
                             ModuleId = 3,
                             PermissionId = 6
                         },
                         new
                         {
-                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
+                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
                             ModuleId = 1,
                             PermissionId = 2
                         },
                         new
                         {
-                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
+                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
                             ModuleId = 4,
                             PermissionId = 2
                         },
                         new
                         {
-                            UserId = "e42f4f6c-2903-4369-a798-2953af431d69",
+                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
                             ModuleId = 3,
                             PermissionId = 2
                         });

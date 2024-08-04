@@ -1,15 +1,24 @@
 ﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.Extensions.Configuration;
 
 namespace Template.Application.SetupOptions
 {
     public static class Cors
     {
-        public static readonly Action<CorsOptions> Options = options =>
+        public static Action<CorsOptions> GetOptions(IConfiguration configuration)
         {
-            options.AddPolicy("AllowAll", policy =>
-               policy.AllowAnyOrigin()
-                     .AllowAnyMethod()
-                     .AllowAnyHeader());
-        };
+            var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+            return options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                    policy.WithOrigins(allowedOrigins)
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials());
+            };
+        }
     }
+
+
 }

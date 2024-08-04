@@ -19,6 +19,7 @@ namespace Template.Identity.Seeds
                 NormalizedEmail = "JOHNDOE@GMAIL.COM",
                 EmailConfirmed = true,
                 PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
+                RefreshToken = "",
                 Active = true
             },
              new User
@@ -31,6 +32,7 @@ namespace Template.Identity.Seeds
                 NormalizedEmail = "JOHNJAMES.COM",
                 EmailConfirmed = true,
                 PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
+                RefreshToken = "",
                 Active = true
             }
         };

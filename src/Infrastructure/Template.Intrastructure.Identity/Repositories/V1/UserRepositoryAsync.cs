@@ -76,6 +76,10 @@ namespace Template.Identity.Repositories.V1
             }
         }
 
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        }
 
         public async Task RemoveFromRoleAsync(IdentityUserRole<string> userRole)
         {

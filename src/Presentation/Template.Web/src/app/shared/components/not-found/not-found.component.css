@@ -1,0 +1,16 @@
+.not-found-container {
+  margin-top: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.not-found-content {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+mat-card {
+  padding: 20px;
+}

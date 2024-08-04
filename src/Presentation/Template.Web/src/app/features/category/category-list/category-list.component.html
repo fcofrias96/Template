@@ -1,0 +1,20 @@
+<div class="category-list">
+  <h2>Categories</h2>
+  <button routerLink="/categories/create" mat-raised-button color="primary">Create Category</button>
+  <mat-list>
+    <mat-list-item *ngFor="let category of categories">
+      <div matLine>{{ category.name }}</div>
+      <div class="category-actions">
+        <button mat-icon-button color="warn" (click)="deleteCategory(category.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" routerLink="/categories/edit/{{ category.id }}">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" routerLink="/categories/detail/{{ category.id }}">
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</div>

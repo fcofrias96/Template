@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Template.Identity.Services.V1
+namespace Template.Application.Models.DTOs.V1.Auth
 {
     public class ResendConfirmationEmailDto
     {

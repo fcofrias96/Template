@@ -1,0 +1,16 @@
+<div class="category-detail" *ngIf="category">
+  <h2>Category Details</h2>
+  <mat-card>
+    <mat-card-content>
+      <div>
+        <strong>ID:</strong> {{ category.id }}
+      </div>
+      <div>
+        <strong>Name:</strong> {{ category.name }}
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button routerLink="/categories" color="primary">Back to List</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

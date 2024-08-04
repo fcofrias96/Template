@@ -14,7 +14,7 @@ namespace Template.Application
             services.AddApiVersioning(ApiVersioning.Options);
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers().ConfigureApiBehaviorOptions(ApiBehavior.Options);
-            services.AddCors(Cors.Options);
+            services.AddCors(Cors.GetOptions(configuration));
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
             services.AddMemoryCache();

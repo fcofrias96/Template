@@ -23,7 +23,7 @@ namespace Template.Application.Configuration
             builder.Property(x => x.IsDeleted)
                    .HasDefaultValue(false);
 
-            builder.HasQueryFilter(x => x.IsDeleted);
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }

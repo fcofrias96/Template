@@ -8,6 +8,7 @@
         public int EmailConfirmationTokenDurationInHours { get; set; }
         public int PasswordResetTokenDurationInHours { get; set; }
         public int LoginTokenDurationInMinutes { get; set; }
+        public int RefreshTokenDurationInDays { get; set; }
         public int ChangeEmailTokenDurationInHours { get; set; }
     }
 
