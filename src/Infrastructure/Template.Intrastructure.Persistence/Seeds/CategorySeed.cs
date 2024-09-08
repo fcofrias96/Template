@@ -10,22 +10,22 @@ namespace Template.Persistence.Seeds
             new Category
             {
                 Id= (int) Categories.Clothes,
-                Name= Categories.Clothes.ToString()
+                Name= nameof(Categories.Clothes)
             },
             new Category
             {
                 Id= (int) Categories.Electrodomestic,
-                Name= Categories.Electrodomestic.ToString()
+                Name= nameof(Categories.Electrodomestic)
             },
             new Category
             {
                 Id= (int) Categories.Fruit,
-                Name= Categories.Fruit.ToString()
+                Name= nameof(Categories.Fruit)
             },
             new Category
             {
                 Id= (int) Categories.Tool,
-                Name= Categories.Tool.ToString()
+                Name= nameof(Categories.Tool)
             }
         };
     }

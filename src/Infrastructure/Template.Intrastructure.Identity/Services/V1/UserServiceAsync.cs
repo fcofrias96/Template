@@ -182,6 +182,8 @@ namespace Template.Identity.Services.V1
 
         public async Task<bool> IsAuthorized(string userId, string module, string permission)
         {
+            if(string.IsNullOrEmpty(userId)) return false;
+
             return await _userModulePermissionRepositoryAsync.IsAuthorizedAsync(userId, module, permission);
         }
 
