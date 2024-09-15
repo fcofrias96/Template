@@ -45,7 +45,7 @@ namespace Template.Identity
             {
                 services.AddDbContext<IdentityContext>(option =>
                 {
-                    option.UseSqlServer(configuration.GetConnectionString("TemplateIdentityConnection"),
+                    option.UseSqlServer(configuration["ConnectionString:TemplateIdentityConnection"],
                         optionBuilder => optionBuilder.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)
                         .EnableRetryOnFailure(
                                 maxRetryCount: 3,

@@ -11,7 +11,9 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
+                Console.WriteLine(configuration["TemplateMainConnection"]);
+
+                options.UseSqlServer(configuration["TemplateMainConnection"],
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                             .EnableRetryOnFailure(
                                 maxRetryCount: 3,
@@ -28,7 +30,7 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("TemplateAuditConnection"),
+                options.UseSqlServer(configuration["TemplateAuditConnection"],
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(AuditDbContext).Assembly.FullName)
                 .EnableRetryOnFailure(
                                 maxRetryCount: 3,
