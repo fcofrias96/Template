@@ -6,8 +6,6 @@ using System.Data;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
-using Template.Application.Models.DTOs.V1.Module;
-using Template.Application.Models.DTOs.V1.ModulePermission;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
 using Template.Application.Utilities;
@@ -22,8 +20,6 @@ namespace Template.Identity.Services.V1
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IModuleService _moduleService;
-        private readonly IUserModulePermissionRepositoryAsync _userModulePermissionRepositoryAsync;
         private readonly IUserRepositoryAsync _userRepository;
         private readonly UserManager<User> _userManager;
 
@@ -32,54 +28,17 @@ namespace Template.Identity.Services.V1
             IMapper mapper,
             IEmailServiceAsync emailService,
             IHttpContextAccessor httpContext,
-            IModuleService moduleService,
-            IUserModulePermissionRepositoryAsync userModulePermissionRepositoryAsync,
+            IResourceServiceAsync moduleService,
             UserManager<User> userManager
             )
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContext = httpContext;
-            _moduleService = moduleService;
-            _userModulePermissionRepositoryAsync = userModulePermissionRepositoryAsync;
             _userManager = userManager;
         }
 
-        public async Task AddModulesAsync(Guid userId, List<ModulePermissionAddDTO> modulePermissions)
-        {
-            var user = await GetUser(userId);
-            var userModulePermissions = new List<UserModulePermission>();
 
-            foreach (var modulePermission in modulePermissions)
-            {
-                foreach (var permission in modulePermission.PermissionIds)
-                {
-                    var userModulePermission = new UserModulePermission
-                    {
-                        UserId = user.Id,
-                        ModuleId = modulePermission.ModuleId,
-                        PermissionId = permission
-                    };
-
-                    userModulePermissions.Add(userModulePermission);
-                }
-            }
-
-            await _userModulePermissionRepositoryAsync.CreateRangeAsync(userModulePermissions);
-        }
-
-        public async Task AddPermissionsFromModuleAsync(Guid userId, int moduleId, List<int> permissionIds)
-        {
-            var user = await GetUser(userId);
-            var userModulePermissions = permissionIds.Select(permissionId => new UserModulePermission
-            {
-                UserId = user.Id,
-                ModuleId = moduleId,
-                PermissionId = permissionId
-            }).ToList();
-
-            await _userModulePermissionRepositoryAsync.CreateRangeAsync(userModulePermissions);
-        }
 
         public async Task AddToRolesAsync(Guid userId, List<Guid> roles)
         {
@@ -106,7 +65,7 @@ namespace Template.Identity.Services.V1
         public async Task DeleteAsync(Guid userId)
         {
             var user = await GetUser(userId);
-            user.Active = false;
+            user.IsDeleted = true;
             await _userManager.UpdateAsync(user);
         }
 
@@ -155,18 +114,6 @@ namespace Template.Identity.Services.V1
             return new ApiResponse<UserDetailDTO>(userDTO);
         }
 
-        public async Task<ApiResponse<ModulePermissionDTO>> GetModuleAsync(Guid userId, int moduleId)
-        {
-            var user = await GetUser(userId);
-            return await _moduleService.GetModulePermissionsAsync(user.Id, moduleId);
-        }
-
-        public async Task<ApiResponse<List<ModulePermissionDTO>>> GetModulesAsync(Guid userId)
-        {
-            var user = await GetUser(userId);
-            var modulePermissions = await _userModulePermissionRepositoryAsync.GetModulePermissionsAsync(user.Id);
-            return new ApiResponse<List<ModulePermissionDTO>>(modulePermissions);
-        }
 
         public async Task<ApiResponse<List<string>>> GetRolesAsync(Guid userId)
         {
@@ -180,12 +127,6 @@ namespace Template.Identity.Services.V1
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
         }
 
-        public async Task<bool> IsAuthorized(string userId, string module, string permission)
-        {
-            if(string.IsNullOrEmpty(userId)) return false;
-
-            return await _userModulePermissionRepositoryAsync.IsAuthorizedAsync(userId, module, permission);
-        }
 
         public async Task RemoveFromRolesAsync(Guid userId, List<Guid> roles)
         {
@@ -206,19 +147,6 @@ namespace Template.Identity.Services.V1
             await _userRepository.RemoveFromRoleAsync(userRole);
         }
 
-        public async Task RemoveModuleAsync(Guid userId, int moduleId)
-        {
-            var user = await GetUser(userId);
-            var userModulePermissions = await _userModulePermissionRepositoryAsync.GetByUserIdAndModuleIdAsync(user.Id, moduleId);
-            await _userModulePermissionRepositoryAsync.DeleteRangeAsync(userModulePermissions);
-        }
-
-        public async Task RemovePermissionsFromModuleAsync(Guid userId, int moduleId, List<int> permissionIds)
-        {
-            var user = await GetUser(userId);
-            var userModulePermission = await _userModulePermissionRepositoryAsync.GetAllAsync(user.Id, moduleId, permissionIds);
-            await _userModulePermissionRepositoryAsync.DeleteRangeAsync(userModulePermission);
-        }
 
         public async Task UpdateAsync(Guid userId, UserUpdateDTO userUpdateDTO)
         {
@@ -258,4 +186,5 @@ namespace Template.Identity.Services.V1
 
         #endregion Private Methods
     }
+
 }

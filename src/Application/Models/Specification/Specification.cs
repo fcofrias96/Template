@@ -2,6 +2,7 @@
 using System.Reflection;
 using Template.Application.Contracts;
 using Template.Application.Exceptions;
+using Template.Application.Extensions;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Models.Specification
@@ -51,6 +52,25 @@ namespace Template.Application.Models.Specification
             var lambda = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
 
             SortBy = lambda;
+        }
+        /// <summary>
+        /// Updates the current filtering criteria by combining it with a new expression. 
+        /// If the <paramref name="exclude"/> parameter is set to true, the expression is combined using an AND NOT operation, 
+        /// excluding items that match the expression. Otherwise, it is combined using an AND operation, including items that match.
+        /// </summary>
+        /// <param name="expression">The filtering expression to be combined with the existing criteria.</param>
+        /// <param name="exclude">If true, applies an AND NOT logic to exclude matching items; otherwise, applies an AND logic.</param>
+
+        public void CombineCriteria(Expression<Func<TEntity, bool>> expression, bool exclude = false)
+        {
+            if (exclude)
+            {
+                Criteria = Criteria is null ? expression.Not() : Criteria.AndNot(expression);
+            }
+            else
+            {
+                Criteria = Criteria is null ? expression : Criteria.And(expression);
+            }
         }
     }
 }

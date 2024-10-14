@@ -7,7 +7,7 @@ using Template.Domain.Entities.V1;
 
 namespace Template.Application.Services.V1
 {
-    public class CategoryService : ServiceBase<Category>, ICategoryService
+    public class CategoryService : ServiceBaseAsync<Category>, ICategoryService
     {
         public CategoryService(ICategoryRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {

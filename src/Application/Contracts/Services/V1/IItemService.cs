@@ -2,7 +2,7 @@
 
 namespace Template.Application.Contracts.Services.V1
 {
-    public interface IItemService : IAsyncService<Item>
+    public interface IItemService : IAsyncServiceAsync<Item>
     {
     }
 }

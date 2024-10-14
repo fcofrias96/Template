@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
-using Template.Application.Models.DTOs.V1.Category;
-using Template.Application.Models.DTOs.V1.Item;
+using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Item;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
@@ -28,7 +27,7 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Authorize(Permissions.Delete)]
+        [Permission(Resources.Item, Actions.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -36,7 +35,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Permissions.Read)]
+        [Permission(Resources.Item, Actions.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemDetailDTO>>> GetByIdAsync(Guid id)
         {
@@ -44,8 +43,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        // GET api/Items/
-        [Authorize(Permissions.Read)]
+        [Permission(Resources.Item, Actions.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDTO>>>> GetAllAsync([FromQuery] ItemQueryParameters request)
         {
@@ -53,16 +51,15 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Permissions.Create)]
+        [Permission(Resources.Item, Actions.Create)]
         [HttpPost]
         public async Task<ActionResult<ItemDetailDTO>> CreateAsync([FromBody] ItemCreateDTO itemCreateDTO)
         {
-            var item = await _itemServiceAsync.CreateAsync<ItemCreateDTO, ItemDetailDTO>(itemCreateDTO);
+            var item = await _itemServiceAsync.CreateAsync<ItemCreateDTO>(itemCreateDTO);
             return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
 
-        // PUT api/Items/{id}
-        [Authorize(Permissions.Update)]
+        [Permission(Resources.Item, Actions.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ItemUpdateDTO itemUpdateDTO)
         {
@@ -71,7 +68,7 @@ namespace Template.Api.Controllers
         }
 
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync([FromQuery] ItemQueryParameters request)
         {
@@ -80,7 +77,7 @@ namespace Template.Api.Controllers
         }
 
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request)
         {
@@ -88,7 +85,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Pdf, "Items.pdf");
         }
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync([FromQuery]ItemQueryParameters request)
         {

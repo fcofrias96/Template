@@ -6,28 +6,30 @@ using Template.Identity.Entities;
 
 namespace Template.Identity.DbContext.V1
 {
-    public class IdentityContext : IdentityDbContext<User>
+    public class IdentityContext : IdentityDbContext<User, Role, string>
     {
         public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
         {
         }
 
-        public DbSet<Module> Modules { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Permission> Permissions { get; set; }
-        public DbSet<UserModulePermission> UserModulePermissions { get; set; }
+        public DbSet<Resource> Resources { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("UserRoles"); });
 
+            builder.ApplyConfiguration(new ActionConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
-            builder.ApplyConfiguration(new UserRoleConfiguration());
-            builder.ApplyConfiguration(new RoleClaimConfiguration());
-            builder.ApplyConfiguration(new UserClaimConfiguration());
-            builder.ApplyConfiguration(new ModuleConfiguration());
+            builder.ApplyConfiguration(new ResourceConfiguration());
             builder.ApplyConfiguration(new PermissionConfiguration());
-            builder.ApplyConfiguration(new UserModulePermissionConfiguration());
+            builder.ApplyConfiguration(new RoleClaimConfiguration());
+            builder.ApplyConfiguration(new RolePermissionConfiguration());
+            builder.ApplyConfiguration(new UserClaimConfiguration());
+            builder.ApplyConfiguration(new UserRoleConfiguration());
 
             builder.Entity<IdentityUserLogin<string>>(entity => entity.ToTable("UserLogins"));
             builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens"));

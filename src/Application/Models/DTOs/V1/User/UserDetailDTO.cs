@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Template.Application.Models.DTOs.V1.Module;
+using Template.Application.Models.DTOs.V1.Resource;
 
 namespace Template.Application.Models.DTOs.V1.User
 {
@@ -13,7 +13,7 @@ namespace Template.Application.Models.DTOs.V1.User
         public string AccessToken { get; set; }
         public int ExpiresIn { get; set; }
 
-        public List<ModulePermissionDTO> ModulePermissions { get; set; }
+        public List<ResourcePermissionDto> ModulePermissions { get; set; }
 
         [JsonIgnore]
         public string RefreshToken { get; set; }

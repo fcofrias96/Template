@@ -6,7 +6,7 @@ using Template.Persistence.Seeds;
 
 namespace Template.Persistence.Configuration.V1
 {
-    public class CategoryConfiguration : EntityBaseConfiguration<Category, int>
+    public class CategoryConfiguration : EntityBaseConfiguration<Category>
     {
         public override void Configure(EntityTypeBuilder<Category> builder)
         {

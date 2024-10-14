@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Template.Persistence.DbContexts;
 using Template.Persistence.DbContexts.V1;
 
@@ -18,7 +19,8 @@ namespace Template.Persistence.OptionActions
                                 maxRetryDelay: TimeSpan.FromSeconds(30),
                                 errorNumbersToAdd: null)
 
-                                );
+                                ) 
+                .LogTo(Console.WriteLine, LogLevel.Information);
             };
 
             return Options;

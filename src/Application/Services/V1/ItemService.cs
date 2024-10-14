@@ -7,9 +7,9 @@ using Template.Domain.Entities.V1;
 
 namespace Template.Application.Services.V1
 {
-    public class ItemService : ServiceBase<Item>, IItemService
+    public class ItemService : ServiceBaseAsync<Item>, IItemService
     {
-        public ItemService(IItemRepository repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, IItemRepository itemRepository) : base(repository, mapper, httpContext, cache)
+        public ItemService(IItemRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, IItemRepositoryAsync itemRepository) : base(repository, mapper, httpContext, cache)
         {
         }
     }

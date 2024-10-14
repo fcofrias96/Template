@@ -5,7 +5,7 @@ using Template.Domain.Entities.V1;
 
 namespace Template.Persistence.Configuration.V1
 {
-    public class ItemConfiguration : EntityBaseConfiguration<Item, Guid>
+    public class ItemConfiguration : EntityBaseConfiguration<Item>
     {
         public override void Configure(EntityTypeBuilder<Item> builder)
         {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Template.Application.Models.DTOs.V1.Module;
+using Template.Application.Models.DTOs.V1.Resource;
 
 namespace Template.Application.Models.DTOs.V1.Auth
 {
@@ -9,7 +9,7 @@ namespace Template.Application.Models.DTOs.V1.Auth
         public string UserName { get; set; }
         public string Email { get; set; }
         public List<string> Roles { get; set; }
-        public List<ModulePermissionDTO> Modules { get; set; }
+        public List<ResourcePermissionDto> Modules { get; set; }
         public string AccessToken { get; set; }
 
         [JsonIgnore]

@@ -5,7 +5,7 @@ using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Repositories.V1
 {
-    public class CategoryRepository : RepositoryBase<Category>, ICategoryRepository
+    public class CategoryRepository : RepositoryBaseAsync<Category>, ICategoryRepository
     {
         public CategoryRepository(ApplicationDbContext context, IConfigurationProvider configurationProvider) : base(context, configurationProvider)
         {

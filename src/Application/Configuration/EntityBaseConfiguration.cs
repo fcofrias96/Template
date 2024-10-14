@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Template.Domain.Common;
+using Template.Domain.Contracts;
 
 namespace Template.Application.Configuration
 {
-    public abstract class EntityBaseConfiguration<TEntity, TKey> : IEntityTypeConfiguration<TEntity> where TEntity : EntityBase<TKey>
+    public abstract class EntityBaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBase
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
@@ -23,7 +23,11 @@ namespace Template.Application.Configuration
             builder.Property(x => x.IsDeleted)
                    .HasDefaultValue(false);
 
-            builder.HasQueryFilter(x => !x.IsDeleted);
+            if(typeof(TEntity).Name != "Role")
+            {
+                builder.HasQueryFilter(x => !x.IsDeleted);
+            }
+            
         }
     }
 }

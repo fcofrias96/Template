@@ -29,8 +29,8 @@ namespace Template.Persistence
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBase<>));
-            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBaseAsync<>));
+            services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             #endregion Dependency Injection

@@ -2,9 +2,11 @@
 {
     public enum Actions
     {
-        None,
-        Create,
+        Create = 1,
+        Read,
         Update,
-        Delete
+        Delete,
+        Export
     }
+
 }

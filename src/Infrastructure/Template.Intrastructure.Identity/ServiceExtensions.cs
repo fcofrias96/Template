@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
-using Template.Application.Constants;
 using Template.Application.Extensions;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Authorization;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
 using Template.Identity.DbContext.V1;
@@ -69,7 +64,7 @@ namespace Template.Identity
             var jwtSettings = new JwtSettings();
             configuration.Bind("JwtSettings", jwtSettings);
 
-            services.AddIdentity<User, IdentityRole>(options =>
+            services.AddIdentity<User, Role>(options =>
             {
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
@@ -108,19 +103,23 @@ namespace Template.Identity
             #region Dependency injection
 
             // Repositories
-            services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
+            services.AddScoped<IActionRepositoryAsync, ActionRepositoryAsync>();
+            services.AddScoped<IPermissionRepositoryAsync, PermissionRepositoryAsync>();
+            services.AddScoped<IResourceRepositoryAsync, ResourceRepository>();
+            services.AddScoped<IRolePermissionRepositoryAsync, RolePermissionRepositoryAsync>();
             services.AddScoped<IRoleRepositoryAsync, RoleRepositoryAsync>();
-            services.AddScoped<IModuleRepository, ModuleRepository>();
-            services.AddScoped<IUserModulePermissionRepositoryAsync, UserModulePermissionRepositoryAsync>();
+            services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
 
             //Services
-            services.AddScoped<IUserServiceAsync, UserServiceAsync>();
+            services.AddScoped<IActionServiceAsync, ActionServiceAsync>();
             services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
+            services.AddScoped<IPermissionServiceAsync, PermissionServiceAsync>();
+            services.AddScoped<IResourceServiceAsync, ResourceService>();
+            services.AddScoped<IRolePermissionServiceAsync, RolePermissionServiceAsync>();
             services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
-            services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<IUserServiceAsync, UserServiceAsync>();
 
-            //Others
-            services.AddSingleton<IAuthorizationHandler, ModulePermissionHandler>();
+
 
             #endregion Dependency injection
 
@@ -181,19 +180,6 @@ namespace Template.Identity
 
             #endregion Authentication
 
-            #region Authorization
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Permissions.Create, policy => policy.Requirements.Add(new ModulePermissionRequirement(Permissions.Create)));
-                options.AddPolicy(Permissions.Read, policy => policy.Requirements.Add(new ModulePermissionRequirement(Permissions.Read)));
-                options.AddPolicy(Permissions.Update, policy => policy.Requirements.Add(new ModulePermissionRequirement(Permissions.Update)));
-                options.AddPolicy(Permissions.Delete, policy => policy.Requirements.Add(new ModulePermissionRequirement(Permissions.Delete)));
-                options.AddPolicy(Permissions.Export, policy => policy.Requirements.Add(new ModulePermissionRequirement(Permissions.Export)));
-
-            });
-
-            #endregion Authorization
         }
     }
 }

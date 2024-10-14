@@ -17,53 +17,10 @@ namespace Template.Identity.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.14")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "6ee79720-2d87-4681-aca2-b158742168f9",
-                            ConcurrencyStamp = "b9d717e8-f561-4b7a-ae3b-b555a0033fa7",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab",
-                            ConcurrencyStamp = "4c449346-22a2-43f5-b12e-e2053b50a2b6",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
-                });
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -71,7 +28,7 @@ namespace Template.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -96,7 +53,7 @@ namespace Template.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -145,28 +102,18 @@ namespace Template.Identity.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
 
-                    b.HasIndex("RoleId");
+                    b.HasKey("UserId", "RoleId");
 
                     b.ToTable("UserRoles", (string)null);
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            RoleId = "6ee79720-2d87-4681-aca2-b158742168f9"
-                        },
-                        new
-                        {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            RoleId = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab"
-                        },
-                        new
-                        {
-                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
-                            RoleId = "23d77f5d-15ac-4ec5-ad1d-0b04e03f30ab"
-                        });
+                    b.HasDiscriminator().HasValue("IdentityUserRole<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -188,13 +135,13 @@ namespace Template.Identity.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Template.Identity.Entities.Module", b =>
+            modelBuilder.Entity("Template.Identity.Entities.Action", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -224,76 +171,7 @@ namespace Template.Identity.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Modules");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Name = "Users"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Name = "Modules"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Name = "Categories"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Name = "Items"
-                        });
-                });
-
-            modelBuilder.Entity("Template.Identity.Entities.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(30)")
-                        .HasDefaultValue("System");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissions");
+                    b.ToTable("Action");
 
                     b.HasData(
                         new
@@ -330,13 +208,641 @@ namespace Template.Identity.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Export"
+                        });
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("ResourceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasIndex("ResourceId", "ActionId")
+                        .IsUnique();
+
+                    b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 18,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 19,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 20,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 21,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 5
+                        },
+                        new
+                        {
+                            Id = 22,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 6
+                        },
+                        new
+                        {
+                            Id = 23,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 6
+                        },
+                        new
+                        {
+                            Id = 24,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 6
+                        },
+                        new
+                        {
+                            Id = 25,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 6
+                        },
+                        new
+                        {
+                            Id = 26,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 6
+                        },
+                        new
+                        {
+                            Id = 27,
+                            ActionId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 28,
+                            ActionId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 29,
+                            ActionId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 30,
+                            ActionId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 31,
+                            ActionId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ResourceId = 7
+                        });
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.Resource", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Resources");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Role"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Resource"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Permission"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Action"
                         },
                         new
                         {
                             Id = 6,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            Name = "All"
+                            Name = "Category"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Item"
+                        });
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "9aa0e20c-40a1-46e8-9983-3701c3627a27",
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.RolePermission", b =>
+                {
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = "9aa0e20c-40a1-46e8-9983-3701c3627a27",
+                            PermissionId = 23
+                        },
+                        new
+                        {
+                            RoleId = "9aa0e20c-40a1-46e8-9983-3701c3627a27",
+                            PermissionId = 28
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 1
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 2
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 3
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 5
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 10
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 11
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 12
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 13
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 14
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 16
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 17
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 18
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 19
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 20
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 22
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 23
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 24
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 25
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 26
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 27
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 28
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 29
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 30
+                        },
+                        new
+                        {
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da",
+                            PermissionId = 31
                         });
                 });
 
@@ -348,11 +854,6 @@ namespace Template.Identity.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -361,6 +862,12 @@ namespace Template.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -373,8 +880,19 @@ namespace Template.Identity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsTokenRevoked")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -438,119 +956,85 @@ namespace Template.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "848f9783-00c7-419d-80a0-94e131cbfa21",
+                            Id = "67a9f532-b747-42b8-bda9-e7cd7c2c838c",
                             AccessFailedCount = 0,
-                            Active = true,
-                            ConcurrencyStamp = "87bab729-de6b-4e25-9f09-06177af5e448",
+                            ConcurrencyStamp = "84e517d1-e5e0-4e16-8567-f6f3a9d8035b",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
+                            IsDeleted = false,
                             IsTokenRevoked = false,
                             LastName = "Doe",
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFkXBOmscJ9bK8oZhgo6TVZA/OMxW6pQwS6cZs6CiGeMBkrc95zqT5R5V++r+7Hj9w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO2M1w9ktRjGBoXjp1xPk/1B5CpB1MU3vihpyCO9iFhyZr9bjBRKzM3OfyeiJ2JK2w==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "4585f5ae-0b41-4118-9673-0761e2606424",
+                            SecurityStamp = "8d7fefcf-47fd-40b3-abc7-9347d5bb3448",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "94586280-2a89-4042-9545-e1052d91f1f1",
+                            Id = "87361a30-cfb7-477b-81a9-0302b879bffd",
                             AccessFailedCount = 0,
-                            Active = true,
-                            ConcurrencyStamp = "beaae018-7201-4d16-bb1d-c4e954cec780",
+                            ConcurrencyStamp = "d0bcf088-ce0f-40b0-a341-143826ffa09b",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "John",
+                            IsDeleted = false,
                             IsTokenRevoked = false,
                             LastName = "James",
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAEAACcQAAAAEMFDfuFf1s/uSB++EZhMjHOa+0E8tLDPk5aokQFEA9w6Op+47OSAGmReNmdPBFL30Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOJhPFJdBxHu/V1VJcG3WNbvyxFH68C3n499wAhr3FYJ/7X7nxNJOSyUOaZbch8RKQ==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "3a59dbc3-22eb-47ec-8d8d-c264373a4b6d",
+                            SecurityStamp = "c05f98a9-66a8-4e80-a8dd-8495bf3fc48f",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
                 });
 
-            modelBuilder.Entity("Template.Identity.Entities.UserModulePermission", b =>
+            modelBuilder.Entity("Template.Identity.Entities.UserRole", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
 
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("int");
+                    b.HasIndex("RoleId");
 
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
+                    b.HasIndex("UserId", "RoleId");
 
-                    b.HasKey("UserId", "ModuleId", "PermissionId");
+                    b.ToTable("UserRoles", (string)null);
 
-                    b.HasIndex("ModuleId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("UserModulePermissions");
+                    b.HasDiscriminator().HasValue("UserRole");
 
                     b.HasData(
                         new
                         {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            ModuleId = 1,
-                            PermissionId = 6
+                            UserId = "67a9f532-b747-42b8-bda9-e7cd7c2c838c",
+                            RoleId = "1e7fa15d-6e45-4c4a-a407-e71ae21441da"
                         },
                         new
                         {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            ModuleId = 2,
-                            PermissionId = 6
+                            UserId = "67a9f532-b747-42b8-bda9-e7cd7c2c838c",
+                            RoleId = "9aa0e20c-40a1-46e8-9983-3701c3627a27"
                         },
                         new
                         {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            ModuleId = 4,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            UserId = "848f9783-00c7-419d-80a0-94e131cbfa21",
-                            ModuleId = 3,
-                            PermissionId = 6
-                        },
-                        new
-                        {
-                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
-                            ModuleId = 1,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
-                            ModuleId = 4,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            UserId = "94586280-2a89-4042-9545-e1052d91f1f1",
-                            ModuleId = 3,
-                            PermissionId = 2
+                            UserId = "87361a30-cfb7-477b-81a9-0302b879bffd",
+                            RoleId = "9aa0e20c-40a1-46e8-9983-3701c3627a27"
                         });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Template.Identity.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -575,21 +1059,6 @@ namespace Template.Identity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Template.Identity.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("Template.Identity.Entities.User", null)
@@ -599,46 +1068,88 @@ namespace Template.Identity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Template.Identity.Entities.UserModulePermission", b =>
+            modelBuilder.Entity("Template.Identity.Entities.Permission", b =>
                 {
-                    b.HasOne("Template.Identity.Entities.Module", "Module")
-                        .WithMany("UserModulePermissions")
-                        .HasForeignKey("ModuleId")
+                    b.HasOne("Template.Identity.Entities.Action", "Action")
+                        .WithMany("Permissions")
+                        .HasForeignKey("ActionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Template.Identity.Entities.Resource", "Resource")
+                        .WithMany("Permissions")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Action");
+
+                    b.Navigation("Resource");
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.RolePermission", b =>
+                {
                     b.HasOne("Template.Identity.Entities.Permission", "Permission")
-                        .WithMany("UserModulePermissions")
+                        .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Template.Identity.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.UserRole", b =>
+                {
+                    b.HasOne("Template.Identity.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Template.Identity.Entities.User", "User")
-                        .WithMany("UserModulePermissions")
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Module");
-
-                    b.Navigation("Permission");
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Template.Identity.Entities.Module", b =>
+            modelBuilder.Entity("Template.Identity.Entities.Action", b =>
                 {
-                    b.Navigation("UserModulePermissions");
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Template.Identity.Entities.Permission", b =>
                 {
-                    b.Navigation("UserModulePermissions");
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.Resource", b =>
+                {
+                    b.Navigation("Permissions");
+                });
+
+            modelBuilder.Entity("Template.Identity.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Template.Identity.Entities.User", b =>
                 {
-                    b.Navigation("UserModulePermissions");
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

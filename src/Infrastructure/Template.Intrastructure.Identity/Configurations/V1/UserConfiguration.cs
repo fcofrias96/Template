@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.Application.Configuration;
 using Template.Identity.Entities;
 using Template.Identity.Seeds;
 
 namespace Template.Identity.Configurations.V1
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class UserConfiguration : EntityBaseConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public override void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");
-
-            builder.HasMany(p => p.UserModulePermissions)
-                .WithOne(p => p.User)
-                .HasForeignKey(p => p.UserId);
 
             builder.Property(p => p.FirstName)
                 .IsRequired();
@@ -21,13 +18,9 @@ namespace Template.Identity.Configurations.V1
             builder.Property(p => p.LastName)
                 .IsRequired();
 
-            builder.Property(p => p.Created)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-            builder.Property(p => p.Active)
-                .HasDefaultValue(true);
-
             builder.HasData(UserSeed.Data);
+
+            base.Configure(builder);
         }
     }
 }

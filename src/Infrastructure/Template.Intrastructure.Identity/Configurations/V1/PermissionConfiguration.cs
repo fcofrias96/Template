@@ -5,20 +5,24 @@ using Template.Identity.Seeds;
 
 namespace Template.Identity.Configurations.V1
 {
-    public class PermissionConfiguration : EntityBaseConfiguration<Permission, int>
+    public class PermissionConfiguration : EntityBaseConfiguration<Permission>
     {
         public override void Configure(EntityTypeBuilder<Permission> builder)
         {
-            base.Configure(builder);
+            builder.HasIndex(p => new { p.ResourceId, p.ActionId })
+                .IsUnique();
 
-            builder.Property(p => p.Name)
+            builder.Property(p => p.ActionId)
                 .IsRequired();
 
-            builder.HasMany(p => p.UserModulePermissions)
+            builder.HasMany(p => p.RolePermissions)
                 .WithOne(p => p.Permission)
                 .HasForeignKey(p => p.PermissionId);
 
+
             builder.HasData(PermissionSeed.Data);
+
+            base.Configure(builder);
         }
     }
 }

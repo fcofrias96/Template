@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Constants;
-using Template.Application.Models.DTOs.V1.Module;
-using Template.Application.Models.DTOs.V1.ModulePermission;
+using Template.Application.Models.DTOs.V1.Resource;
 using Template.Application.Models.DTOs.V1.Role;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
@@ -11,7 +10,7 @@ using Template.Identity.Specification.V1;
 
 namespace Template.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin)]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
@@ -28,25 +27,7 @@ namespace Template.Api.Controllers
             _userServiceAsync = userService;
         }
 
-        #region Actions
-
-        [Authorize(Roles = Roles.Admin)]
-        [HttpPost("{id}/Modules")]
-        public async Task<ActionResult> AddModulesAsync(Guid id, [FromBody] List<ModulePermissionAddDTO> modulePermissions)
-        {
-            await _userServiceAsync.AddModulesAsync(id, modulePermissions);
-            return NoContent();
-        }
-
-        [Authorize(Roles = Roles.Admin)]
-        [HttpPost("{id}/Modules/{moduleId}/permissions")]
-        public async Task<ActionResult> AddPermissionsFromModuleAsync(Guid id, int moduleId, [FromBody] ModulePermissionIdsDTO modulePermissionIds)
-        {
-            await _userServiceAsync.AddPermissionsFromModuleAsync(id, moduleId, modulePermissionIds.PermissionIds);
-            return NoContent();
-        }
-
-        [Authorize(Roles = Roles.Admin)]
+        #region Actions    
         [HttpPost("{id}/roles/{roleId}")]
         public async Task<ActionResult> AddToRoleAsync(Guid id, Guid roleId)
         {
@@ -54,7 +35,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpPost("{id}/roles")]
         public async Task<ActionResult> AddToRolesAsync(Guid id, [FromBody] RoleIdsDTO roleIdsDTO)
         {
@@ -62,7 +43,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -70,7 +51,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<UserListDTO>>>> GetAllUsers([FromQuery] UserFilterRequest request)
         {
@@ -78,7 +59,7 @@ namespace Template.Api.Controllers
             return Ok(pagedUsersResult);
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UserDetailDTO>>> GetByIdAsync(Guid id)
         {
@@ -86,23 +67,23 @@ namespace Template.Api.Controllers
             return Ok(user);
         }
 
-        [Authorize(Roles = Roles.Admin)]
-        [HttpGet("{id}/Modules/{moduleId}")]
-        public async Task<ActionResult<ApiResponse<ModulePermissionDTO>>> GetModuleAsync(Guid id, int moduleId)
-        {
-            var permissions = await _userServiceAsync.GetModuleAsync(id, moduleId);
-            return Ok(permissions);
-        }
+        
+        //[HttpGet("{id}/Modules/{moduleId}")]
+        //public async Task<ActionResult<ApiResponse<ResourcePermissionDto>>> GetModuleAsync(Guid id, int moduleId)
+        //{
+        //    var permissions = await _userServiceAsync.GetModuleAsync(id, moduleId);
+        //    return Ok(permissions);
+        //}
 
-        [Authorize(Roles = Roles.Admin)]
-        [HttpGet("{id}/Modules")]
-        public async Task<ActionResult<List<ModulePermissionDTO>>> GetModulesAsync(Guid id)
-        {
-            var permissions = await _userServiceAsync.GetModulesAsync(id);
-            return Ok(permissions);
-        }
+        
+        //[HttpGet("{id}/Modules")]
+        //public async Task<ActionResult<List<ResourcePermissionDto>>> GetModulesAsync(Guid id)
+        //{
+        //    var permissions = await _userServiceAsync.GetModulesAsync(id);
+        //    return Ok(permissions);
+        //}
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpGet("{id}/roles")]
         public async Task<ActionResult<ApiResponse<List<string>>>> GetRolesAsync(Guid id)
         {
@@ -110,23 +91,8 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = Roles.Admin)]
-        [HttpDelete("{id}/Modules/{moduleId}")]
-        public async Task<ActionResult> RemoveModuleAsync(Guid id, int moduleId)
-        {
-            await _userServiceAsync.RemoveModuleAsync(id, moduleId);
-            return NoContent();
-        }
-
-        [Authorize(Roles = Roles.Admin)]
-        [HttpDelete("{id}/Modules/{moduleId}/permissions")]
-        public async Task<ActionResult> RemovePermissionsFromModuleAsync(Guid id, int moduleId, [FromBody] ModulePermissionIdsDTO modulePermissionIdsDTO)
-        {
-            await _userServiceAsync.RemovePermissionsFromModuleAsync(id, moduleId, modulePermissionIdsDTO.PermissionIds);
-            return NoContent();
-        }
-
-        [Authorize(Roles = Roles.Admin)]
+        
+        
         [HttpDelete("{id}/roles/{roleId}")]
         public async Task<ActionResult> RemoveRoleAsync(Guid id, Guid roleId)
         {
@@ -134,7 +100,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = Roles.Admin)]
+        
         [HttpDelete("{id}/roles")]
         public async Task<ActionResult> RemoveRolesAsync(Guid id, [FromBody] RoleIdsDTO roleIdsDTO)
         {

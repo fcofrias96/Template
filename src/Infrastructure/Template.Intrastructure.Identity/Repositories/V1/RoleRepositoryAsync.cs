@@ -1,36 +1,15 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using Template.Application.Models.DTOs.V1.Role;
+using Template.Application.Repository;
 using Template.Identity.Contracts.Repositories.V1;
+using Template.Identity.DbContext.V1;
+using Template.Identity.Entities;
 
 namespace Template.Identity.Repositories.V1
 {
-    public class RoleRepositoryAsync : IRoleRepositoryAsync
+    public class RoleRepositoryAsync : RepositoryBaseAsync<Role>, IRoleRepositoryAsync
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IMapper _mapper;
-
-        public RoleRepositoryAsync(RoleManager<IdentityRole> roleManager, IMapper mapper)
+        public RoleRepositoryAsync(IdentityContext context, IConfigurationProvider configurationProvider) : base(context, configurationProvider)
         {
-            _roleManager = roleManager;
-            _mapper = mapper;
-        }
-
-        public async Task<List<RoleListDTO>> GetAllAsync()
-        {
-            return await _roleManager.Roles
-                .ProjectTo<RoleListDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
-        }
-
-        public async Task<List<Claim>> GetClaims(string roleName)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-
-            return (List<Claim>)await _roleManager.GetClaimsAsync(role);
         }
     }
 }

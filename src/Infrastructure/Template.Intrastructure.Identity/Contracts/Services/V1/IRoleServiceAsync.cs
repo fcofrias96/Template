@@ -1,10 +1,9 @@
-﻿using Template.Application.Models.DTOs.V1.Role;
-using Template.Application.Models.Wrappers;
+﻿using Template.Application.Contracts.Services.V1;
+using Template.Identity.Entities;
 
 namespace Template.Identity.Contracts.Services.V1
 {
-    public interface IRoleServiceAsync
+    public interface IRoleServiceAsync: IAsyncServiceAsync<Role>
     {
-        Task<ApiResponse<List<RoleListDTO>>> GetAllAsync();
     }
 }

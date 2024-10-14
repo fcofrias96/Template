@@ -3,6 +3,7 @@
     public class PermissionUpdateDTO
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int ActionId { get; set; }
+        public int ResourceId { get; set; }
     }
 }

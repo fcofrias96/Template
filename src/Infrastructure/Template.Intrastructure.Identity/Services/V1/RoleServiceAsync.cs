@@ -1,33 +1,25 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Template.Application.Models.DTOs.V1.Role;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Models.Wrappers;
+using Template.Application.Services;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
+using Template.Identity.Entities;
 
 namespace Template.Identity.Services.V1
 {
-    public class RoleServiceAsync : IRoleServiceAsync
+    public class RoleServiceAsync : ServiceBaseAsync<Role>, IRoleServiceAsync
     {
-        private readonly IRoleRepositoryAsync _roleRepositoryAsync;
-        private readonly IMemoryCache _cache;
-
-        public RoleServiceAsync(IRoleRepositoryAsync roleRepositoryAsync, IMemoryCache cache)
+        public RoleServiceAsync(IRoleRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
         {
-            _roleRepositoryAsync = roleRepositoryAsync;
-            _cache = cache;
         }
 
-        public async Task<ApiResponse<List<RoleListDTO>>> GetAllAsync()
+
+        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
         {
-            string cacheKey = $"RolesCache";
-
-            if (!_cache.TryGetValue(cacheKey, out List<RoleListDTO> roles))
-            {
-                roles = await _roleRepositoryAsync.GetAllAsync();
-                _cache.Set(cacheKey, roles);
-            }
-
-            return new ApiResponse<List<RoleListDTO>>(roles);
+            string idString = id?.ToString() ?? string.Empty;
+            return base.GetByIdProjectedAsync<string, TDestination>(idString);
         }
     }
 }

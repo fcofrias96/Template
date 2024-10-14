@@ -24,7 +24,7 @@ namespace Template.Application
 
             #region Dependency Injection
 
-            services.AddScoped(typeof(IAsyncService<>), typeof(ServiceBase<>));
+            services.AddScoped(typeof(IAsyncServiceAsync<>), typeof(ServiceBaseAsync<>));
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<ICategoryService, CategoryService>();
 

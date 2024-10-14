@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,11 +13,9 @@ using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.DTOs.V1.Email;
-using Template.Application.Models.DTOs.V1.ModulePermission;
 using Template.Application.Models.DTOs.V1.Token;
 using Template.Application.Models.DTOs.V1.User;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
 using Template.Identity.Entities;
 using Template.Identity.Seeds;
@@ -33,13 +30,11 @@ namespace Template.Identity.Services.V1
         private readonly JwtSettings _jwtSettings;
         private readonly SignInManager<User> _singInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IUserModulePermissionRepositoryAsync _userModulePermissionRepositoryAsync;
         private readonly IUserServiceAsync _userServiceAsync;
         private List<string> _userRoles;
         public AuthServiceAsync(
             IEmailServiceAsync emailServiceAsync,
             IOptions<JwtSettings> jwtSettings,
-            IUserModulePermissionRepositoryAsync userModulePermissionRepositoryAsync,
             UserManager<User> userManager,
             SignInManager<User> singInManager,
             IHttpContextAccessor httpContext,
@@ -49,7 +44,6 @@ namespace Template.Identity.Services.V1
             _emailServiceAsync = emailServiceAsync;
             _jwtSettings = jwtSettings.Value;
             _userRoles = new List<string>();
-            _userModulePermissionRepositoryAsync = userModulePermissionRepositoryAsync;
             _userManager = userManager;
             _singInManager = singInManager;
             _httpContext = httpContext;
@@ -153,19 +147,19 @@ namespace Template.Identity.Services.V1
 
             await _userManager.AddToRoleAsync(user, Roles.User);
 
-            var itemsModuleId = ModuleSeed.Data.First(m => m.Name == "Items").Id;
-            var readPermissionId = PermissionSeed.Data.First(p => p.Name == Permissions.Read).Id;
+            var itemsModuleId = ResourceSeed.Data.First(m => m.Name == "Items").Id;
+            //var readPermissionId = PermissionSeed.Data.First(p => p.ActionId == Actions.Read).Id;
 
-            var modulePermission = new List<ModulePermissionAddDTO>
-                {
-                    new ModulePermissionAddDTO
-                    {
-                        ModuleId = itemsModuleId,
-                        PermissionIds = new List<int> { readPermissionId }
-                    }
-                };
+            //var modulePermission = new List<ModulePermissionAddDTO>
+            //    {
+            //        new ModulePermissionAddDTO
+            //        {
+            //            ModuleId = itemsModuleId,
+            //            PermissionIds = new List<int> { readPermissionId }
+            //        }
+            //    };
 
-            await _userServiceAsync.AddModulesAsync(Guid.Parse(user.Id), modulePermission);
+            //await _userServiceAsync.AddModulesAsync(Guid.Parse(user.Id), modulePermission);
 
             var emailVerificationLink = await GenerateEmailVerificationLinkAsync(user);
 
@@ -247,7 +241,7 @@ namespace Template.Identity.Services.V1
                 throw new BadRequestException($"User account '{loginDto.Email}' is locked.");
             }
 
-            if (!user.Active)
+            if (user.IsDeleted)
             {
                 throw new BadRequestException($"User account '{loginDto.Email}' is inactivated.");
             }
@@ -265,7 +259,6 @@ namespace Template.Identity.Services.V1
                 response.Email = user.Email;
                 response.UserName = user.UserName;
                 response.Roles = _userRoles;
-                response.Modules = await _userModulePermissionRepositoryAsync.GetModulePermissionsAsync(user.Id);
                 response.RefreshToken = refreshToken;
 
                 user.RefreshToken = refreshToken;

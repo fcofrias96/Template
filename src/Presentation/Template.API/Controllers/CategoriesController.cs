@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using MimeKit;
+using Template.Api.Attributes;
+using Template.Application.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
+using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Category;
 using Template.Application.Models.Wrappers;
 
@@ -29,15 +32,15 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Authorize(Permissions.Create)]
+        [Permission(Resources.Category, Actions.Create)]
         [HttpPost]
         public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
-            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDTO, CategoryDetailDTO>(categoryCreateDTO);
+            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDTO>(categoryCreateDTO);
             return CreatedAtAction(nameof(GetCategoryAsync), new { id = category.Id }, category);
         }
 
-        [Authorize(Permissions.Delete)]
+        [Permission(Resources.Category, Actions.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategoryAsync(int id)
         {
@@ -45,7 +48,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Permissions.Read)]
+        [Permission(Resources.Category, Actions.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<CategoryListDTO>>>> GetAllCategoriesAsync()
         {
@@ -53,7 +56,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Permissions.Read)]
+        [Permission(Resources.Category, Actions.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<CategoryDetailDTO>>> GetCategoryAsync(int id)
         {
@@ -61,7 +64,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Permissions.Update)]
+        [Permission(Resources.Category, Actions.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
         {
@@ -70,7 +73,7 @@ namespace Template.Api.Controllers
         }
 
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Category, Actions.Export)]
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync()
         {
@@ -78,7 +81,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Word, "Categories.docx");
         }
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Category, Actions.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync()
         {
@@ -86,7 +89,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Pdf, "Categories.pdf");
         }
 
-        [Authorize(Permissions.Export)]
+        [Permission(Resources.Category, Actions.Export)]
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync()
         {

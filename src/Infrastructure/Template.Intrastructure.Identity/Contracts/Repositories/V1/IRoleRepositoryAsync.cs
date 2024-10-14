@@ -1,12 +1,11 @@
-﻿using System.Security.Claims;
-using Template.Application.Models.DTOs.V1.Role;
+﻿using Template.Application.Contracts.Repositories.V1;
+using Template.Identity.Entities;
 
 namespace Template.Identity.Contracts.Repositories.V1
 {
-    public interface IRoleRepositoryAsync
+    public interface IRoleRepositoryAsync : IAsyncRepository<Role>
     {
-        Task<List<RoleListDTO>> GetAllAsync();
+       
 
-        Task<List<Claim>> GetClaims(string roleName);
     }
 }

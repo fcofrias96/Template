@@ -11,6 +11,7 @@ namespace Template.Identity.Seeds
         {
              new User
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = "John",
                 LastName = "Doe",
                 UserName = "johnDoe",
@@ -20,10 +21,11 @@ namespace Template.Identity.Seeds
                 EmailConfirmed = true,
                 PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
                 RefreshToken = "",
-                Active = true
+                IsDeleted = false
             },
              new User
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = "John",
                 LastName = "James",
                 UserName = "johnJames",
@@ -33,7 +35,7 @@ namespace Template.Identity.Seeds
                 EmailConfirmed = true,
                 PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
                 RefreshToken = "",
-                Active = true
+                IsDeleted = false
             }
         };
     }

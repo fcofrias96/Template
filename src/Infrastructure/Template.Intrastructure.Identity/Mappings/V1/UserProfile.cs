@@ -10,10 +10,8 @@ namespace Template.Identity.Mappings.V1
         {
             CreateMap<UserCreateDTO, User>();
             CreateMap<UserUpdateDTO, User>();
-            CreateMap<User, UserDetailDTO>()
-                .ForMember(dest => dest.ModulePermissions, opt => opt.MapFrom(src => src.UserModulePermissions));
+            CreateMap<User, UserDetailDTO>();
             CreateMap<User, UserListDTO>();
-            CreateMap<User, UserModulePermission>();
         }
     }
 }
