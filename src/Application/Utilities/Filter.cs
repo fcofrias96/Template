@@ -1,8 +1,12 @@
-﻿namespace Template.Application.Utilities
+﻿using System.Reflection;
+
+namespace Template.Application.Utilities
 {
-    public class Filter
+    public class Field
     {
+        public PropertyInfo PropertyInfo { get; set; }
+        public object Values { get; set; }
         public bool Exclude { get; set; }
-        public string Value { get; set; }
+        public bool Range { get; set; }
     }
 }

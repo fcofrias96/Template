@@ -1,4 +1,6 @@
-﻿namespace Template.Application.Contracts
+﻿using Template.Application.Utilities;
+
+namespace Template.Application.Contracts
 {
     public interface IQueryParametersBase
     {
@@ -6,5 +8,7 @@
         public bool Descending { get; set; }
         int Offset { get; }
         int Limit { get; }
+        public string[] FilterableProperties { get; set; }
+        public List<Field> GetFields();
     }
 }

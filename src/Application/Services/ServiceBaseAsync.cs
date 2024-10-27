@@ -83,8 +83,6 @@ namespace Template.Application.Services
         }
 
 
-
-
         public async Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
@@ -212,7 +210,7 @@ namespace Template.Application.Services
                 for (int i = 0; i < properties.Length; i++)
                 {
 
-                    var propertyName = GetDisplayName(properties[i]);
+                    var propertyName = ServiceBaseAsync<TEntity>.GetDisplayName(properties[i]);
                     worksheet.Cell(1, i + 1).Value = propertyName;
                 }
 
@@ -222,7 +220,7 @@ namespace Template.Application.Services
                     for (int j = 0; j < properties.Length; j++)
                     {
                         var value = properties[j].GetValue(data[i]);
-                        worksheet.Cell(i + 2, j + 1).Value = ConvertToFriendlyValue(value);
+                        worksheet.Cell(i + 2, j + 1).Value = ServiceBaseAsync<TEntity>.ConvertToFriendlyValue(value);
                     }
                 }
 
@@ -261,7 +259,7 @@ namespace Template.Application.Services
                     // Header
                     foreach (var property in properties)
                     {
-                        var propertyName = GetDisplayName(property);
+                        var propertyName = ServiceBaseAsync<TEntity>.GetDisplayName(property);
                         table.AddHeaderCell(new Cell().Add(new Paragraph(propertyName)));
                     }
 
@@ -270,7 +268,7 @@ namespace Template.Application.Services
                     {
                         foreach (var property in properties)
                         {
-                            var value = ConvertToFriendlyValue(property.GetValue(item));
+                            var value = ServiceBaseAsync<TEntity>.ConvertToFriendlyValue(property.GetValue(item));
                             table.AddCell(new Cell().Add(new Paragraph(value)));
                         }
                     }
@@ -285,7 +283,7 @@ namespace Template.Application.Services
                 return stream.ToArray();
             }
         }
-        private byte[] GenerateWord<TDestination>(string title, IList<TDestination> data)
+        private static byte[] GenerateWord<TDestination>(string title, IList<TDestination> data)
         {
             using (var stream = new MemoryStream())
             {
@@ -304,7 +302,7 @@ namespace Template.Application.Services
                     // Header
                     for (int i = 0; i < properties.Length; i++)
                     {
-                        var propertyName = GetDisplayName(properties[i]);
+                        var propertyName = ServiceBaseAsync<TEntity>.GetDisplayName(properties[i]);
                         table.Rows[0].Cells[i].Paragraphs[0].Append(propertyName).Bold();
                     }
 
@@ -314,7 +312,7 @@ namespace Template.Application.Services
                         var item = data[i];
                         for (int j = 0; j < properties.Length; j++)
                         {
-                            var value = ConvertToFriendlyValue(properties[j].GetValue(item));
+                            var value = ServiceBaseAsync<TEntity>.ConvertToFriendlyValue(properties[j].GetValue(item));
                             table.Rows[i + 1].Cells[j].Paragraphs[0].Append(value);
                         }
                     }
@@ -332,13 +330,13 @@ namespace Template.Application.Services
                 return stream.ToArray();
             }
         }
-        private string GetDisplayName(PropertyInfo property)
+        private static string GetDisplayName(PropertyInfo property)
         {
             var displayName = property.GetCustomAttribute<DisplayNameAttribute>();
             return displayName?.Name ?? property.Name;
         }
 
-        private TSpecification SpecificationCreatorInstance<TSpecification>(IQueryParametersBase request, bool applyPagination = true) where TSpecification : ISpecification<TEntity>
+        private static TSpecification SpecificationCreatorInstance<TSpecification>(IQueryParametersBase request, bool applyPagination = true) where TSpecification : ISpecification<TEntity>
         {
             var type = typeof(TSpecification);
             object[] constructorArguments = new object[] { request, applyPagination };
@@ -346,16 +344,16 @@ namespace Template.Application.Services
             return spec;
         }
 
-        private string ConvertToFriendlyValue(object? value)
+        private static string ConvertToFriendlyValue(object? value)
         {
             if (value is null)
                 return string.Empty;
 
-            if (value is DateTime)
-                return ((DateTime)value).ToString("yyyy-MM-dd");
+            if (value is DateTime time)
+                return time.ToString("yyyy-MM-dd");
 
-            if (value is bool)
-                return (bool)value ? "Si" : "No";
+            if (value is bool v)
+                return v ? "Si" : "No";
 
             return value.ToString() ?? string.Empty;
         }
