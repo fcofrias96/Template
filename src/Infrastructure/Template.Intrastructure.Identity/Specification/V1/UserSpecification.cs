@@ -37,7 +37,7 @@ namespace Template.Identity.Specification.V1
         {
             Skip = request.Offset;
             Take = request.Limit;
-            Descending = request.Descending;
+            Descending = request.IsDescending;
             ApplySortBy(request.SortBy ?? "FirstName");
 
             #region Criteria

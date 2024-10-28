@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.DTOs.V1.Token;
-using Template.Application.Models.DTOs.V1.User;
+using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
 using Template.Identity.Settings;

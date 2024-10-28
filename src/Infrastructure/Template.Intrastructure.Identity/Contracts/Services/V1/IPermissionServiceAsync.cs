@@ -1,5 +1,5 @@
 ﻿using Template.Application.Contracts.Services.V1;
-using Template.Application.Models.DTOs.V1.Permission;
+using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Identity.Entities;
 
 

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Template.Application.Models.DTOs.V1.Resource;
+using Template.Application.Models.DTOs.V1.Resources;
 
 namespace Template.Application.Models.DTOs.V1.Auth
 {

@@ -1,4 +1,4 @@
-﻿using Template.Application.Models.DTOs.V1.Email;
+﻿using Template.Application.Models.DTOs.V1.Emails;
 
 namespace Template.Application.Contracts.Services.V1
 {

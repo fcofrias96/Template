@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services;
 using Template.Identity.Contracts.Repositories.V1;
@@ -11,7 +12,14 @@ namespace Template.Identity.Services.V1
 {
     public class RoleServiceAsync : ServiceBaseAsync<Role>, IRoleServiceAsync
     {
-        public RoleServiceAsync(IRoleRepositoryAsync repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache) : base(repository, mapper, httpContext, cache)
+        public RoleServiceAsync(
+            IRoleRepositoryAsync repository,
+            IMapper mapper, 
+            IHttpContextAccessor httpContext, 
+            IMemoryCache cache,
+            ILogger logger
+
+            ) : base(repository, mapper, httpContext, cache, logger)
         {
         }
 

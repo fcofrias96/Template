@@ -14,6 +14,7 @@ namespace Template.Application.Attributes
             if (value is not string strValue)
                 return new ValidationResult("El valor debe ser una cadena de texto en formato 'yyyy-MM-dd'.");
 
+            strValue = strValue.TrimStart('!');
             string[] parts = strValue.Split(new[] { ".." }, StringSplitOptions.None);
 
             if (parts.Length != 2)

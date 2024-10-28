@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Template.Application.Models.DTOs.V1.User;
+using Template.Application.Models.DTOs.V1.Users;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Mappings.V1

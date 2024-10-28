@@ -5,10 +5,9 @@ namespace Template.Application.Contracts
     public interface IQueryParametersBase
     {
         public string? SortBy { get; set; }
-        public bool Descending { get; set; }
+        public bool IsDescending { get; set; }
         int Offset { get; }
         int Limit { get; }
-        public string[] FilterableProperties { get; set; }
-        public List<Field> GetFields();
+        public List<Field> BuildFields();
     }
 }

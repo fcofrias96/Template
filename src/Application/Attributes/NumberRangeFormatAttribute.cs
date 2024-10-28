@@ -18,6 +18,7 @@ namespace Template.Application.Attributes
                 return new ValidationResult("El valor debe ser una cadena de texto.");
             }
 
+            strValue = strValue.TrimStart('!');
             string[] parts = strValue.Split(new string[] { ".." }, StringSplitOptions.None);
 
             if (parts.Length != 2)

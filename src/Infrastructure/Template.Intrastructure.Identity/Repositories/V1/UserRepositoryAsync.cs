@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Security.Claims;
-using Template.Application.Models.DTOs.V1.User;
+using Template.Application.Models.DTOs.V1.Users;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.DbContext.V1;
 using Template.Identity.Entities;

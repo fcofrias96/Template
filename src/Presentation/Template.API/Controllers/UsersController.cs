@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Constants;
-using Template.Application.Models.DTOs.V1.Resource;
-using Template.Application.Models.DTOs.V1.Role;
-using Template.Application.Models.DTOs.V1.User;
+using Template.Application.Models.DTOs.V1.Roles;
+using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
 using Template.Identity.Specification.V1;

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using Template.Application.Exceptions;
-using Template.Application.Models.DTOs.V1.Permission;
+using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Services;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
@@ -21,9 +22,10 @@ namespace Template.Identity.Services.V1
             IHttpContextAccessor httpContext, 
             IMemoryCache cache, 
             IResourceRepositoryAsync resourceRepository,
-            IActionRepositoryAsync actionRepository
+            IActionRepositoryAsync actionRepository,
+            ILogger logger
 
-            ) : base(repository, mapper, httpContext, cache)
+            ) : base(repository, mapper, httpContext, cache, logger)
         {
             _permissionRepository = repository;
             _resourceRepository = resourceRepository;

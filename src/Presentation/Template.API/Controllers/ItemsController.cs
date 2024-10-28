@@ -3,7 +3,7 @@ using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Enums;
-using Template.Application.Models.DTOs.V1.Item;
+using Template.Application.Models.DTOs.V1.Items;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
 

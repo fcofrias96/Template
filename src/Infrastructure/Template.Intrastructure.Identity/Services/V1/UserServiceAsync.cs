@@ -6,7 +6,7 @@ using System.Data;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
-using Template.Application.Models.DTOs.V1.User;
+using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Application.Utilities;
 using Template.Identity.Contracts.Repositories.V1;

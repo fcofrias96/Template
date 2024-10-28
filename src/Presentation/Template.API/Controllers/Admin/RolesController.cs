@@ -4,7 +4,7 @@ using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Extensions;
-using Template.Application.Models.DTOs.V1.Role;
+using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
 

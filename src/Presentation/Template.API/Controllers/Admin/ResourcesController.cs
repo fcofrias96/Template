@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
-using Template.Application.Models.DTOs.V1.Resource;
+using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
 

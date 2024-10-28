@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
-using Template.Application.Models.DTOs.V1.Permission;
+using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
 

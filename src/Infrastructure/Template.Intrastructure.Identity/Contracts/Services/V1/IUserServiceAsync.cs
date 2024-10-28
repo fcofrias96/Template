@@ -1,4 +1,4 @@
-﻿using Template.Application.Models.DTOs.V1.User;
+﻿using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Entities;
 using Template.Identity.Specification.V1;

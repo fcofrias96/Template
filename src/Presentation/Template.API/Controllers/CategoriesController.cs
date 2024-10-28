@@ -7,7 +7,9 @@ using Template.Application.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Enums;
-using Template.Application.Models.DTOs.V1.Category;
+using Template.Application.Models.DTOs.V1.Categories;
+using Template.Application.Models.DTOs.V1.Items;
+using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
 
 namespace Template.Api.Controllers
@@ -50,9 +52,9 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, Actions.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDTO>>>> GetAllCategoriesAsync()
+        public async Task<ActionResult<ApiResponse<List<CategoryListDTO>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
         {
-            var response = await _categoryServiceAsync.GetAllProjectedAsync<CategoryListDTO>();
+            var response = await _categoryServiceAsync.GetAllProjectedWithPaginationAsync<CategoryListDTO, CategorySpecification>(request);
             return Ok(response);
         }
 

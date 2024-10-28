@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Serilog;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using Template.Application.Contracts;
@@ -15,16 +16,19 @@ namespace Template.Application.Models.Specification
     /// <typeparam name="TEntity">The type of entity for which the specification is defined.</typeparam>
     public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
     {
-        protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination)
+        private readonly ILogger _logger;
+        protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination, ILogger logger)
         {
             if (applyPagination)
             {
                 Skip = queryParametersBase.Offset;
                 Take = queryParametersBase.Limit;
             }
-            MakeCriteria(queryParametersBase.GetFields());
-            Descending = queryParametersBase.Descending;
+
+            Descending = queryParametersBase.IsDescending;
+            BuildCriteria(queryParametersBase.BuildFields());
             ApplySortBy(queryParametersBase.SortBy ?? "Created");
+            _logger = logger;
         }
 
 
@@ -77,7 +81,7 @@ namespace Template.Application.Models.Specification
         }
 
 
-        private void MakeCriteria(List<Field>  fields )
+        private void BuildCriteria(List<Field>  fields )
         {
             fields.ForEach(field =>
             {
@@ -87,8 +91,6 @@ namespace Template.Application.Models.Specification
                 if (field.Range)
                 {
                     var array = (Array)field.Values;
-
-
                     var min = array.GetValue(0);
                     var max = array.GetValue(1);
 
@@ -114,16 +116,11 @@ namespace Template.Application.Models.Specification
         }
 
 
-        public static object ConvertToType(Type type, object value)
+        public object? ConvertToType(Type type, object value)
         {
-            if (value == null)
+            if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                if (type.IsClass || Nullable.GetUnderlyingType(type) != null)
-                {
-                    return null;
-                }
-
-                return Activator.CreateInstance(type);
+                return type.IsValueType ? Activator.CreateInstance(type) : null;
             }
 
             if (value.GetType().IsArray)
@@ -177,8 +174,8 @@ namespace Template.Application.Models.Specification
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al convertir el valor '{value}' al tipo {type.Name}: {ex.Message}");
-                return null;
+                _logger.Error("Error al convertir el valor '{value}' al tipo {type.Name}: {ex.Message}", value, type.Name, ex.Message);
+                throw;
             }
         }
     }

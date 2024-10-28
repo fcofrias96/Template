@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using System.Text.Json.Serialization;
+using Template.Application.Attributes;
 using Template.Application.Contracts;
 
 namespace Template.Application.Utilities
@@ -7,71 +7,50 @@ namespace Template.Application.Utilities
     public abstract class QueryParametersBase<TEntity> : IQueryParametersBase
     {
         public abstract string? SortBy { get; set; }
-        public abstract string[] FilterableProperties { get; set; }
-        public string? Filter { get; set; }
-        public bool Descending { get; set; }
-        public int Offset { get; set; }
-        public int Limit { get; set; } = 30;
+        public bool IsDescending { get; set; }
+        public int Offset { get;  }
+        public int Limit { get; } = 30;
 
-        public List<Field> GetFields()
+        private readonly (Type AttributeType, string Separator, bool IsRange)[] AttributeFormats = 
         {
+            (typeof(NumberListFormatAttribute), ",", false),
+            (typeof(GuidListFormatAttribute), ",", false),
+            (typeof(DateRangeFormatAttribute), "..", true),
+            (typeof(NumberRangeFormatAttribute), "..", true)
+        };
 
-            if (string.IsNullOrEmpty(Filter)) return (List<Field>)Enumerable.Empty<Field>();
-            Type type = typeof(TEntity);
+        private readonly string[] DefaultProperties =
+        {
+            nameof(SortBy),
+            nameof(IsDescending),
+            nameof(Offset),
+            nameof(Limit)
+        };
 
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                             .Where(p => FilterableProperties.Contains(p.Name));
-
-
-
-            var filters = Filter.Split(',');
+        public List<Field> BuildFields()
+        {
             var fields = new List<Field>();
+            var derivedType = this.GetType();
 
-            foreach (var filter in filters)
+            var properties = derivedType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                        .Where(p => !DefaultProperties.Contains(p.Name));
+
+            foreach (var property in properties)
             {
-                var data = filter.Split(':');
-                var propertyName = data[0];
-                var property = properties.FirstOrDefault(p => p.Name == propertyName);
+                var propertyValue = GetPropertyValue(property);
+                if (string.IsNullOrEmpty(propertyValue)) continue;
 
-                if (property == null)
-                {
-                    throw new Exception();
-                }
+                bool isExclusion =  IsExclusion(ref propertyValue);
+                bool isRange = false;
+                object value = ProcessValue(property, propertyValue, ref isRange);
 
-                object values;
-                bool exclude = false;
-                bool range = false;
-
-
-                if (data[1].StartsWith('!'))
-                {
-                    var cleanedData = data[1].Substring(2, data[1].Length - 2);
-                    values = cleanedData.Split('|');
-                    exclude = true;
-                }
-                else if (data[1].StartsWith('{') && data[1].EndsWith('}'))
-                {
-                    var cleanedData = data[1].Substring(1, data[1].Length - 2);
-                    values = cleanedData.Split('|');
-                }
-                else if (data[1].StartsWith('[') && data[1].EndsWith(']'))
-                {
-                    var cleanedData = data[1].Substring(1, data[1].Length - 2);
-                    values = cleanedData.Split("..");
-                    range = true;
-                }
-                else
-                {
-                    values = data[1];
-                }
-
-
+                var entityProperty = GetEntityProperty(property.Name);
                 var field = new Field
                 {
-                    PropertyInfo = property,
-                    Values = values,
-                    Exclude = exclude,
-                    Range = range
+                    PropertyInfo = entityProperty,
+                    Values = value,
+                    Exclude = isExclusion,
+                    Range = isRange
                 };
 
                 fields.Add(field);
@@ -80,10 +59,43 @@ namespace Template.Application.Utilities
             return fields;
         }
 
+        private string? GetPropertyValue(PropertyInfo property)
+        {
+            return property.GetValue(this)?.ToString();
+        }
 
+        private static bool IsExclusion(ref string propertyValue)
+        {
+            if (propertyValue.StartsWith('!'))
+            {
+                propertyValue = propertyValue.Substring(1);
+                return true;
+            }
+            return false;
+        }
+
+        private object ProcessValue(PropertyInfo property, string propertyValue, ref bool isRange)
+        {
+            foreach (var (attributeType, separator, isRangeFlag) in AttributeFormats)
+            {
+                if (property.IsDefined(attributeType))
+                {
+                    isRange = isRangeFlag;
+                    return propertyValue.Split(separator);
+                }
+            }
+            return propertyValue;
+        }
+
+        private static PropertyInfo GetEntityProperty(string propertyName)
+        {
+            var entityProperty = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            if (entityProperty == null)
+            {
+                throw new Exception($"The class '{typeof(TEntity).Name}' does not contain a property named '{propertyName}'.");
+            }
+            return entityProperty;
+        }
     }
 
-
-
-  
 }

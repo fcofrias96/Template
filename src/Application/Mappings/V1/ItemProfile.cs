@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Template.Application.Models.DTOs.V1.Item;
+using Template.Application.Models.DTOs.V1.Items;
 using Template.Domain.Entities.V1;
 
 namespace Template.Application.Mappings.V1

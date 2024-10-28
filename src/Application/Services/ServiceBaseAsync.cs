@@ -6,6 +6,7 @@ using iText.Layout.Properties;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using System.Reflection;
 using Template.Application.Attributes;
 using Template.Application.Contracts;
@@ -30,15 +31,17 @@ namespace Template.Application.Services
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
         private readonly IAsyncRepository<TEntity> _repository;
+        private readonly ILogger _logger;
 
         #endregion Private Variable
 
-        public ServiceBaseAsync(IAsyncRepository<TEntity> repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache)
+        public ServiceBaseAsync(IAsyncRepository<TEntity> repository, IMapper mapper, IHttpContextAccessor httpContext, IMemoryCache cache, ILogger logger)
         {
             _repository = repository;
             _mapper = mapper;
             _httpContext = httpContext;
             _cache = cache;
+            _logger = logger;
         }
 
         #region Public Methods
@@ -68,7 +71,7 @@ namespace Template.Application.Services
         public async Task<byte[]> ExportToExcelAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
-            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, false);
+            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
             var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
 
             return GenerateExcel(title, data);
@@ -86,7 +89,7 @@ namespace Template.Application.Services
         public async Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
-            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, false);
+            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
             var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
             return GeneratePdf(title, data);
         }
@@ -100,7 +103,7 @@ namespace Template.Application.Services
         public async Task<byte[]> ExportToWordAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
-            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, false);
+            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
             var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
             return GenerateWord(title, data);
         }
@@ -128,7 +131,7 @@ namespace Template.Application.Services
         where TSpecification : ISpecification<TEntity>
         {
 
-            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters);
+            var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger);
 
             if (spec.Skip % spec.Take != 0)
             {
@@ -336,10 +339,10 @@ namespace Template.Application.Services
             return displayName?.Name ?? property.Name;
         }
 
-        private static TSpecification SpecificationCreatorInstance<TSpecification>(IQueryParametersBase request, bool applyPagination = true) where TSpecification : ISpecification<TEntity>
+        private static TSpecification SpecificationCreatorInstance<TSpecification>(IQueryParametersBase request, ILogger logger, bool applyPagination = true) where TSpecification : ISpecification<TEntity>
         {
             var type = typeof(TSpecification);
-            object[] constructorArguments = new object[] { request, applyPagination };
+            object[] constructorArguments = new object[] { request, applyPagination, logger };
             var spec = (TSpecification)Activator.CreateInstance(type, constructorArguments)!;
             return spec;
         }

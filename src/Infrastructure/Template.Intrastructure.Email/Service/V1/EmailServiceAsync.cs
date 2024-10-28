@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using System.Net.Security;
 using Template.Application.Contracts.Services.V1;
-using Template.Application.Models.DTOs.V1.Email;
+using Template.Application.Models.DTOs.V1.Emails;
 using Template.Email.Settings;
 
 namespace Template.Email.Service.V1
