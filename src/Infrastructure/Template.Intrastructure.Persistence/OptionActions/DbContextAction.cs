@@ -14,13 +14,14 @@ namespace Template.Persistence.OptionActions
             {
                 options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
-                            .EnableRetryOnFailure(
-                                maxRetryCount: 3,
-                                maxRetryDelay: TimeSpan.FromSeconds(30),
-                                errorNumbersToAdd: null)
+                            //.EnableRetryOnFailure(
+                            //    maxRetryCount: 3,
+                            //    maxRetryDelay: TimeSpan.FromSeconds(30),
+                            //    errorNumbersToAdd: null)
 
-                                ) 
-                .LogTo(Console.WriteLine, LogLevel.Information);
+                             )
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                ;
             };
 
             return Options;

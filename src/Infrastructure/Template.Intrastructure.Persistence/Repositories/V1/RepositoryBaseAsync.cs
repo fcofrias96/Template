@@ -15,11 +15,13 @@ namespace Template.Persistence.Repositories.V1
 
         private readonly IConfigurationProvider _configurationProvider;
         private readonly ApplicationDbContext _dbContext;
+        protected readonly DbSet<TEntity> _dbSet;
         #endregion Private Variable
 
         public RepositoryBaseAsync(ApplicationDbContext context, IConfigurationProvider configurationProvider)
         {
             _dbContext = context;
+            _dbSet = _dbContext.Set<TEntity>();
             _configurationProvider = configurationProvider;
         }
 
@@ -34,13 +36,13 @@ namespace Template.Persistence.Repositories.V1
 
         public async Task DeleteAsync(TEntity entity)
         {
-            _dbContext.Set<TEntity>().Remove(entity);
+            _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<List<TDestination>> GetAllProjectedAsync<TDestination>()
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
@@ -48,8 +50,8 @@ namespace Template.Persistence.Repositories.V1
 
         public async Task<List<TDestination>> GetAllProjectedWithPaginationAsync<TDestination>(ISpecification<TEntity> spec)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
-            query = ApplySpecification(query, spec);
+            var query = _dbSet.AsQueryable();
+            query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
@@ -57,8 +59,8 @@ namespace Template.Persistence.Repositories.V1
 
         public async Task<IList<TDestination>> GetAllProjectedToExportAsync<TDestination>(ISpecification<TEntity> spec)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
-            query = ApplySpecification(query, spec, applyPagination: false );
+            var query = _dbSet.AsQueryable();
+            query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec, applyPagination: false );
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
@@ -67,12 +69,12 @@ namespace Template.Persistence.Repositories.V1
 
         public async Task<TEntity?> GetByIdAsync<TKey>(TKey id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
                               .Where(x => x.Id.Equals(id))
                               .ProjectTo<TDestination>(_configurationProvider)
@@ -82,11 +84,11 @@ namespace Template.Persistence.Repositories.V1
         {
             if (criteria == null)
             {
-                return await _dbContext.Set<TEntity>().CountAsync();
+                return await _dbSet.CountAsync();
             }
             else
             {
-                return await _dbContext.Set<TEntity>().Where(criteria).CountAsync();
+                return await _dbSet.Where(criteria).CountAsync();
             }
         }
 
@@ -101,7 +103,7 @@ namespace Template.Persistence.Repositories.V1
 
 
 
-        private IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true)
+        private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true)
         {
             if (spec.Criteria != null)
             {

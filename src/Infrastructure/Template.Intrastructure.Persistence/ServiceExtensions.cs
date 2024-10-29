@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.V1;
 using Template.Persistence.DbContexts;
 using Template.Persistence.DbContexts.V1;
@@ -30,6 +31,7 @@ namespace Template.Persistence
             #region Dependency Injection
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(RepositoryBaseAsync<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
 
