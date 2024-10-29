@@ -78,7 +78,7 @@ namespace Template.Api.Middlewares
                                     break;
                                 case SqlErrorCodes.ForeignKeyViolation:
                                     statusCode = StatusCodes.Status400BadRequest;
-                                    message = "No se puede eliminar o actualizar el registro debido a restricciones de integridad referencial.";
+                                    message = "No se puede agregar, actualizar o eliminar el registro debido a restricciones de integridad referencial.";
                                     break;
                                 default:
                                     statusCode = StatusCodes.Status500InternalServerError;
