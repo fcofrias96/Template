@@ -24,7 +24,7 @@ namespace Template.Application.Contracts.Services.V1
 
         Task<byte[]> ExportToWordAsync<TDestination>(string title);
 
-        Task<ApiResponse<List<TDestination>>> GetAllProjectedAsync<TDestination>();
+        Task<ApiResponse<IReadOnlyList<TDestination>>> GetAllProjectedAsync<TDestination>();
 
         Task<ApiResponse<PagedCollection<TDestination>>> GetAllProjectedWithPaginationAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters) where TSpecification : ISpecification<TEntity>;
 

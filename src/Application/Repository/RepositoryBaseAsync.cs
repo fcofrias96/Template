@@ -14,11 +14,13 @@ namespace Template.Application.Repository
 
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbContext _dbContext;
+        private readonly DbSet<TEntity> _dbSet;
         #endregion Private Variable
 
         public RepositoryBaseAsync(DbContext context, IConfigurationProvider configurationProvider)
         {
             _dbContext = context;
+            _dbSet = _dbContext.Set<TEntity>();
             _configurationProvider = configurationProvider;
         }
 
@@ -33,30 +35,30 @@ namespace Template.Application.Repository
 
         public async Task DeleteAsync(TEntity entity)
         {
-            _dbContext.Set<TEntity>().Remove(entity);
+            _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<TDestination>> GetAllProjectedAsync<TDestination>()
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
         }
 
-        public async Task<List<TDestination>> GetAllProjectedWithPaginationAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
         }
 
-        public async Task<IList<TDestination>> GetAllProjectedToExportAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec, applyPagination: false);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
@@ -66,12 +68,12 @@ namespace Template.Application.Repository
 
         public async Task<TEntity?> GetByIdAsync<TKey>(TKey id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
         {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
                               .Where(x => x.Id.Equals(id))
                               .ProjectTo<TDestination>(_configurationProvider)
@@ -81,11 +83,11 @@ namespace Template.Application.Repository
         {
             if (criteria == null)
             {
-                return await _dbContext.Set<TEntity>().CountAsync();
+                return await _dbSet.CountAsync();
             }
             else
             {
-                return await _dbContext.Set<TEntity>().Where(criteria).CountAsync();
+                return await _dbSet.Where(criteria).CountAsync();
             }
         }
 

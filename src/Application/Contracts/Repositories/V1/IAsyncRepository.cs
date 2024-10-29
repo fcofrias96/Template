@@ -1,24 +1,15 @@
-﻿using System.Linq.Expressions;
+﻿using Template.Application.Contracts.Repositories.Base;
 
 namespace Template.Application.Contracts.Repositories.V1
 {
-    public interface IAsyncRepository<TEntity>
+    public interface IAsyncRepository<TEntity> :
+        ICreateRepository<TEntity>,
+        IUpdateRepository<TEntity>,
+        IDeleteRepository<TEntity>,
+        IReadRepository<TEntity>,
+        IExportRepository<TEntity>
     {
-        Task<TEntity> CreateAsync(TEntity entity);
 
-        Task DeleteAsync(TEntity entity);
-
-        Task<List<TDestination>> GetAllProjectedWithPaginationAsync<TDestination>(ISpecification<TEntity> spec);
-
-        Task<List<TDestination>> GetAllProjectedAsync<TDestination>();
-
-        Task<TEntity?> GetByIdAsync<TKey>(TKey id);
-
-        Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id);
-
-        Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria);
-
-        Task UpdateAsync(TEntity entity);
-        Task<IList<TDestination>> GetAllProjectedToExportAsync<TDestination>(ISpecification<TEntity> spec);
     }
+
 }

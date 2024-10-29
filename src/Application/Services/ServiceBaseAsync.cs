@@ -72,7 +72,7 @@ namespace Template.Application.Services
                                         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
-            var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
+            var data = await _repository.GetProjectedForExportAsync<TDestination>(spec);
 
             return GenerateExcel(title, data);
 
@@ -81,7 +81,7 @@ namespace Template.Application.Services
 
         public async Task<byte[]> ExportToExcelAsync<TDestination>(string title)                      
         {
-            var data = await _repository.GetAllProjectedAsync<TDestination>();
+            var data = await _repository.GetProjectedAsync<TDestination>();
             return GenerateExcel(title, data);
         }
 
@@ -90,13 +90,13 @@ namespace Template.Application.Services
                                         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
-            var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
+            var data = await _repository.GetProjectedForExportAsync<TDestination>(spec);
             return GeneratePdf(title, data);
         }
 
         public async Task<byte[]> ExportToPdfAsync<TDestination>(string title)
         {
-            var data = await _repository.GetAllProjectedAsync<TDestination>();
+            var data = await _repository.GetProjectedAsync<TDestination>();
             return GeneratePdf(title, data);
         }
 
@@ -104,27 +104,27 @@ namespace Template.Application.Services
                                         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationCreatorInstance<TSpecification>(queryParameters, _logger, false);
-            var data = await _repository.GetAllProjectedToExportAsync<TDestination>(spec);
+            var data = await _repository.GetProjectedForExportAsync<TDestination>(spec);
             return GenerateWord(title, data);
         }
 
         public async Task<byte[]> ExportToWordAsync<TDestination>(string title)
         {
-            var data = await _repository.GetAllProjectedAsync<TDestination>();
+            var data = await _repository.GetProjectedAsync<TDestination>();
             return GenerateWord(title, data);
         }
 
-        public async Task<ApiResponse<List<TDestination>>> GetAllProjectedAsync<TDestination>()
+        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetAllProjectedAsync<TDestination>()
         {
             string cacheKey = $"{typeof(TEntity).FullName}Cache";
 
-            if (!_cache.TryGetValue(cacheKey, out List<TDestination> mappedEntities))
+            if (!_cache.TryGetValue(cacheKey, out IReadOnlyList<TDestination> mappedEntities))
             {
-                mappedEntities = await _repository.GetAllProjectedAsync<TDestination>();
+                mappedEntities = await _repository.GetProjectedAsync<TDestination>();
                 _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
             }
 
-            return new ApiResponse<List<TDestination>>(mappedEntities);
+            return new ApiResponse<IReadOnlyList<TDestination>>(mappedEntities);
         }
 
         public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetAllProjectedWithPaginationAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters)
@@ -145,7 +145,7 @@ namespace Template.Application.Services
                 throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
             }
 
-            var items = await _repository.GetAllProjectedWithPaginationAsync<TDestination>(spec);
+            var items = await _repository.GetProjectedPaginatedAsync<TDestination>(spec);
             var href = _httpContext?.HttpContext?.Request.GetEncodedUrl()!;
             var next = UrlUtile.GetNextURL(href, spec.Take, spec.Skip, total);
             var prev = UrlUtile.GetPrevURL(href, spec.Take, spec.Skip);
@@ -201,7 +201,7 @@ namespace Template.Application.Services
 
         #region Private Methods
 
-        private byte[] GenerateExcel<TDestination>(string title, IList<TDestination> data)
+        private static byte[] GenerateExcel<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
 
             using (var workbook = new XLWorkbook())
@@ -237,7 +237,7 @@ namespace Template.Application.Services
         }
 
 
-        private byte[] GeneratePdf<TDestination>(string title, IList<TDestination> data)
+        private static byte[] GeneratePdf<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
             using (var stream = new MemoryStream())
             {
@@ -286,7 +286,7 @@ namespace Template.Application.Services
                 return stream.ToArray();
             }
         }
-        private static byte[] GenerateWord<TDestination>(string title, IList<TDestination> data)
+        private static byte[] GenerateWord<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
             using (var stream = new MemoryStream())
             {

@@ -40,7 +40,7 @@ namespace Template.Persistence.Repositories.V1
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<TDestination>> GetAllProjectedAsync<TDestination>()
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
         {
             var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
@@ -48,7 +48,7 @@ namespace Template.Persistence.Repositories.V1
                               .ToListAsync();
         }
 
-        public async Task<List<TDestination>> GetAllProjectedWithPaginationAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec)
         {
             var query = _dbSet.AsQueryable();
             query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec);
@@ -57,7 +57,7 @@ namespace Template.Persistence.Repositories.V1
                               .ToListAsync();
         }
 
-        public async Task<IList<TDestination>> GetAllProjectedToExportAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec)
         {
             var query = _dbSet.AsQueryable();
             query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec, applyPagination: false );
