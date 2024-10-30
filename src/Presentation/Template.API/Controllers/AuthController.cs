@@ -18,7 +18,6 @@ namespace Template.Api.Controllers
         private readonly IAuthServiceAsync _authService;
         private readonly JwtSettings _jwtSettings;
 
-
         public AuthController(IAuthServiceAsync authService, IOptions<JwtSettings> jwtSettings)
         {
             _authService = authService;
@@ -48,14 +47,12 @@ namespace Template.Api.Controllers
             return Ok(confirmaEmail);
         }
 
-
         [HttpPost("resend-confirmation-email")]
         public async Task<ActionResult<ApiResponse>> ResendConfirmationEmailAsync([FromBody] ResendConfirmationEmailDto resendConfirmationEmail)
         {
             var confirmaEmail = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail);
             return Ok(confirmaEmail);
         }
-
 
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDTO)
@@ -64,15 +61,12 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-
         [HttpPost("reset-password")]
         public async Task<ActionResult<ApiResponse>> ResetPasswordAsync(ResetPasswordDto resetPasswordDTO)
         {
             var resetPassword = await _authService.ResetPassword(resetPasswordDTO);
             return Ok(resetPassword);
         }
-
-
 
         [Authorize]
         [HttpPost("change-email")]
@@ -83,9 +77,8 @@ namespace Template.Api.Controllers
         }
 
         [HttpGet("confirm-change-email")]
-        public async Task<ActionResult<ApiResponse>> ConfirmChangeEmailAsync([FromQuery]ConfirmChangeEmailDto confirmChangeEmailDto)
+        public async Task<ActionResult<ApiResponse>> ConfirmChangeEmailAsync([FromQuery] ConfirmChangeEmailDto confirmChangeEmailDto)
         {
-
             var response = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto);
             return Ok(response);
         }
@@ -109,7 +102,6 @@ namespace Template.Api.Controllers
             return Ok(responese);
         }
 
-
         private CookieOptions GetCookieOptions()
         {
             return new CookieOptions
@@ -120,6 +112,5 @@ namespace Template.Api.Controllers
                 Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays)
             };
         }
-
     }
 }

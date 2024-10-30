@@ -11,7 +11,7 @@ using Template.Application.Extensions;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
-using Template.Identity.DbContext.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
 using Template.Identity.Repositories.V1;
 using Template.Identity.Services.V1;
@@ -31,14 +31,14 @@ namespace Template.Identity
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<IdentityContext>(option =>
+                services.AddDbContext<DbContext, IdentityContext>(option =>
                 {
                     option.UseInMemoryDatabase("TemplateIdentity");
                 });
             }
             else
             {
-                services.AddDbContext<IdentityContext>(option =>
+                services.AddDbContext<DbContext, IdentityContext>(option =>
                 {
                     option.UseSqlServer(configuration.GetConnectionString("TemplateIdentityConnection"),
                         optionBuilder => optionBuilder.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)
@@ -74,13 +74,11 @@ namespace Template.Identity
                 options.Tokens.EmailConfirmationTokenProvider = TokenProviders.EmailConfirmation;
                 options.Tokens.PasswordResetTokenProvider = TokenProviders.PasswordReset;
                 options.Tokens.ChangeEmailTokenProvider = TokenProviders.ChangeEmail;
-
             }).AddEntityFrameworkStores<IdentityContext>()
               .AddDefaultTokenProviders()
               .AddTokenProvider<EmailConfirmationTokenProvider<User>>(TokenProviders.EmailConfirmation)
               .AddTokenProvider<PasswordResetTokenProvider<User>>(TokenProviders.PasswordReset)
               .AddTokenProvider<ChangeEmailTokenProvider<User>>(TokenProviders.ChangeEmail);
-
 
             services.Configure<EmailConfirmationTokenProviderOptions>(options =>
             {
@@ -96,7 +94,6 @@ namespace Template.Identity
             {
                 options.TokenLifespan = TimeSpan.FromHours(jwtSettings.ChangeEmailTokenDurationInHours);
             });
-
 
             #endregion Identity
 
@@ -118,8 +115,6 @@ namespace Template.Identity
             services.AddScoped<IRolePermissionServiceAsync, RolePermissionServiceAsync>();
             services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
             services.AddScoped<IUserServiceAsync, UserServiceAsync>();
-
-
 
             #endregion Dependency injection
 
@@ -177,9 +172,7 @@ namespace Template.Identity
                 };
             });
 
-
             #endregion Authentication
-
         }
     }
 }

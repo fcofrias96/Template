@@ -26,7 +26,8 @@ namespace Template.Api.Controllers
             _userServiceAsync = userService;
         }
 
-        #region Actions    
+        #region Actions
+
         [HttpPost("{id}/roles/{roleId}")]
         public async Task<ActionResult> AddToRoleAsync(Guid id, Guid roleId)
         {
@@ -34,7 +35,6 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        
         [HttpPost("{id}/roles")]
         public async Task<ActionResult> AddToRolesAsync(Guid id, [FromBody] RoleIdsDTO roleIdsDTO)
         {
@@ -42,7 +42,6 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -50,7 +49,6 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<UserListDTO>>>> GetAllUsers([FromQuery] UserFilterRequest request)
         {
@@ -58,7 +56,6 @@ namespace Template.Api.Controllers
             return Ok(pagedUsersResult);
         }
 
-        
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UserDetailDTO>>> GetByIdAsync(Guid id)
         {
@@ -66,7 +63,6 @@ namespace Template.Api.Controllers
             return Ok(user);
         }
 
-        
         //[HttpGet("{id}/Modules/{moduleId}")]
         //public async Task<ActionResult<ApiResponse<ResourcePermissionDto>>> GetModuleAsync(Guid id, int moduleId)
         //{
@@ -74,7 +70,6 @@ namespace Template.Api.Controllers
         //    return Ok(permissions);
         //}
 
-        
         //[HttpGet("{id}/Modules")]
         //public async Task<ActionResult<List<ResourcePermissionDto>>> GetModulesAsync(Guid id)
         //{
@@ -82,7 +77,6 @@ namespace Template.Api.Controllers
         //    return Ok(permissions);
         //}
 
-        
         [HttpGet("{id}/roles")]
         public async Task<ActionResult<ApiResponse<List<string>>>> GetRolesAsync(Guid id)
         {
@@ -90,8 +84,6 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        
-        
         [HttpDelete("{id}/roles/{roleId}")]
         public async Task<ActionResult> RemoveRoleAsync(Guid id, Guid roleId)
         {
@@ -99,7 +91,6 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        
         [HttpDelete("{id}/roles")]
         public async Task<ActionResult> RemoveRolesAsync(Guid id, [FromBody] RoleIdsDTO roleIdsDTO)
         {
@@ -113,8 +104,6 @@ namespace Template.Api.Controllers
             await _userServiceAsync.UpdateAsync(id, userUpdateDTO);
             return NoContent();
         }
-
-
 
         #endregion Actions
     }

@@ -8,8 +8,6 @@ namespace Template.Application.Models.Specification.V1
     {
         public ItemSpecification(ItemQueryParameters queryParameters, bool applyPagination, ILogger logger) : base(queryParameters, applyPagination, logger)
         {
-
         }
     }
-
 }

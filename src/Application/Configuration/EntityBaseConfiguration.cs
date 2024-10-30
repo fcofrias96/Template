@@ -23,11 +23,10 @@ namespace Template.Application.Configuration
             builder.Property(x => x.IsDeleted)
                    .HasDefaultValue(false);
 
-            if(typeof(TEntity).Name != "Role")
+            if (typeof(TEntity).Name != "Role")
             {
                 builder.HasQueryFilter(x => !x.IsDeleted);
             }
-            
         }
     }
 }

@@ -55,7 +55,6 @@ namespace Template.Application.Utilities
             }
         }
 
-
         public static Expression<Func<TEntity, bool>> BuildRangeExpression<TEntity>(
           object? minValue, object? maxValue, PropertyInfo property)
         {

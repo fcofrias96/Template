@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using MimeKit;
 using Template.Api.Attributes;
-using Template.Application.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Categories;
-using Template.Application.Models.DTOs.V1.Items;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
 
@@ -46,7 +43,7 @@ namespace Template.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategoryAsync(int id)
         {
-            await _categoryServiceAsync.DeleteLogicalAsync(id);
+            await _categoryServiceAsync.SoftDeleteAsync(id);
             return NoContent();
         }
 
@@ -54,7 +51,7 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<CategoryListDTO>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
         {
-            var response = await _categoryServiceAsync.GetAllProjectedWithPaginationAsync<CategoryListDTO, CategorySpecification>(request);
+            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDTO, CategorySpecification>(request);
             return Ok(response);
         }
 
@@ -73,7 +70,6 @@ namespace Template.Api.Controllers
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO);
             return NoContent();
         }
-
 
         [Permission(Resources.Category, Actions.Export)]
         [HttpGet("export/word")]
@@ -98,7 +94,6 @@ namespace Template.Api.Controllers
             var file = await _categoryServiceAsync.ExportToExcelAsync<CategoryExportDTO>("Categorias");
             return File(file, FileContentType.Excel, "Categories.xlsx");
         }
-
 
         #endregion Actions
     }

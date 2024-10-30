@@ -1,0 +1,101 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Caching.Memory;
+using Serilog;
+using Template.Application.Contracts;
+using Template.Application.Contracts.Repositories.Base;
+using Template.Application.Contracts.Services.Base;
+using Template.Application.Exceptions;
+using Template.Application.Models.Wrappers;
+using Template.Application.Utilities;
+using Template.Domain.Contracts;
+
+namespace Template.Application.Services.Base
+{
+    public class ReadServiceAsync<TEntity> : IReadServiceAsync<TEntity> where TEntity : class, IEntityBase
+    {
+        private readonly IReadRepositoryAsync<TEntity> _readRepositoryAsync;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ILogger _logger;
+        private readonly IMemoryCache _cache;
+
+        public ReadServiceAsync(IReadRepositoryAsync<TEntity> repository, IHttpContextAccessor httpContext, ILogger logger, IMemoryCache cache)
+        {
+            _readRepositoryAsync = repository;
+            _httpContext = httpContext;
+            _logger = logger;
+            _cache = cache;
+        }
+
+        public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        {
+            var mappedEntity = await _readRepositoryAsync.GetByIdProjectedAsync<TKey, TDestination>(id);
+            if (mappedEntity is null)
+            {
+                throw new NotFoundException(typeof(TEntity).Name, id);
+            }
+
+            return new ApiResponse<TDestination>(mappedEntity);
+        }
+
+        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters)
+        where TSpecification : ISpecification<TEntity>
+        {
+            var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger);
+
+            if (spec.Skip % spec.Take != 0)
+            {
+                throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
+            }
+
+            var total = await _readRepositoryAsync.GetTotalCountAsync(spec.Criteria);
+
+            if (total < spec.Skip)
+            {
+                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
+            }
+
+            var items = await _readRepositoryAsync.GetProjectedPaginatedAsync<TDestination>(spec);
+            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl()!;
+            var next = UrlUtile.GetNextURL(href, spec.Take, spec.Skip, total);
+            var prev = UrlUtile.GetPrevURL(href, spec.Take, spec.Skip);
+
+            var pagedCollection = new PagedCollection<TDestination>
+            {
+                HRef = href,
+                Elements = items,
+                Limit = spec.Take,
+                Next = next,
+                Offset = spec.Skip,
+                Prev = prev,
+                Total = total
+            };
+
+            return new ApiResponse<PagedCollection<TDestination>>(pagedCollection);
+        }
+
+        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>()
+        {
+            string cacheKey = $"{typeof(TEntity).FullName}Cache";
+
+            if (!_cache.TryGetValue(cacheKey, out IReadOnlyList<TDestination> mappedEntities))
+            {
+                mappedEntities = await _readRepositoryAsync.GetProjectedAsync<TDestination>();
+                _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
+            }
+
+            return new ApiResponse<IReadOnlyList<TDestination>>(mappedEntities);
+        }
+
+        public async Task<TEntity> GetByIdAsync<TKey>(TKey id)
+        {
+            var entity = await _readRepositoryAsync.GetByIdAsync(id);
+            if (entity is null)
+            {
+                throw new NotFoundException(typeof(TEntity).Name, id);
+            }
+
+            return entity;
+        }
+    }
+}

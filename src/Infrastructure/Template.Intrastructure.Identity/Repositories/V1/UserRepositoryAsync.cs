@@ -3,10 +3,9 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Security.Claims;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Identity.Contracts.Repositories.V1;
-using Template.Identity.DbContext.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
 using Template.Identity.Specification.V1;
 
@@ -24,7 +23,6 @@ namespace Template.Identity.Repositories.V1
             _mapper = mapper;
             _dbContext = dbContext;
         }
-
 
         public Task AddToRoleAsync(IdentityUserRole<string> userRoles)
         {
@@ -62,8 +60,6 @@ namespace Template.Identity.Repositories.V1
                               .ToListAsync();
         }
 
-
-
         public async Task<int> GetTotalRecordsAsync(Expression<Func<User, bool>>? criteria)
         {
             if (criteria == null)
@@ -92,6 +88,5 @@ namespace Template.Identity.Repositories.V1
             _dbContext.UserRoles.RemoveRange(identityUserRoles);
             await _dbContext.SaveChangesAsync();
         }
-
     }
 }

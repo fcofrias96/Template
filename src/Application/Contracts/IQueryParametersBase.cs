@@ -8,6 +8,7 @@ namespace Template.Application.Contracts
         public bool IsDescending { get; set; }
         int Offset { get; }
         int Limit { get; }
+
         public List<Field> BuildFields();
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Template.Application.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    sealed class DisplayNameAttribute : Attribute
+    internal sealed class DisplayNameAttribute : Attribute
     {
         public string Name { get; }
 
@@ -10,5 +10,4 @@
             Name = name;
         }
     }
-
 }

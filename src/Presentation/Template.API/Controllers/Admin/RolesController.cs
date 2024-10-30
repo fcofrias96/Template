@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
-using Template.Application.Extensions;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Identity.Contracts.Services.V1;
@@ -16,7 +15,6 @@ namespace Template.Api.Controllers.Admin
     [Authorize(Roles = Roles.Admin)]
     public class RolesController : ControllerBase
     {
-
         private readonly IRoleServiceAsync _roleService;
         private readonly IRolePermissionServiceAsync _rolePermissionService;
 
@@ -30,7 +28,7 @@ namespace Template.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetRoles()
         {
-            var roles = await _roleService.GetAllProjectedAsync<RoleListDto>();
+            var roles = await _roleService.GetProjectedAsync<RoleListDto>();
             return Ok(roles);
         }
 
@@ -63,7 +61,7 @@ namespace Template.Api.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRole(Guid id)
         {
-            await _roleService.DeleteLogicalAsync(id);
+            await _roleService.SoftDeleteAsync(id);
             return NoContent();
         }
 

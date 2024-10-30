@@ -1,7 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Template.Application.Contracts.Repositories.Base;
+using Template.Application.Contracts.Repositories.V1;
+using Template.Application.Contracts.Services.Base;
+using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Contracts.Services.V1;
-using Template.Application.Services;
+using Template.Application.Repository;
+using Template.Application.Services.Base;
 using Template.Application.Services.V1;
 using Template.Application.SetupOptions;
 
@@ -24,7 +29,16 @@ namespace Template.Application
 
             #region Dependency Injection
 
+            // services
             services.AddScoped(typeof(IAsyncServiceAsync<>), typeof(ServiceBaseAsync<>));
+            services.AddScoped(typeof(ICreateServiceAsync<>), typeof(CreateServiceAsync<>));
+            services.AddScoped(typeof(IDeleteServiceAsync<>), typeof(DeleteServiceAsync<>));
+            services.AddScoped(typeof(IExportServiceAsync<>), typeof(ExportServiceAsync<>));
+            services.AddScoped(typeof(IReadServiceAsync<>), typeof(ReadServiceAsync<>));
+            services.AddScoped(typeof(IUpdateServiceAsync<>), typeof(UpdateServiceAsync<>));
+
+
+
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<ICategoryService, CategoryService>();
 

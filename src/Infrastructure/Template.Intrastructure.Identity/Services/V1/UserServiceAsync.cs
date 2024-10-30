@@ -38,8 +38,6 @@ namespace Template.Identity.Services.V1
             _userManager = userManager;
         }
 
-
-
         public async Task AddToRolesAsync(Guid userId, List<Guid> roles)
         {
             var user = await GetUser(userId);
@@ -59,8 +57,6 @@ namespace Template.Identity.Services.V1
             var userRole = new IdentityUserRole<string> { UserId = user.Id, RoleId = roleId.ToString() };
             await _userRepository.AddToRoleAsync(userRole);
         }
-
-       
 
         public async Task DeleteAsync(Guid userId)
         {
@@ -108,17 +104,16 @@ namespace Template.Identity.Services.V1
         public async Task<ApiResponse<UserDetailDTO>> GetByIdAsync(Guid userId)
         {
             var user = await GetUser(userId);
-            var roles = (List<string>) await _userManager.GetRolesAsync(user);
+            var roles = (List<string>)await _userManager.GetRolesAsync(user);
             var userDTO = _mapper.Map<UserDetailDTO>(user);
             userDTO.Roles = roles;
             return new ApiResponse<UserDetailDTO>(userDTO);
         }
 
-
         public async Task<ApiResponse<List<string>>> GetRolesAsync(Guid userId)
         {
             var user = await GetUser(userId);
-            var roles = (List<string>) await _userManager.GetRolesAsync(user);
+            var roles = (List<string>)await _userManager.GetRolesAsync(user);
             return new ApiResponse<List<string>>(roles);
         }
 
@@ -126,7 +121,6 @@ namespace Template.Identity.Services.V1
         {
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
         }
-
 
         public async Task RemoveFromRolesAsync(Guid userId, List<Guid> roles)
         {
@@ -146,7 +140,6 @@ namespace Template.Identity.Services.V1
             var userRole = new IdentityUserRole<string> { UserId = user.Id, RoleId = roleId.ToString() };
             await _userRepository.RemoveFromRoleAsync(userRole);
         }
-
 
         public async Task UpdateAsync(Guid userId, UserUpdateDTO userUpdateDTO)
         {
@@ -180,11 +173,6 @@ namespace Template.Identity.Services.V1
             return user;
         }
 
-
-
-
-
         #endregion Private Methods
     }
-
 }

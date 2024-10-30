@@ -1,9 +1,9 @@
-﻿using Template.Application.Contracts.Services.V1;
-using Action = Template.Identity.Entities.Action;
+﻿using Template.Application.Models.DTOs.V1.Actions;
 
 namespace Template.Identity.Contracts.Services.V1
 {
-    public interface IActionServiceAsync: IAsyncServiceAsync<Action>
+    public interface IActionServiceAsync
     {
+        Task<IReadOnlyList<ActionListDto>> GetProjectedAsync();
     }
 }

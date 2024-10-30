@@ -6,5 +6,4 @@
         UniqueIndexViolation = 2601,
         ForeignKeyViolation = 547,
     }
-
 }

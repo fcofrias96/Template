@@ -38,8 +38,7 @@ namespace Template.Application.Attributes
 
         private string GetAllowedValuesAsString()
         {
-            return string.Join(", ", AllowedValues.Where(v => v is not null).Select(v =>  v.ToString()));
+            return string.Join(", ", AllowedValues.Where(v => v is not null).Select(v => v.ToString()));
         }
     }
-
 }

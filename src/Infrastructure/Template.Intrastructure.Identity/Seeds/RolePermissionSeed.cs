@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
-using Microsoft.AspNetCore.Identity;
-using Template.Application.Constants;
+﻿using Template.Application.Constants;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Seeds
@@ -51,5 +49,4 @@ namespace Template.Identity.Seeds
             return rolePermissions;
         }
     }
-
 }

@@ -15,7 +15,6 @@ namespace Template.Api.Controllers.Admin
     [Authorize(Roles = Roles.Admin)]
     public class ActionsController : ControllerBase
     {
-
         private readonly IActionServiceAsync _actionService;
 
         public ActionsController(IActionServiceAsync actionService)
@@ -27,9 +26,8 @@ namespace Template.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<ActionListDto>>>> GetActions()
         {
-            var actions = await _actionService.GetAllProjectedAsync<ActionListDto>();
+            var actions = await _actionService.GetProjectedAsync();
             return Ok(actions);
         }
-
     }
 }

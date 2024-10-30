@@ -31,7 +31,6 @@ namespace Template.Identity.Seeds
             }
 
             #endregion User
-
         };
     }
 }

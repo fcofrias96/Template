@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Template.Application.Enums;
-using Template.Identity.Contracts.Services.V1;
 using Template.Application.Extensions;
+using Template.Identity.Contracts.Services.V1;
 
 namespace Template.Api.Attributes
 {
@@ -39,5 +39,4 @@ namespace Template.Api.Attributes
             }
         }
     }
-
 }

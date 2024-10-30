@@ -1,9 +1,8 @@
-﻿
-using Template.Domain.Common;
+﻿using Template.Domain.Common;
 
 namespace Template.Identity.Entities
 {
-    public class  Action : EntityBase<int>
+    public class Action : EntityBase<int>
     {
         public override int Id { get; set; }
         public string Name { get; set; }

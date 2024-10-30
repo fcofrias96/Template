@@ -14,11 +14,17 @@ namespace Template.Identity.Contracts.Services.V1
         Task<ApiResponse> ForgotPassword(ForgotPasswordDto model);
 
         Task<ApiResponse> ResetPassword(ResetPasswordDto model);
+
         Task<ApiResponse> CreateAsync(UserCreateDTO userCreateDTO);
+
         Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto);
+
         Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto);
+
         Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto);
+
         Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken);
+
         Task<ApiResponse> LogoutAsync();
     }
 }

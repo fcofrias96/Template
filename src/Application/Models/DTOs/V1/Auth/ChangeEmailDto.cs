@@ -12,6 +12,5 @@ namespace Template.Application.Models.DTOs.V1.Auth
 
         [Required]
         public string CurrentPassword { get; set; }
-
     }
 }

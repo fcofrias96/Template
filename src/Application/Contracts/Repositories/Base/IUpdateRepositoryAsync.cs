@@ -1,8 +1,7 @@
 ﻿namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IUpdateRepository<TEntity>
+    public interface IUpdateRepositoryAsync<TEntity>
     {
         Task UpdateAsync(TEntity entity);
     }
-
 }

@@ -31,7 +31,6 @@ using Template.Persistence;
         app.UseDeveloperExceptionPage();
     }
 
-
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseMiddleware<ETagMiddleware>();
     app.UseSerilogRequestLogging();

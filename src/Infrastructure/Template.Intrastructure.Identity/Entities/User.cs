@@ -22,7 +22,7 @@ namespace Template.Identity.Entities
             get => Id;
             set => Id = (string)value;
         }
-        public ICollection<UserRole> UserRoles { get; set; } = [];
 
+        public ICollection<UserRole> UserRoles { get; set; } = [];
     }
 }

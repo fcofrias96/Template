@@ -51,7 +51,6 @@ namespace Template.Api.Middlewares
                     var exception = ex.InnerException ?? ex;
                     string message = exception.Message;
 
-
                     #region StatusCode
 
                     switch (exception)
@@ -59,15 +58,19 @@ namespace Template.Api.Middlewares
                         case BadRequestException:
                             statusCode = StatusCodes.Status400BadRequest;
                             break;
+
                         case SecurityTokenException:
                             statusCode = StatusCodes.Status401Unauthorized;
                             break;
+
                         case ForbiddenException:
                             statusCode = StatusCodes.Status403Forbidden;
                             break;
+
                         case NotFoundException:
                             statusCode = StatusCodes.Status404NotFound;
                             break;
+
                         case SqlException sqlEx:
                             switch ((SqlErrorCodes)sqlEx.Number)
                             {
@@ -76,22 +79,24 @@ namespace Template.Api.Middlewares
                                     statusCode = StatusCodes.Status409Conflict;
                                     message = "Ya existe un registro con los mismos datos.";
                                     break;
+
                                 case SqlErrorCodes.ForeignKeyViolation:
                                     statusCode = StatusCodes.Status400BadRequest;
                                     message = "No se puede agregar, actualizar o eliminar el registro debido a restricciones de integridad referencial.";
                                     break;
+
                                 default:
                                     statusCode = StatusCodes.Status500InternalServerError;
                                     message = "Ocurrió un error en la base de datos.";
                                     break;
                             }
                             break;
+
                         default:
                             statusCode = StatusCodes.Status500InternalServerError;
                             message = "Ocurrió un problema en el servidor, por favor contacte al administrador.";
                             break;
                     }
-
 
                     #endregion StatusCode
 

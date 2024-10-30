@@ -15,7 +15,6 @@ namespace Template.Api.Controllers.Admin
     [Authorize(Roles = Roles.Admin)]
     public class ResourcesController : ControllerBase
     {
-
         private readonly IResourceServiceAsync _resourceService;
 
         public ResourcesController(IResourceServiceAsync resourceService)
@@ -27,7 +26,7 @@ namespace Template.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<ResourceListDto>>>> GetResources()
         {
-            var resources = await _resourceService.GetAllProjectedAsync<ResourceListDto>();
+            var resources = await _resourceService.GetProjectedAsync<ResourceListDto>();
             return Ok(resources);
         }
 
@@ -60,7 +59,7 @@ namespace Template.Api.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteResource(int id)
         {
-            await _resourceService.DeleteLogicalAsync(id);
+            await _resourceService.SoftDeleteAsync(id);
             return NoContent();
         }
     }

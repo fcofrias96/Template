@@ -19,7 +19,6 @@ namespace Template.Identity.Configurations.V1
                 .WithOne(p => p.Permission)
                 .HasForeignKey(p => p.PermissionId);
 
-
             builder.HasData(PermissionSeed.Data);
 
             base.Configure(builder);

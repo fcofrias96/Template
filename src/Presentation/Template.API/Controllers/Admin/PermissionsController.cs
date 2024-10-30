@@ -15,7 +15,6 @@ namespace Template.Api.Controllers.Admin
     [Authorize(Roles = Roles.Admin)]
     public class PermissionsController : ControllerBase
     {
-
         private readonly IPermissionServiceAsync _permissionService;
 
         public PermissionsController(IPermissionServiceAsync permissionService)
@@ -27,7 +26,7 @@ namespace Template.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions()
         {
-            var permissions = await _permissionService.GetAllProjectedAsync<PermissionListDto>();
+            var permissions = await _permissionService.GetProjectedAsync<PermissionListDto>();
             return Ok(permissions);
         }
 
@@ -60,7 +59,7 @@ namespace Template.Api.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePermission(int id)
         {
-            await _permissionService.DeleteLogicalAsync(id);
+            await _permissionService.SoftDeleteAsync(id);
             return NoContent();
         }
     }

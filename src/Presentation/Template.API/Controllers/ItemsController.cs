@@ -31,7 +31,7 @@ namespace Template.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
-            await _itemServiceAsync.DeletePermanentAsync(id);
+            await _itemServiceAsync.PermanentDeleteAsync(id);
             return NoContent();
         }
 
@@ -47,7 +47,7 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDTO>>>> GetAllAsync([FromQuery] ItemQueryParameters request)
         {
-            var response = await _itemServiceAsync.GetAllProjectedWithPaginationAsync<ItemListDTO, ItemSpecification>(request);
+            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDTO, ItemSpecification>(request);
             return Ok(response);
         }
 
@@ -67,7 +67,6 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-
         [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync([FromQuery] ItemQueryParameters request)
@@ -76,18 +75,17 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Word, "Items.docx");
         }
 
-
         [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDTO, ItemSpecification> ("Lista de Artículos", request);
+            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDTO, ItemSpecification>("Lista de Artículos", request);
             return File(file, FileContentType.Pdf, "Items.pdf");
         }
 
         [Permission(Resources.Item, Actions.Export)]
         [HttpGet("export/excel")]
-        public async Task<FileResult> ExportToExcelAsync([FromQuery]ItemQueryParameters request)
+        public async Task<FileResult> ExportToExcelAsync([FromQuery] ItemQueryParameters request)
         {
             var file = await _itemServiceAsync.ExportToExcelAsync<ItemExportDTO, ItemSpecification>("Artículos", request);
             return File(file, FileContentType.Excel, "Items.xlsx");

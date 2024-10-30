@@ -29,15 +29,11 @@ namespace Template.Application.Attributes
             DateTime startDate = default;
             DateTime endDate = default;
 
-
             if (hasStartDate && !DateTime.TryParseExact(parts[0], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                 return new ValidationResult("La fecha inicial no es válida. El formato aceptado es 'yyyy-MM-dd'.");
 
-
-
             if (hasEndDate && !DateTime.TryParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                 return new ValidationResult("La fecha final no es válida. El formato aceptado es 'yyyy-MM-dd'.");
-
 
             if (hasStartDate && hasEndDate && startDate > endDate)
                 return new ValidationResult("La fecha inicial debe ser anterior o igual a la fecha final.");

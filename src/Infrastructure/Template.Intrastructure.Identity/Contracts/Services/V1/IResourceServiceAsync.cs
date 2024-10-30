@@ -3,7 +3,7 @@ using Template.Identity.Entities;
 
 namespace Template.Identity.Contracts.Services.V1
 {
-    public interface IResourceServiceAsync:IAsyncServiceAsync<Resource>
+    public interface IResourceServiceAsync : IAsyncServiceAsync<Resource>
     {
     }
 }

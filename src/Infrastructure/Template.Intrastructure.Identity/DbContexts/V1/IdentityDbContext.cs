@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Template.Identity.Configurations.V1;
 using Template.Identity.Entities;
 
-namespace Template.Identity.DbContext.V1
+namespace Template.Identity.DbContexts.V1
 {
     public class IdentityContext : IdentityDbContext<User, Role, string>
     {

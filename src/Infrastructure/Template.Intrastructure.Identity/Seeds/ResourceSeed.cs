@@ -1,6 +1,6 @@
 ﻿using Template.Application.Enums;
-using Template.Identity.Entities;
 using Template.Application.Extensions;
+using Template.Identity.Entities;
 
 namespace Template.Identity.Seeds
 {

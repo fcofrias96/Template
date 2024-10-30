@@ -35,24 +35,20 @@ namespace Template.Application.Attributes
                 return new ValidationResult("Formato inválido. Debe proporcionar al menos un número.");
             }
 
-
             if (hasNum1 && !double.TryParse(parts[0], NumberStyles.Number, CultureInfo.InvariantCulture, out num1))
             {
                 return new ValidationResult($"El primer número '{parts[0]}' no es válido.");
             }
-
 
             if (hasNum2 && !double.TryParse(parts[1], NumberStyles.Number, CultureInfo.InvariantCulture, out num2))
             {
                 return new ValidationResult($"El segundo número '{parts[1]}' no es válido.");
             }
 
-
             if (hasNum1 && hasNum2 && num1 > num2)
             {
                 return new ValidationResult($"El primer número ({num1}) debe ser menor o igual al segundo número ({num2}).");
             }
-
 
             return ValidationResult.Success;
         }

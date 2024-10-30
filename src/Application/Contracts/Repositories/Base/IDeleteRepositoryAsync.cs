@@ -1,8 +1,7 @@
 ﻿namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IDeleteRepository<TEntity>
+    public interface IDeleteRepositoryAsync<TEntity>
     {
         Task DeleteAsync(TEntity entity);
     }
-
 }

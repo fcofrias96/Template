@@ -11,5 +11,4 @@
         public int RefreshTokenDurationInDays { get; set; }
         public int ChangeEmailTokenDurationInHours { get; set; }
     }
-
 }

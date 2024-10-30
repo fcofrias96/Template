@@ -17,6 +17,7 @@ namespace Template.Application.Models.Specification
     public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
     {
         private readonly ILogger _logger;
+
         protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination, ILogger logger)
         {
             if (applyPagination)
@@ -30,7 +31,6 @@ namespace Template.Application.Models.Specification
             ApplySortBy(queryParametersBase.SortBy ?? "Created");
             _logger = logger;
         }
-
 
         public Expression<Func<TEntity, bool>>? Criteria { get; protected set; }
         public bool Descending { get; private set; }
@@ -60,9 +60,10 @@ namespace Template.Application.Models.Specification
 
             SortBy = lambda;
         }
+
         /// <summary>
-        /// Updates the current filtering criteria by combining it with a new expression. 
-        /// If the <paramref name="exclude"/> parameter is set to true, the expression is combined using an AND NOT operation, 
+        /// Updates the current filtering criteria by combining it with a new expression.
+        /// If the <paramref name="exclude"/> parameter is set to true, the expression is combined using an AND NOT operation,
         /// excluding items that match the expression. Otherwise, it is combined using an AND operation, including items that match.
         /// </summary>
         /// <param name="expression">The filtering expression to be combined with the existing criteria.</param>
@@ -80,8 +81,7 @@ namespace Template.Application.Models.Specification
             }
         }
 
-
-        private void BuildCriteria(List<Field>  fields )
+        private void BuildCriteria(List<Field> fields)
         {
             fields.ForEach(field =>
             {
@@ -111,10 +111,8 @@ namespace Template.Application.Models.Specification
                 }
 
                 CombineCriteria(expression, field.Exclude);
-
             });
         }
-
 
         public object? ConvertToType(Type type, object value)
         {

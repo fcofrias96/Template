@@ -32,6 +32,7 @@ namespace Template.Identity.Services.V1
         private readonly UserManager<User> _userManager;
         private readonly IUserServiceAsync _userServiceAsync;
         private List<string> _userRoles;
+
         public AuthServiceAsync(
             IEmailServiceAsync emailServiceAsync,
             IOptions<JwtSettings> jwtSettings,
@@ -52,14 +53,12 @@ namespace Template.Identity.Services.V1
 
         public async Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto)
         {
-
             var currentUserId = GetCurrentUserId();
 
             if (currentUserId != changeEmailDto.UserId.ToString())
             {
                 throw new ForbiddenException();
             }
-
 
             var user = await FindUserByIdAsync(changeEmailDto.UserId.ToString());
             var passwordValid = await _userManager.CheckPasswordAsync(user, changeEmailDto.CurrentPassword);
@@ -71,7 +70,6 @@ namespace Template.Identity.Services.V1
             {
                 throw new BadRequestException("New email address is the same as the current email address.");
             }
-
 
             var changeEmailLink = await GenerateChangeEmailLinkAsync(user, changeEmailDto.NewEmail);
             var emailDto = CreateChangeEmailNotification(user, changeEmailDto.NewEmail, changeEmailLink);
@@ -99,7 +97,6 @@ namespace Template.Identity.Services.V1
 
             await RevokeTokenAsync(user.Id);
             return new ApiResponse("Your email address has been successfully changed.");
-
         }
 
         public async Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto)
@@ -176,7 +173,6 @@ namespace Template.Identity.Services.V1
 
             if (user != null)
             {
-
                 if (!user.EmailConfirmed)
                 {
                     throw new BadRequestException($"Email for user '{model.Email}' is not confirmed.");
@@ -187,7 +183,6 @@ namespace Template.Identity.Services.V1
                 var baseUrl = $"{_jwtSettings.Audience}/reset-password";
                 var resetPasswordUrl = QueryHelpers.AddQueryString(baseUrl, "token", encodedToken);
                 resetPasswordUrl = QueryHelpers.AddQueryString(resetPasswordUrl, "userId", user.Id);
-
 
                 var tokenDuration = _jwtSettings.PasswordResetTokenDurationInHours;
                 string duration = $"{tokenDuration} hour{(tokenDuration >= 2 ? "s" : "")}";
@@ -211,24 +206,20 @@ namespace Template.Identity.Services.V1
                     Subject = "Reset Password",
                 };
                 await _emailServiceAsync.SendEmailAsync(emailRequest);
-
             }
 
             return new ApiResponse("If an account with that email exists, a password reset link has been sent. Please check your email.");
         }
-
 
         public async Task<ApiResponse> LogoutAsync()
         {
             var userId = GetCurrentUserId();
             await RevokeTokenAsync(userId);
             return new ApiResponse("Logged out successfully");
-
         }
 
         public async Task<ApiResponse<AuthenticationResponseDTO>> LoginAsync(LoginDto loginDto)
         {
-
             var user = await FindUserByEmailAsync(loginDto.Email);
 
             if (!user.EmailConfirmed)
@@ -245,7 +236,6 @@ namespace Template.Identity.Services.V1
             {
                 throw new BadRequestException($"User account '{loginDto.Email}' is inactivated.");
             }
-
 
             var result = await _singInManager.PasswordSignInAsync(user, loginDto.Password, isPersistent: true, lockoutOnFailure: true); ;
 
@@ -281,12 +271,10 @@ namespace Template.Identity.Services.V1
             {
                 throw new BadRequestException($"Invalid login attempt for user '{loginDto.Email}'.");
             }
-
         }
 
         public async Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken)
         {
-
             if (string.IsNullOrEmpty(refreshToken))
             {
                 throw new ForbiddenException("No refresh token provided");
@@ -319,7 +307,6 @@ namespace Template.Identity.Services.V1
             };
 
             return new ApiResponse<RefreshTokenResponseDto>(response);
-
         }
 
         public async Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto)
@@ -339,7 +326,6 @@ namespace Template.Identity.Services.V1
             }
             return new ApiResponse("If an account with that email exists, a confirmation email has been resent. Please check your email.");
         }
-
 
         public async Task<ApiResponse> ResetPassword(ResetPasswordDto model)
         {
@@ -361,7 +347,6 @@ namespace Template.Identity.Services.V1
 
         private EmailDto CreateChangeEmailNotification(User user, string newEmail, string changeEmailLink)
         {
-
             var tokenDuration = _jwtSettings.ChangeEmailTokenDurationInHours;
             string duration = $"{tokenDuration} hour{(tokenDuration >= 2 ? "s" : "")}";
 
@@ -383,7 +368,6 @@ namespace Template.Identity.Services.V1
                 </body>
                 </html>"
             };
-
         }
 
         private EmailDto CreateConfirmationEmail(User user, string emailConfirmationLink)
@@ -408,7 +392,6 @@ namespace Template.Identity.Services.V1
             </html>",
                 Subject = "Confirm Registration"
             };
-
         }
 
         private async Task<User> FindUserByEmailAsync(string email)
@@ -432,6 +415,7 @@ namespace Template.Identity.Services.V1
 
             return user;
         }
+
         private async Task<string> GenerateChangeEmailLinkAsync(User user, string newEmail)
         {
             var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
@@ -464,6 +448,7 @@ namespace Template.Identity.Services.V1
 
             return emailVerificationLink;
         }
+
         private async Task<JwtSecurityToken> GenerateJWTokenAsync(User user)
         {
             var userClaimList = await _userManager.GetClaimsAsync(user);
@@ -498,8 +483,6 @@ namespace Template.Identity.Services.V1
             return jwtSecurityToken;
         }
 
-
-
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -512,7 +495,5 @@ namespace Template.Identity.Services.V1
         {
             return _httpContext.HttpContext?.User?.FindFirst("userId")?.Value ?? string.Empty;
         }
-
     }
-
 }

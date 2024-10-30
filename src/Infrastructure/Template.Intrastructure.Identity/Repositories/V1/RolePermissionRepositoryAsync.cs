@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Template.Identity.Contracts.Repositories.V1;
-using Template.Identity.DbContext.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Repositories.V1
@@ -14,10 +14,10 @@ namespace Template.Identity.Repositories.V1
             _dbContext = dbContext;
         }
 
-        public  async Task AddRanges(RolePermission[] rolePermissions)
+        public async Task AddRanges(RolePermission[] rolePermissions)
         {
-           await _dbContext.RolePermissions.AddRangeAsync(rolePermissions);
-           await _dbContext.SaveChangesAsync();
+            await _dbContext.RolePermissions.AddRangeAsync(rolePermissions);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<RolePermission[]> GetAlls(string roleId, int[] permissionsId)
@@ -27,7 +27,7 @@ namespace Template.Identity.Repositories.V1
 
         public async Task RemoveRanges(RolePermission[] rolePermissions)
         {
-             _dbContext.RolePermissions.RemoveRange(rolePermissions);
+            _dbContext.RolePermissions.RemoveRange(rolePermissions);
             await _dbContext.SaveChangesAsync();
         }
     }

@@ -7,7 +7,7 @@ namespace Template.Application.Models.DTOs.V1.Items
 {
     public class ItemQueryParameters : QueryParametersBase<Item>
     {
-        [AllowedValues("Id","Name", "Price", "Description", null)]
+        [AllowedValues("Id", "Name", "Price", "Description", null)]
         public override string? SortBy { get; set; }
 
         [NumberRangeFormat]
@@ -18,6 +18,5 @@ namespace Template.Application.Models.DTOs.V1.Items
         [NumberListFormat]
         [FromQuery(Name = "CategoryIds")]
         public string? CategoryId { get; set; }
-
     }
 }

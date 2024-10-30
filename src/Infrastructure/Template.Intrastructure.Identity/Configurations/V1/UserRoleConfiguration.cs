@@ -9,7 +9,7 @@ namespace Template.Identity.Configurations.V1
     {
         public void Configure(EntityTypeBuilder<UserRole> builder)
         {
-           builder.ToTable("UserRoles");
+            builder.ToTable("UserRoles");
 
             builder.HasIndex(ur => new { ur.UserId, ur.RoleId });
 

@@ -2,13 +2,18 @@
 
 namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IReadRepository<TEntity>
+    public interface IReadRepositoryAsync<TEntity>
     {
         Task<TEntity?> GetByIdAsync<TKey>(TKey id);
-        Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>();
-        Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec);
-        Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria);
-        Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id);
-    }
 
+        Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id);
+
+        Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>();
+
+        Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec);
+
+        Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec);
+
+        Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria);
+    }
 }

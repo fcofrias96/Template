@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Repository;
 using Template.Identity.Contracts.Repositories.V1;
-using Template.Identity.DbContext.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Repositories.V1
@@ -11,7 +11,14 @@ namespace Template.Identity.Repositories.V1
     {
         private readonly IdentityContext _dbContext;
 
-        public PermissionRepositoryAsync(IdentityContext dbContext, IConfigurationProvider configurationProvider) : base(dbContext, configurationProvider)
+        public PermissionRepositoryAsync(
+                    ICreateRepositoryAsync<Permission> createRepository,
+                    IUpdateRepositoryAsync<Permission> updateRepository,
+                    IDeleteRepositoryAsync<Permission> deleteRepository,
+                    IReadRepositoryAsync<Permission> readRepository,
+                    IdentityContext dbContext
+
+                    ) : base(createRepository, updateRepository, deleteRepository, readRepository)
         {
             _dbContext = dbContext;
         }

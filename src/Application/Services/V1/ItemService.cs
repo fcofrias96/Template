@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
-using Serilog;
-using Template.Application.Contracts.Repositories.V1;
+﻿using Template.Application.Contracts.Services.Base;
+using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Contracts.Services.V1;
+using Template.Application.Services.Base;
 using Template.Domain.Entities.V1;
 
 namespace Template.Application.Services.V1
@@ -11,13 +9,12 @@ namespace Template.Application.Services.V1
     public class ItemService : ServiceBaseAsync<Item>, IItemService
     {
         public ItemService(
-            IItemRepositoryAsync repository, 
-            IMapper mapper, 
-            IHttpContextAccessor httpContext, 
-            IMemoryCache cache, 
-            IItemRepositoryAsync itemRepository, 
-            ILogger logger) 
-            : base(repository, mapper, httpContext, cache, logger)
+            ICreateServiceAsync<Item> createService,
+            IDeleteServiceAsync<Item> deleteService,
+            IExportServiceAsync<Item> exportService,
+            IReadServiceAsync<Item> readService,
+            IUpdateServiceAsync<Item> updateService) :
+            base(createService, deleteService, exportService, readService, updateService)
         {
         }
     }

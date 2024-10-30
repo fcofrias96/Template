@@ -31,5 +31,4 @@ namespace Template.Application.Attributes
             return ValidationResult.Success;
         }
     }
-
 }

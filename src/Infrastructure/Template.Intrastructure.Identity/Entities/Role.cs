@@ -16,9 +16,8 @@ namespace Template.Identity.Entities
             get => Id;
             set => Id = (string)value;
         }
+
         public ICollection<RolePermission> RolePermissions { get; set; } = [];
         public ICollection<UserRole> UserRoles { get; set; } = [];
     }
-
-
 }

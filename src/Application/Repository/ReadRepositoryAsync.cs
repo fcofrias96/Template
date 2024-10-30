@@ -3,41 +3,20 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Template.Application.Contracts;
-using Template.Application.Contracts.Repositories.V1;
+using Template.Application.Contracts.Repositories.Base;
 using Template.Domain.Contracts;
-using Template.Persistence.DbContexts.V1;
 
-namespace Template.Persistence.Repositories.V1
+namespace Template.Application.Repository
 {
-    public class RepositoryBaseAsync<TEntity> : IAsyncRepository<TEntity> where TEntity : class, IEntityBase
+    public class ReadRepositoryAsync<TEntity> : IReadRepositoryAsync<TEntity> where TEntity : class, IEntityBase
     {
-        #region Private Variable
-
         private readonly IConfigurationProvider _configurationProvider;
-        private readonly ApplicationDbContext _dbContext;
-        protected readonly DbSet<TEntity> _dbSet;
-        #endregion Private Variable
+        private readonly DbSet<TEntity> _dbSet;
 
-        public RepositoryBaseAsync(ApplicationDbContext context, IConfigurationProvider configurationProvider)
+        public ReadRepositoryAsync(DbContext dbContext, IConfigurationProvider configurationProvider)
         {
-            _dbContext = context;
-            _dbSet = _dbContext.Set<TEntity>();
+            _dbSet = dbContext.Set<TEntity>();
             _configurationProvider = configurationProvider;
-        }
-
-        #region Public Methods
-
-        public async Task<TEntity> CreateAsync(TEntity entity)
-        {
-            await _dbContext.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
-        }
-
-        public async Task DeleteAsync(TEntity entity)
-        {
-            _dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
@@ -51,7 +30,7 @@ namespace Template.Persistence.Repositories.V1
         public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec)
         {
             var query = _dbSet.AsQueryable();
-            query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec);
+            query = ApplySpecification(query, spec);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
@@ -60,12 +39,11 @@ namespace Template.Persistence.Repositories.V1
         public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec)
         {
             var query = _dbSet.AsQueryable();
-            query = RepositoryBaseAsync<TEntity>.ApplySpecification(query, spec, applyPagination: false );
+            query = ApplySpecification(query, spec, applyPagination: false);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
         }
-
 
         public async Task<TEntity?> GetByIdAsync<TKey>(TKey id)
         {
@@ -80,6 +58,7 @@ namespace Template.Persistence.Repositories.V1
                               .ProjectTo<TDestination>(_configurationProvider)
                               .FirstOrDefaultAsync();
         }
+
         public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria)
         {
             if (criteria == null)
@@ -92,16 +71,8 @@ namespace Template.Persistence.Repositories.V1
             }
         }
 
-        public async Task UpdateAsync(TEntity entity)
-        {
-            _dbContext.Update(entity);
-            await _dbContext.SaveChangesAsync();
-        }
-        #endregion Public Methods
 
         #region Private Methods
-
-
 
         private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true)
         {
@@ -123,10 +94,11 @@ namespace Template.Persistence.Repositories.V1
             {
                 query = query.Skip(spec.Skip).Take(spec.Take);
             }
-           
 
             return query;
         }
+
         #endregion Private Methods
+
     }
 }

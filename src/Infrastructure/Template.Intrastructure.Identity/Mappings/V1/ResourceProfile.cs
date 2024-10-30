@@ -12,7 +12,7 @@ namespace Template.Identity.Mappings.V1
             CreateMap<ResourceUpdateDTO, Resource>();
             CreateMap<Resource, ResourceDetailDto>()
                 .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.Permissions
-                                                                .Select(p=> $"{p.Action.Name} {p.Resource.Name}")));
+                                                                .Select(p => $"{p.Action.Name} {p.Resource.Name}")));
         }
     }
 }

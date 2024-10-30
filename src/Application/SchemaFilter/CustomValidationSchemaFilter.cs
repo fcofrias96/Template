@@ -1,7 +1,6 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.ComponentModel.DataAnnotations;
 using Template.Application.Attributes;
 using AllowedValuesAttribute = Template.Application.Attributes.AllowedValuesAttribute;
 
@@ -49,7 +48,6 @@ namespace Template.Application.SchemaFilter
                 var allowedValuesAttribute = attributes.OfType<AllowedValuesAttribute>().FirstOrDefault();
                 if (allowedValuesAttribute != null)
                 {
-
                     // Set the enum values in the schema to show a dropdown in Swagger UI
                     schema.Enum = allowedValuesAttribute.AllowedValues
                         .Where(v => v is not null)
@@ -72,7 +70,4 @@ namespace Template.Application.SchemaFilter
             }
         }
     }
-
-
-
 }

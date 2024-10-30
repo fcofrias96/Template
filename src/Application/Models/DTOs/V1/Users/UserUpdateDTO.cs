@@ -12,6 +12,5 @@ namespace Template.Application.Models.DTOs.V1.Users
 
         [Required]
         public string LastName { get; set; }
-
     }
 }

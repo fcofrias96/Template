@@ -22,7 +22,7 @@ namespace Template.Persistence
                 using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    await action(); 
+                    await action();
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
                     return true;
@@ -34,7 +34,5 @@ namespace Template.Persistence
                 }
             });
         }
-
     }
-
 }

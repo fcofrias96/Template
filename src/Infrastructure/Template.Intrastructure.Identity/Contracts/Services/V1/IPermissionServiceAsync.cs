@@ -2,7 +2,6 @@
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Identity.Entities;
 
-
 namespace Template.Identity.Contracts.Services.V1
 {
     public interface IPermissionServiceAsync : IAsyncServiceAsync<Permission>

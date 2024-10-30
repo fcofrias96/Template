@@ -4,5 +4,4 @@
     {
         Task<bool> ExecuteInTransactionAsync(Func<Task> action);
     }
-
 }

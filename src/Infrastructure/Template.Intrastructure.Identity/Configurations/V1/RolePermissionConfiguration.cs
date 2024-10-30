@@ -14,7 +14,6 @@ namespace Template.Identity.Configurations.V1
             builder.HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
             builder.HasData(RolePermissionSeed.Data);
-
         }
     }
 }

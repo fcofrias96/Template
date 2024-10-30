@@ -1,7 +1,6 @@
-﻿
-using Action = Template.Identity.Entities.Action;
+﻿using Template.Application.Enums;
 using Template.Application.Extensions;
-using Template.Application.Enums;
+using Action = Template.Identity.Entities.Action;
 
 namespace Template.Identity.Seeds
 {

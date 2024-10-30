@@ -5,6 +5,5 @@ namespace Template.Identity.Contracts.Repositories.V1
 {
     public interface IResourceRepositoryAsync : IAsyncRepository<Resource>
     {
-
     }
 }

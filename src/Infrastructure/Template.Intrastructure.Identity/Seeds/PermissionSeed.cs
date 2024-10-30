@@ -1,5 +1,5 @@
-﻿using Template.Application.Extensions;
-using Template.Application.Enums;
+﻿using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Seeds
@@ -15,7 +15,6 @@ namespace Template.Identity.Seeds
                 Id = 1,
                 ActionId =  Actions.Create.ToInt() ,
                 ResourceId = Resources.User.ToInt()
-
              },
              new Permission
              {
@@ -41,16 +40,17 @@ namespace Template.Identity.Seeds
                  ActionId = Actions.Export.ToInt(),
                  ResourceId = Resources.User.ToInt()
              },
-             #endregion User 
+             #endregion User
 
-            #region Resource 
+
+
+            #region Resource
 
              new Permission
              {
                 Id = 6,
                 ActionId = Actions.Create.ToInt(),
                 ResourceId = Resources.Resource.ToInt()
-
              },
              new Permission
              {
@@ -76,8 +76,7 @@ namespace Template.Identity.Seeds
                  ActionId = Actions.Export.ToInt(),
                  ResourceId = Resources.Resource.ToInt()
              },
-             #endregion Resource 
-
+             #endregion Resource
 
             #region Role
 
@@ -86,7 +85,6 @@ namespace Template.Identity.Seeds
                Id = 11,
                ActionId = Actions.Create.ToInt(),
                ResourceId = Resources.Role.ToInt()
-
             },
             new Permission
             {
@@ -112,7 +110,9 @@ namespace Template.Identity.Seeds
                 ActionId = Actions.Export.ToInt(),
                 ResourceId = Resources.Role.ToInt()
             },
-            #endregion Role 
+            #endregion Role
+
+
 
             #region Permission
 
@@ -121,7 +121,6 @@ namespace Template.Identity.Seeds
                Id = 16,
                ActionId = Actions.Create.ToInt(),
                ResourceId = Resources.Permission.ToInt()
-
             },
             new Permission
             {
@@ -147,25 +146,27 @@ namespace Template.Identity.Seeds
                 ActionId = Actions.Export.ToInt(),
                 ResourceId = Resources.Permission.ToInt()
             },
-            #endregion Permission 
+            #endregion Permission
+
+
 
             #region Action
+
             new Permission
             {
                 Id = 21,
                 ActionId = Actions.Read.ToInt(),
                 ResourceId = Resources.Action.ToInt()
             },
-            #endregion Action 
-            
-            #region Category 
+            #endregion Action
+
+            #region Category
 
               new Permission
              {
                 Id = 22,
                 ActionId = Actions.Create.ToInt(),
                 ResourceId = Resources.Category.ToInt()
-
              },
              new Permission
              {
@@ -191,7 +192,9 @@ namespace Template.Identity.Seeds
                  ActionId = Actions.Export.ToInt(),
                  ResourceId = Resources.Category.ToInt()
              },
-             #endregion Category 
+             #endregion Category
+
+
 
             #region Item
 
@@ -200,7 +203,6 @@ namespace Template.Identity.Seeds
                 Id = 27,
                 ActionId = Actions.Create.ToInt() ,
                 ResourceId = Resources.Item.ToInt()
-
              },
              new Permission
              {
@@ -226,7 +228,7 @@ namespace Template.Identity.Seeds
                  ActionId = Actions.Export.ToInt(),
                  ResourceId = Resources.Item.ToInt()
              },
-             #endregion Item 
+             #endregion Item
 
         };
     }

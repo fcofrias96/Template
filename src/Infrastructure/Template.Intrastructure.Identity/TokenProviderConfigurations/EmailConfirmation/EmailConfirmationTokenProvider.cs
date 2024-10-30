@@ -14,6 +14,4 @@ namespace Template.Identity.TokenProviderConfigurations.EmailConfirmation
         {
         }
     }
-
-
 }
