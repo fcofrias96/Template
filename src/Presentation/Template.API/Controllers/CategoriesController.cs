@@ -18,8 +18,6 @@ namespace Template.Api.Controllers
     public class CategoriesController : ControllerBase
     {
         #region Private Variable
-
-        private readonly IMemoryCache _cache;
         private readonly ICategoryService _categoryServiceAsync;
 
         #endregion Private Variable
@@ -33,9 +31,9 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, Actions.Create)]
         [HttpPost]
-        public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDTO)
         {
-            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDTO>(categoryCreateDTO);
+            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDto>(categoryCreateDTO);
             return CreatedAtAction(nameof(GetCategoryAsync), new { id = category.Id }, category);
         }
 
@@ -49,23 +47,23 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, Actions.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDTO>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
+        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
         {
-            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDTO, CategorySpecification>(request);
+            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request);
             return Ok(response);
         }
 
         [Permission(Resources.Category, Actions.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<CategoryDetailDTO>>> GetCategoryAsync(int id)
+        public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id)
         {
-            var response = await _categoryServiceAsync.GetByIdProjectedAsync<int, CategoryDetailDTO>(id);
+            var response = await _categoryServiceAsync.GetByIdProjectedAsync<int, CategoryDetailDto>(id);
             return Ok(response);
         }
 
         [Permission(Resources.Category, Actions.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
+        public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO)
         {
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO);
             return NoContent();
@@ -75,7 +73,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync()
         {
-            var file = await _categoryServiceAsync.ExportToWordAsync<CategoryExportDTO>("Lista de Categorias");
+            var file = await _categoryServiceAsync.ExportToWordAsync<CategoryExportDto>("Lista de Categorias");
             return File(file, FileContentType.Word, "Categories.docx");
         }
 
@@ -83,7 +81,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync()
         {
-            var file = await _categoryServiceAsync.ExportToPdfAsync<CategoryExportDTO>("Lista de Categorias");
+            var file = await _categoryServiceAsync.ExportToPdfAsync<CategoryExportDto>("Lista de Categorias");
             return File(file, FileContentType.Pdf, "Categories.pdf");
         }
 
@@ -91,7 +89,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync()
         {
-            var file = await _categoryServiceAsync.ExportToExcelAsync<CategoryExportDTO>("Categorias");
+            var file = await _categoryServiceAsync.ExportToExcelAsync<CategoryExportDto>("Categorias");
             return File(file, FileContentType.Excel, "Categories.xlsx");
         }
 

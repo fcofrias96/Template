@@ -49,7 +49,7 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Permission, Actions.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDTO permissionUpdateDTO)
+        public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDto permissionUpdateDTO)
         {
             await _permissionService.UpdateAsync(id, permissionUpdateDTO);
             return NoContent();

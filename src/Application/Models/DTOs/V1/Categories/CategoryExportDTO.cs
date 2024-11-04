@@ -2,7 +2,7 @@
 
 namespace Template.Application.Models.DTOs.V1.Categories
 {
-    public class CategoryExportDTO
+    public class CategoryExportDto
     {
         [DisplayName("Nombre")]
         public string Name { get; set; }

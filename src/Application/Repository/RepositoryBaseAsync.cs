@@ -1,24 +1,26 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Repositories.V1;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class RepositoryBaseAsync<TEntity> : IAsyncRepository<TEntity> where TEntity : class, IEntityBase
+    public class RepositoryBaseAsync<TEntity, TDbContext> : IAsyncRepository<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
         #region Private Variable
 
-        private readonly ICreateRepositoryAsync<TEntity> _createRepository;
-        private readonly IDeleteRepositoryAsync<TEntity> _deleteRepository;
-        private readonly IReadRepositoryAsync<TEntity> _readRepository;
-        private readonly IUpdateRepositoryAsync<TEntity> _updateRepository;
+        private readonly ICreateRepositoryAsync<TEntity, TDbContext> _createRepository;
+        private readonly IDeleteRepositoryAsync<TEntity, TDbContext> _deleteRepository;
+        private readonly IReadRepositoryAsync<TEntity, TDbContext> _readRepository;
+        private readonly IUpdateRepositoryAsync<TEntity, TDbContext> _updateRepository;
         public RepositoryBaseAsync(
-            ICreateRepositoryAsync<TEntity> createRepository, 
-            IUpdateRepositoryAsync<TEntity> updateRepository, 
-            IDeleteRepositoryAsync<TEntity> deleteRepository, 
-            IReadRepositoryAsync<TEntity> readRepository
+            ICreateRepositoryAsync<TEntity, TDbContext> createRepository, 
+            IUpdateRepositoryAsync<TEntity, TDbContext> updateRepository, 
+            IDeleteRepositoryAsync<TEntity, TDbContext> deleteRepository, 
+            IReadRepositoryAsync<TEntity, TDbContext> readRepository
             )
         {
             _createRepository = createRepository;

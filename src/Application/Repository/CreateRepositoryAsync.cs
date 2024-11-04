@@ -4,11 +4,13 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class CreateRepositoryAsync<TEntity> : ICreateRepositoryAsync<TEntity> where TEntity : class, IEntityBase
+    public class CreateRepositoryAsync<TEntity, TDbContext> : ICreateRepositoryAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public CreateRepositoryAsync(DbContext dbContext)
+        public CreateRepositoryAsync(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }

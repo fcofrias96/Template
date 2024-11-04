@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
+using Template.Persistence.Contracts;
 using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence

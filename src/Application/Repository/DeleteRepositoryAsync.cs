@@ -4,11 +4,13 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class DeleteRepositoryAsync<TEntity> :  IDeleteRepositoryAsync<TEntity> where TEntity : class, IEntityBase
+    public class DeleteRepositoryAsync<TEntity, TDbContext> :  IDeleteRepositoryAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public DeleteRepositoryAsync(DbContext dbContext)
+        public DeleteRepositoryAsync(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }

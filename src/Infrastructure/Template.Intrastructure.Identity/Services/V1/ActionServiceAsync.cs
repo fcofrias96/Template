@@ -1,15 +1,16 @@
 ﻿using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Models.DTOs.V1.Actions;
 using Template.Identity.Contracts.Services.V1;
+using Template.Identity.DbContexts.V1;
 using Action = Template.Identity.Entities.Action;
 
 namespace Template.Identity.Services.V1
 {
     public class ActionServiceAsync : IActionServiceAsync
     {
-        private readonly IReadRepositoryAsync<Action> _readRepository;
+        private readonly IReadRepositoryAsync<Action, IdentityContext> _readRepository;
 
-        public ActionServiceAsync(IReadRepositoryAsync<Action> readRepository)
+        public ActionServiceAsync(IReadRepositoryAsync<Action, IdentityContext> readRepository)
         {
             _readRepository = readRepository;
         }

@@ -7,15 +7,15 @@ using Template.Identity.Entities;
 
 namespace Template.Identity.Repositories.V1
 {
-    public class PermissionRepositoryAsync : RepositoryBaseAsync<Permission>, IPermissionRepositoryAsync
+    public class PermissionRepositoryAsync : RepositoryBaseAsync<Permission,  IdentityContext>, IPermissionRepositoryAsync
     {
         private readonly IdentityContext _dbContext;
 
         public PermissionRepositoryAsync(
-                    ICreateRepositoryAsync<Permission> createRepository,
-                    IUpdateRepositoryAsync<Permission> updateRepository,
-                    IDeleteRepositoryAsync<Permission> deleteRepository,
-                    IReadRepositoryAsync<Permission> readRepository,
+                    ICreateRepositoryAsync<Permission,  IdentityContext> createRepository,
+                    IUpdateRepositoryAsync<Permission,  IdentityContext> updateRepository,
+                    IDeleteRepositoryAsync<Permission,  IdentityContext> deleteRepository,
+                    IReadRepositoryAsync<Permission,  IdentityContext> readRepository,
                     IdentityContext dbContext
 
                     ) : base(createRepository, updateRepository, deleteRepository, readRepository)

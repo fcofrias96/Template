@@ -2,7 +2,7 @@
 
 namespace Template.Application.Models.DTOs.V1.Items
 {
-    public class ItemCreateDTO
+    public class ItemCreateDto
     {
         [Required]
         public string Name { get; set; }

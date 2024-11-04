@@ -2,7 +2,7 @@
 
 namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IReadRepositoryAsync<TEntity>
+    public interface IReadRepositoryAsync<TEntity, TDbContext>
     {
         Task<TEntity?> GetByIdAsync<TKey>(TKey id);
 

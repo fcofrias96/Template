@@ -1,26 +1,26 @@
 ﻿using Template.Application.Contracts;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
-using Template.Application.Contracts.Services.V1;
 using Template.Application.Models.Wrappers;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class ServiceBaseAsync<TEntity> : IAsyncServiceAsync<TEntity> where TEntity : class, IEntityBase
+    public class ServiceBaseAsync<TEntity,TDbContext> : IAsyncServiceAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
     {
-        private readonly ICreateServiceAsync<TEntity> _createService;
-        private readonly IDeleteServiceAsync<TEntity> _deleteService;
-        private readonly IExportServiceAsync<TEntity> _exportService;
-        private readonly IReadServiceAsync<TEntity> _readService;
-        private readonly IUpdateServiceAsync<TEntity> _updateService;
+        private readonly ICreateServiceAsync<TEntity, TDbContext> _createService;
+        private readonly IDeleteServiceAsync<TEntity, TDbContext> _deleteService;
+        private readonly IExportServiceAsync<TEntity, TDbContext> _exportService;
+        private readonly IReadServiceAsync<TEntity, TDbContext> _readService;
+        private readonly IUpdateServiceAsync<TEntity, TDbContext> _updateService;
 
         public ServiceBaseAsync(
-            ICreateServiceAsync<TEntity> createService,
-            IDeleteServiceAsync<TEntity> deleteService,
-            IExportServiceAsync<TEntity> exportService,
-            IReadServiceAsync<TEntity> readService,
-            IUpdateServiceAsync<TEntity> updateService)
+            ICreateServiceAsync<TEntity, TDbContext> createService,
+            IDeleteServiceAsync<TEntity, TDbContext> deleteService,
+            IExportServiceAsync<TEntity, TDbContext> exportService,
+            IReadServiceAsync<TEntity, TDbContext> readService,
+            IUpdateServiceAsync<TEntity, TDbContext> updateService)
         {
             _createService = createService;
             _deleteService = deleteService;
@@ -97,7 +97,7 @@ namespace Template.Application.Services.Base
             return _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters);
         }
 
-        public virtual Task<TEntity> GetByIdAsync<TKey>(TKey id)
+        public Task<TEntity> GetByIdAsync<TKey>(TKey id)
         {
             return _readService.GetByIdAsync(id);
         }

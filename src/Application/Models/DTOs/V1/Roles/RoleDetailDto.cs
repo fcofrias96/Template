@@ -1,11 +1,12 @@
-﻿namespace Template.Application.Models.DTOs.V1.Roles
+﻿using Template.Application.Models.DTOs.V1.Resources;
+
+namespace Template.Application.Models.DTOs.V1.Roles
 {
     public class RoleDetailDto
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string NormalizedName { get; set; }
-
-        public string[] Permissions { get; set; }
+        public ResourcePermissionDto[] Resources { get; set; }
     }
 }

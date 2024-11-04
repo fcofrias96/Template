@@ -26,14 +26,14 @@ namespace Template.Application.Models.Specification
                 Take = queryParametersBase.Limit;
             }
 
-            Descending = queryParametersBase.IsDescending;
+            IsDescending = queryParametersBase.IsDescending;
             BuildCriteria(queryParametersBase.BuildFields());
             ApplySortBy(queryParametersBase.SortBy ?? "Created");
             _logger = logger;
         }
 
         public Expression<Func<TEntity, bool>>? Criteria { get; protected set; }
-        public bool Descending { get; private set; }
+        public bool IsDescending { get; private set; }
 
         public Expression<Func<TEntity, object>> SortBy { get; set; }
 

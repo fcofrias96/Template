@@ -6,6 +6,6 @@ namespace Template.Application.Models.DTOs.V1.Resources
     {
         public int Id { get; set; }
         public string Resource { get; set; }
-        public List<PermissionListDto> Permissions { get; set; }
+        public PermissionListDto[] Permissions { get; set; }
     }
 }

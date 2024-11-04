@@ -4,11 +4,13 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class UpdateRepositoryAsync<TEntity> : IUpdateRepositoryAsync<TEntity> where TEntity : class, IEntityBase
+    public class UpdateRepositoryAsync<TEntity,TDbContext> : IUpdateRepositoryAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TDbContext _dbContext;
 
-        public UpdateRepositoryAsync(DbContext dbContext)
+        public UpdateRepositoryAsync(TDbContext dbContext)
         {
             _dbContext = dbContext;
         }

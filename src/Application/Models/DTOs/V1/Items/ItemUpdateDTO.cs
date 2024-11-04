@@ -2,7 +2,7 @@
 
 namespace Template.Application.Models.DTOs.V1.Items
 {
-    public class ItemUpdateDTO
+    public class ItemUpdateDto
     {
         [Required]
         public Guid Id { get; set; }

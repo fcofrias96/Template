@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Extensions;
@@ -6,18 +7,20 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class DeleteServiceAsync<TEntity> : IDeleteServiceAsync<TEntity> where TEntity : class, IEntityBase
+    public class DeleteServiceAsync<TEntity, TDbContext> : IDeleteServiceAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly IDeleteRepositoryAsync<TEntity> _deleteRepositoryAsync;
-        private readonly IUpdateRepositoryAsync<TEntity> _updateRepositoryAsync;
+        private readonly IDeleteRepositoryAsync<TEntity, TDbContext> _deleteRepositoryAsync;
+        private readonly IUpdateRepositoryAsync<TEntity, TDbContext> _updateRepositoryAsync;
         private readonly IMemoryCache _cache;
-        private readonly IReadServiceAsync<TEntity> _readService;
+        private readonly IReadServiceAsync<TEntity, TDbContext> _readService;
 
         public DeleteServiceAsync(
-            IDeleteRepositoryAsync<TEntity> deleteRepositoryAsync,
-            IUpdateRepositoryAsync<TEntity> updateRepositoryAsync,
+            IDeleteRepositoryAsync<TEntity, TDbContext> deleteRepositoryAsync,
+            IUpdateRepositoryAsync<TEntity, TDbContext> updateRepositoryAsync,
             IMemoryCache cache,
-            IReadServiceAsync<TEntity> readService
+            IReadServiceAsync<TEntity, TDbContext> readService
             
             )
         {

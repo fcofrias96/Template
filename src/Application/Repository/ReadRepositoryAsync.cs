@@ -8,12 +8,14 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class ReadRepositoryAsync<TEntity> : IReadRepositoryAsync<TEntity> where TEntity : class, IEntityBase
+    public class ReadRepositoryAsync<TEntity, TDbContext> : IReadRepositoryAsync<TEntity, TDbContext> 
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        public ReadRepositoryAsync(DbContext dbContext, IConfigurationProvider configurationProvider)
+        public ReadRepositoryAsync(TDbContext dbContext, IConfigurationProvider configurationProvider)
         {
             _dbSet = dbContext.Set<TEntity>();
             _configurationProvider = configurationProvider;
@@ -21,8 +23,7 @@ namespace Template.Application.Repository
 
         public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
         {
-            var query = _dbSet.AsQueryable();
-            return await query.AsNoTracking()
+            return await _dbSet.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync();
         }
@@ -81,7 +82,7 @@ namespace Template.Application.Repository
                 query = query.Where(spec.Criteria);
             }
 
-            if (spec.Descending)
+            if (spec.IsDescending)
             {
                 query = query.OrderByDescending(spec.SortBy);
             }

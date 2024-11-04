@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
+using Template.Application.Contracts;
+using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
+using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
-using Template.Application.Utilities;
 using Template.Identity.Contracts.Repositories.V1;
 using Template.Identity.Contracts.Services.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
-using Template.Identity.Specification.V1;
 
 namespace Template.Identity.Services.V1
 {
@@ -20,25 +21,27 @@ namespace Template.Identity.Services.V1
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IUserRepositoryAsync _userRepository;
+        private readonly IReadServiceAsync<User, IdentityContext> _readService;
         private readonly UserManager<User> _userManager;
-
+        private readonly IUserRepositoryAsync _userRepository;
         public UserServiceAsync(
             IUserRepositoryAsync userRepository,
             IMapper mapper,
             IEmailServiceAsync emailService,
             IHttpContextAccessor httpContext,
             IResourceServiceAsync moduleService,
-            UserManager<User> userManager
+            UserManager<User> userManager,
+            IReadServiceAsync<User, IdentityContext> readService
             )
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContext = httpContext;
             _userManager = userManager;
+            _readService = readService;
         }
 
-        public async Task AddToRolesAsync(Guid userId, List<Guid> roles)
+        public async Task AddToRolesAsync(Guid userId, IReadOnlyList<Guid> roles)
         {
             var user = await GetUser(userId);
 
@@ -65,56 +68,33 @@ namespace Template.Identity.Services.V1
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<ApiResponse<PagedCollection<UserListDTO>>> GetAllAsync(UserFilterRequest request)
+        public async Task<User> GetByIdAsync<TKey>(TKey id)
         {
-            var spec = new UserSpecification(request);
-
-            if (spec.Skip % spec.Take != 0)
-            {
-                throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
-            }
-
-            var total = await _userRepository.GetTotalRecordsAsync(spec.Criteria);
-
-            if (total < spec.Skip)
-            {
-                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
-            }
-
-            var userList = await _userRepository.GetAllProjectedWithPaginationAsync(spec);
-
-            var href = _httpContext?.HttpContext?.Request.GetEncodedUrl();
-            var next = UrlUtile.GetNextURL(href, request.Limit, request.Offset, total);
-            var prev = UrlUtile.GetPrevURL(href, request.Limit, request.Offset);
-
-            var data = new PagedCollection<UserListDTO>
-            {
-                Elements = userList,
-                HRef = href,
-                Prev = prev,
-                Next = next,
-                Offset = request.Offset,
-                Limit = request.Limit,
-                Total = total
-            };
-
-            return new ApiResponse<PagedCollection<UserListDTO>>(data);
+            var parsedId = ParseToString(id);
+            return await _readService.GetByIdAsync(parsedId);
+        }
+        public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        {
+            var parsedId = ParseToString(id);
+            return await _readService.GetByIdProjectedAsync<string, TDestination>(parsedId);
         }
 
-        public async Task<ApiResponse<UserDetailDTO>> GetByIdAsync(Guid userId)
+        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>()
         {
-            var user = await GetUser(userId);
-            var roles = (List<string>)await _userManager.GetRolesAsync(user);
-            var userDTO = _mapper.Map<UserDetailDTO>(user);
-            userDTO.Roles = roles;
-            return new ApiResponse<UserDetailDTO>(userDTO);
+            return await _readService.GetProjectedAsync<TDestination>();
         }
 
-        public async Task<ApiResponse<List<string>>> GetRolesAsync(Guid userId)
+        public async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters) where TSpecification : ISpecification<User>
         {
-            var user = await GetUser(userId);
-            var roles = (List<string>)await _userManager.GetRolesAsync(user);
-            return new ApiResponse<List<string>>(roles);
+            return await _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters);
+        }
+
+        public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId)
+        {
+            var parsedId = ParseToString(userId);
+
+            var roles = await _userRepository.GetRoles(parsedId);
+            return new ApiResponse<IReadOnlyList<RoleListDto>>(roles);
         }
 
         public async Task<User> GetUserByRefreshToken(string refreshToken)
@@ -122,7 +102,7 @@ namespace Template.Identity.Services.V1
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
         }
 
-        public async Task RemoveFromRolesAsync(Guid userId, List<Guid> roles)
+        public async Task RemoveFromRolesAsync(Guid userId, IReadOnlyList<Guid> roles)
         {
             var user = await GetUser(userId);
             var userRoles = roles.Select(role => new IdentityUserRole<string>
@@ -141,7 +121,7 @@ namespace Template.Identity.Services.V1
             await _userRepository.RemoveFromRoleAsync(userRole);
         }
 
-        public async Task UpdateAsync(Guid userId, UserUpdateDTO userUpdateDTO)
+        public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO)
         {
             var currentUserId = _httpContext?.HttpContext?.GetUserId();
 
@@ -160,6 +140,17 @@ namespace Template.Identity.Services.V1
             await _userManager.UpdateAsync(user);
         }
 
+
+        public async Task<UserDetailDto> GetUserDetailAsync(Guid userId)
+        {
+            var user = await _userRepository.GetUserDetailAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new NotFoundException("User", userId);
+            }
+            return user;
+        }
+
         #region Private Methods
 
         private async Task<User> GetUser(Guid userId)
@@ -173,6 +164,11 @@ namespace Template.Identity.Services.V1
             return user;
         }
 
+
+        private static string ParseToString<TKey>(TKey id)
+        {
+            return id?.ToString() ?? string.Empty;
+        }
         #endregion Private Methods
     }
 }

@@ -7,7 +7,7 @@ namespace Template.Identity.Contracts.Services.V1
 {
     public interface IAuthServiceAsync
     {
-        Task<ApiResponse<AuthenticationResponseDTO>> LoginAsync(LoginDto loginDto);
+        Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto);
 
         Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto);
 
@@ -15,7 +15,7 @@ namespace Template.Identity.Contracts.Services.V1
 
         Task<ApiResponse> ResetPassword(ResetPasswordDto model);
 
-        Task<ApiResponse> CreateAsync(UserCreateDTO userCreateDTO);
+        Task<ApiResponse> CreateAsync(UserCreateDto userCreateDTO);
 
         Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto);
 

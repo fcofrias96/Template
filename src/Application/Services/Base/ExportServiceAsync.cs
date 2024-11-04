@@ -2,6 +2,7 @@
 using iText.Kernel.Pdf;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
 using Template.Application.Attributes;
@@ -14,12 +15,14 @@ using Xceed.Words.NET;
 
 namespace Template.Application.Services.Base
 {
-    public class ExportServiceAsync<TEntity> : IExportServiceAsync<TEntity> where TEntity : class, IEntityBase
+    public class ExportServiceAsync<TEntity, TDbContext> : IExportServiceAsync<TEntity, TDbContext>
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly IReadRepositoryAsync<TEntity> _readDepositoryAsync;
+        private readonly IReadRepositoryAsync<TEntity, TDbContext> _readDepositoryAsync;
         private readonly ILogger _logger;
 
-        public ExportServiceAsync(IReadRepositoryAsync<TEntity> repository, ILogger logger)
+        public ExportServiceAsync(IReadRepositoryAsync<TEntity, TDbContext> repository, ILogger logger)
         {
             _readDepositoryAsync = repository;
             _logger = logger;

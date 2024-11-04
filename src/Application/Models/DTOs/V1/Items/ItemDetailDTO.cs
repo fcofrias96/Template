@@ -1,6 +1,6 @@
 ﻿namespace Template.Application.Models.DTOs.V1.Items
 {
-    public class ItemDetailDTO
+    public class ItemDetailDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

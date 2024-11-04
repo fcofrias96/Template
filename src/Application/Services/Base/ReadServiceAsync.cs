@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using Template.Application.Contracts;
-using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Exceptions;
 using Template.Application.Models.Wrappers;
@@ -12,14 +12,16 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class ReadServiceAsync<TEntity> : IReadServiceAsync<TEntity> where TEntity : class, IEntityBase
+    public class ReadServiceAsync<TEntity, TDbContext> : IReadServiceAsync<TEntity, TDbContext>
+        where TEntity : class, IEntityBase
+        where TDbContext : DbContext
     {
-        private readonly IReadRepositoryAsync<TEntity> _readRepositoryAsync;
+        private readonly Contracts.Repositories.Base.IReadRepositoryAsync<TEntity, TDbContext> _readRepositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
         private readonly ILogger _logger;
         private readonly IMemoryCache _cache;
 
-        public ReadServiceAsync(IReadRepositoryAsync<TEntity> repository, IHttpContextAccessor httpContext, ILogger logger, IMemoryCache cache)
+        public ReadServiceAsync(Contracts.Repositories.Base.IReadRepositoryAsync<TEntity, TDbContext> repository, IHttpContextAccessor httpContext, ILogger logger, IMemoryCache cache)
         {
             _readRepositoryAsync = repository;
             _httpContext = httpContext;

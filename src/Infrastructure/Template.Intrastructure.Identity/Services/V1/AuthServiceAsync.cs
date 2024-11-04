@@ -31,7 +31,7 @@ namespace Template.Identity.Services.V1
         private readonly SignInManager<User> _singInManager;
         private readonly UserManager<User> _userManager;
         private readonly IUserServiceAsync _userServiceAsync;
-        private List<string> _userRoles;
+        private IReadOnlyList<string> _userRoles;
 
         public AuthServiceAsync(
             IEmailServiceAsync emailServiceAsync,
@@ -44,7 +44,6 @@ namespace Template.Identity.Services.V1
         {
             _emailServiceAsync = emailServiceAsync;
             _jwtSettings = jwtSettings.Value;
-            _userRoles = new List<string>();
             _userManager = userManager;
             _singInManager = singInManager;
             _httpContext = httpContext;
@@ -113,7 +112,7 @@ namespace Template.Identity.Services.V1
             return new ApiResponse($"Account Confirmed for {user.Email}.");
         }
 
-        public async Task<ApiResponse> CreateAsync(UserCreateDTO userCreateDto)
+        public async Task<ApiResponse> CreateAsync(UserCreateDto userCreateDto)
         {
             var userWithSameUserName = await _userManager.FindByNameAsync(userCreateDto.UserName);
             if (userWithSameUserName != null)
@@ -218,7 +217,7 @@ namespace Template.Identity.Services.V1
             return new ApiResponse("Logged out successfully");
         }
 
-        public async Task<ApiResponse<AuthenticationResponseDTO>> LoginAsync(LoginDto loginDto)
+        public async Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto)
         {
             var user = await FindUserByEmailAsync(loginDto.Email);
 
@@ -241,7 +240,7 @@ namespace Template.Identity.Services.V1
 
             if (result.Succeeded)
             {
-                var response = new AuthenticationResponseDTO();
+                var response = new AuthenticationResponseDto();
                 JwtSecurityToken jwtSecurityToken = await GenerateJWTokenAsync(user);
                 var refreshToken = GenerateRefreshToken();
                 response.Id = user.Id;
@@ -257,7 +256,7 @@ namespace Template.Identity.Services.V1
                 user.TokenRevokedTime = null;
                 await _userManager.UpdateAsync(user);
 
-                return new ApiResponse<AuthenticationResponseDTO>(response);
+                return new ApiResponse<AuthenticationResponseDto>(response);
             }
             else if (result.IsLockedOut)
             {
@@ -452,7 +451,7 @@ namespace Template.Identity.Services.V1
         private async Task<JwtSecurityToken> GenerateJWTokenAsync(User user)
         {
             var userClaimList = await _userManager.GetClaimsAsync(user);
-            _userRoles = (List<string>)await _userManager.GetRolesAsync(user);
+            _userRoles = (IReadOnlyList<string>) await _userManager.GetRolesAsync(user);
             var roles = new List<Claim>();
 
             foreach (var role in _userRoles)

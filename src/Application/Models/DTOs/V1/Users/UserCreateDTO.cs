@@ -2,7 +2,7 @@
 
 namespace Template.Application.Models.DTOs.V1.Users
 {
-    public class UserCreateDTO
+    public class UserCreateDto
     {
         [Required]
         public string FirstName { get; set; }

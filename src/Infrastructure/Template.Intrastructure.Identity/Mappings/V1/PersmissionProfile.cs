@@ -8,10 +8,9 @@ namespace Template.Identity.Mappings.V1
     {
         public PermissionProfile()
         {            CreateMap<Permission, PermissionListDto>()
-               .ForMember(dest => dest.Resource, opt => opt.MapFrom(src => src.Resource.Name))
-               .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.Action.Name));
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.Action.Name} {src.Resource.Name}" ));
             CreateMap<PermissionCreateDto, Permission>();
-            CreateMap<PermissionUpdateDTO, Permission>();
+            CreateMap<PermissionUpdateDto, Permission>();
             CreateMap<Permission, PermissionDetailDto>()
                .ForMember(dest => dest.Resource, opt => opt.MapFrom(src => src.Resource.Name))
                .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.Action.Name))

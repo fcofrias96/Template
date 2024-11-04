@@ -3,18 +3,19 @@ using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
 using Template.Identity.Contracts.Services.V1;
+using Template.Identity.DbContexts.V1;
 using Template.Identity.Entities;
 
 namespace Template.Identity.Services.V1
 {
-    public class RoleServiceAsync : ServiceBaseAsync<Role>, IRoleServiceAsync
+    public class RoleServiceAsync : ServiceBaseAsync<Role, IdentityContext>, IRoleServiceAsync
     {
         public RoleServiceAsync(
-                ICreateServiceAsync<Role> createService,
-                IDeleteServiceAsync<Role> deleteService,
-                IExportServiceAsync<Role> exportService,
-                IReadServiceAsync<Role> readService,
-                IUpdateServiceAsync<Role> updateService
+                ICreateServiceAsync<Role, IdentityContext> createService,
+                IDeleteServiceAsync<Role, IdentityContext> deleteService,
+                IExportServiceAsync<Role, IdentityContext> exportService,
+                IReadServiceAsync<Role, IdentityContext> readService,
+                IUpdateServiceAsync<Role, IdentityContext> updateService
                 ) :
             base(createService, deleteService, exportService, readService, updateService)
         {

@@ -8,10 +8,11 @@ namespace Template.Identity.Mappings.V1
     {
         public UserProfile()
         {
-            CreateMap<UserCreateDTO, User>();
-            CreateMap<UserUpdateDTO, User>();
-            CreateMap<User, UserDetailDTO>();
-            CreateMap<User, UserListDTO>();
+            CreateMap<UserCreateDto, User>();
+            CreateMap<UserUpdateDto, User>();
+            CreateMap<User, UserListDto>()
+                .ForMember(dest=> dest.Roles, opt=> opt.MapFrom(src=> src.UserRoles.Select(ur=> ur.Role.Name)));
+           
         }
     }
 }

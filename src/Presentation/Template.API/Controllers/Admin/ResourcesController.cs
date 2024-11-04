@@ -49,7 +49,7 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Resource, Actions.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateResource(int id, [FromBody] ResourceUpdateDTO resourceUpdateDTO)
+        public async Task<ActionResult> UpdateResource(int id, [FromBody] ResourceUpdateDto resourceUpdateDTO)
         {
             await _resourceService.UpdateAsync(id, resourceUpdateDTO);
             return NoContent();

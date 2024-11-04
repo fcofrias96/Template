@@ -31,14 +31,14 @@ namespace Template.Identity
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<DbContext, IdentityContext>(option =>
+                services.AddDbContext<IdentityContext>(option =>
                 {
                     option.UseInMemoryDatabase("TemplateIdentity");
                 });
             }
             else
             {
-                services.AddDbContext<DbContext, IdentityContext>(option =>
+                services.AddDbContext<IdentityContext>(option =>
                 {
                     option.UseSqlServer(configuration.GetConnectionString("TemplateIdentityConnection"),
                         optionBuilder => optionBuilder.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)

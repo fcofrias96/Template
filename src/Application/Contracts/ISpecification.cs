@@ -8,6 +8,6 @@ namespace Template.Application.Contracts
         Expression<Func<TEntity, object>> SortBy { get; }
         int Skip { get; }
         int Take { get; }
-        bool Descending { get; }
+        bool IsDescending { get; }
     }
 }

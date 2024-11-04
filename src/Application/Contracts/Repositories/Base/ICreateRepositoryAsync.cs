@@ -1,6 +1,6 @@
 ﻿namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface ICreateRepositoryAsync<TEntity>
+    public interface ICreateRepositoryAsync<TEntity, TDbContext>
     {
         Task CreateAsync(TEntity entity);
     }

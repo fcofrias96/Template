@@ -7,11 +7,11 @@ namespace Template.Application.Mappings.V1
     public class CategoryProfile : Profile
     {
         public CategoryProfile()
-        {            CreateMap<Category, CategoryListDTO>();
-            CreateMap<Category, CategoryExportDTO>();
-            CreateMap<CategoryCreateDTO, Category>();
-            CreateMap<CategoryUpdateDTO, Category>();
-            CreateMap<Category, CategoryDetailDTO>();
+        {            CreateMap<Category, CategoryListDto>();
+            CreateMap<Category, CategoryExportDto>();
+            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryUpdateDto, Category>();
+            CreateMap<Category, CategoryDetailDto>();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Template.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse<AuthenticationResponseDTO>>> LoginAsync(LoginDto loginDTO)
+        public async Task<ActionResult<ApiResponse<AuthenticationResponseDto>>> LoginAsync(LoginDto loginDTO)
         {
             var response = await _authService.LoginAsync(loginDTO);
             var cookieOptions = GetCookieOptions();
@@ -34,7 +34,7 @@ namespace Template.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponse>> RegisterAsync([FromBody] UserCreateDTO userCreateDTO)
+        public async Task<ActionResult<ApiResponse>> RegisterAsync([FromBody] UserCreateDto userCreateDTO)
         {
             var user = await _authService.CreateAsync(userCreateDTO);
             return Ok(user);

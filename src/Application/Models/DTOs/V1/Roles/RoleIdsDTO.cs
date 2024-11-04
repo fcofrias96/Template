@@ -2,9 +2,9 @@
 
 namespace Template.Application.Models.DTOs.V1.Roles
 {
-    public class RoleIdsDTO
+    public class RoleIdsDto
     {
         [Required]
-        public List<Guid> RoleIds { get; set; }
+        public Guid[] RoleIds { get; set; }
     }
 }

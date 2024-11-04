@@ -37,31 +37,31 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Item, Actions.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<ItemDetailDTO>>> GetByIdAsync(Guid id)
+        public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(Guid id)
         {
-            var response = await _itemServiceAsync.GetByIdProjectedAsync<Guid, ItemDetailDTO>(id);
+            var response = await _itemServiceAsync.GetByIdProjectedAsync<Guid, ItemDetailDto>(id);
             return Ok(response);
         }
 
         [Permission(Resources.Item, Actions.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDTO>>>> GetAllAsync([FromQuery] ItemQueryParameters request)
+        public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request)
         {
-            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDTO, ItemSpecification>(request);
+            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto, ItemSpecification>(request);
             return Ok(response);
         }
 
         [Permission(Resources.Item, Actions.Create)]
         [HttpPost]
-        public async Task<ActionResult<ItemDetailDTO>> CreateAsync([FromBody] ItemCreateDTO itemCreateDTO)
+        public async Task<ActionResult<ItemDetailDto>> CreateAsync([FromBody] ItemCreateDto itemCreateDTO)
         {
-            var item = await _itemServiceAsync.CreateAsync<ItemCreateDTO>(itemCreateDTO);
+            var item = await _itemServiceAsync.CreateAsync<ItemCreateDto>(itemCreateDTO);
             return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
 
         [Permission(Resources.Item, Actions.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ItemUpdateDTO itemUpdateDTO)
+        public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ItemUpdateDto itemUpdateDTO)
         {
             await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO);
             return NoContent();
@@ -71,7 +71,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToWordAsync<ItemExportDTO, ItemSpecification>("Lista de Artículos", request);
+            var file = await _itemServiceAsync.ExportToWordAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request);
             return File(file, FileContentType.Word, "Items.docx");
         }
 
@@ -79,7 +79,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDTO, ItemSpecification>("Lista de Artículos", request);
+            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request);
             return File(file, FileContentType.Pdf, "Items.pdf");
         }
 
@@ -87,7 +87,7 @@ namespace Template.Api.Controllers
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToExcelAsync<ItemExportDTO, ItemSpecification>("Artículos", request);
+            var file = await _itemServiceAsync.ExportToExcelAsync<ItemExportDto, ItemSpecification>("Artículos", request);
             return File(file, FileContentType.Excel, "Items.xlsx");
         }
 
