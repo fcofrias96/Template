@@ -5,8 +5,8 @@ using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.DTOs.V1.Token;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Services.V1;
-using Template.Identity.Settings;
+using Template.Security.Contracts.Services.V1;
+using Template.Security.Settings;
 
 namespace Template.Api.Controllers
 {

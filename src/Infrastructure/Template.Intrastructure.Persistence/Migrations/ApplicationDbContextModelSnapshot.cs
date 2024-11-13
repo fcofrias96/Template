@@ -17,7 +17,7 @@ namespace Template.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -58,7 +58,7 @@ namespace Template.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -138,7 +138,7 @@ namespace Template.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Item", (string)null);
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.V1.Item", b =>

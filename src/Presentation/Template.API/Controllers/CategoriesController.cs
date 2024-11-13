@@ -29,7 +29,7 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Permission(Resources.Category, Actions.Create)]
+        [Permission(Resources.Category, ActionType.Create)]
         [HttpPost]
         public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDTO)
         {
@@ -37,7 +37,7 @@ namespace Template.Api.Controllers
             return CreatedAtAction(nameof(GetCategoryAsync), new { id = category.Id }, category);
         }
 
-        [Permission(Resources.Category, Actions.Delete)]
+        [Permission(Resources.Category, ActionType.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategoryAsync(int id)
         {
@@ -45,7 +45,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Permission(Resources.Category, Actions.Read)]
+        [Permission(Resources.Category, ActionType.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
         {
@@ -53,7 +53,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Category, Actions.Read)]
+        [Permission(Resources.Category, ActionType.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id)
         {
@@ -61,7 +61,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Category, Actions.Update)]
+        [Permission(Resources.Category, ActionType.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO)
         {
@@ -69,7 +69,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Permission(Resources.Category, Actions.Export)]
+        [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync()
         {
@@ -77,7 +77,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Word, "Categories.docx");
         }
 
-        [Permission(Resources.Category, Actions.Export)]
+        [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync()
         {
@@ -85,7 +85,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Pdf, "Categories.pdf");
         }
 
-        [Permission(Resources.Category, Actions.Export)]
+        [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync()
         {

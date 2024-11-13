@@ -27,7 +27,7 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Permission(Resources.Item, Actions.Delete)]
+        [Permission(Resources.Item, ActionType.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -35,7 +35,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Permission(Resources.Item, Actions.Read)]
+        [Permission(Resources.Item, ActionType.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(Guid id)
         {
@@ -43,7 +43,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Item, Actions.Read)]
+        [Permission(Resources.Item, ActionType.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request)
         {
@@ -51,7 +51,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Item, Actions.Create)]
+        [Permission(Resources.Item, ActionType.Create)]
         [HttpPost]
         public async Task<ActionResult<ItemDetailDto>> CreateAsync([FromBody] ItemCreateDto itemCreateDTO)
         {
@@ -59,7 +59,7 @@ namespace Template.Api.Controllers
             return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
 
-        [Permission(Resources.Item, Actions.Update)]
+        [Permission(Resources.Item, ActionType.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ItemUpdateDto itemUpdateDTO)
         {
@@ -67,7 +67,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Permission(Resources.Item, Actions.Export)]
+        [Permission(Resources.Item, ActionType.Export)]
         [HttpGet("export/word")]
         public async Task<FileResult> ExportToWordAsync([FromQuery] ItemQueryParameters request)
         {
@@ -75,7 +75,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Word, "Items.docx");
         }
 
-        [Permission(Resources.Item, Actions.Export)]
+        [Permission(Resources.Item, ActionType.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request)
         {
@@ -83,7 +83,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.Pdf, "Items.pdf");
         }
 
-        [Permission(Resources.Item, Actions.Export)]
+        [Permission(Resources.Item, ActionType.Export)]
         [HttpGet("export/excel")]
         public async Task<FileResult> ExportToExcelAsync([FromQuery] ItemQueryParameters request)
         {

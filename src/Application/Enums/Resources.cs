@@ -5,8 +5,9 @@
         User = 1,
         Role,
         Resource,
-        Permission,
+        ResourceAction,
         Action,
+        Configuration,
         Category,
         Item
     }

@@ -5,7 +5,7 @@ using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Actions;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Services.V1;
+using Template.Security.Contracts.Services.V1;
 
 namespace Template.Api.Controllers.Admin
 {
@@ -22,7 +22,7 @@ namespace Template.Api.Controllers.Admin
             _actionService = actionService;
         }
 
-        [Permission(Resources.Action, Actions.Read)]
+        [Permission(Resources.Action, ActionType.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<ActionListDto>>>> GetActions()
         {

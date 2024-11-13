@@ -3,7 +3,7 @@ using Template.Api.Middlewares;
 using Template.Application;
 using Template.Application.SetupOptions;
 using Template.Email;
-using Template.Identity;
+using Template.Security;
 using Template.Persistence;
 
 {

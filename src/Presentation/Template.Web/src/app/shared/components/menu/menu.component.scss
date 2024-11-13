@@ -1,0 +1,44 @@
+.root-menu {
+  display: flex;
+  position: relative;
+
+  > li {
+    position: relative;
+
+    &:hover > app-menu > ul.sub-menu {
+      display: block !important;
+    }
+
+    > app-menu > ul.sub-menu {
+      position: absolute;
+      display: none;
+    }
+  }
+}
+
+
+
+.menu {
+  list-style: none;
+  padding-left: 20px;
+
+  li {
+    margin: 5px 0;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+
+      i {
+        margin-right: 5px;
+      }
+
+      &.active {
+        font-weight: bold;
+        color: #007bff; // Cambia esto por el color que prefieras para el enlace activo
+      }
+    }
+  }
+}

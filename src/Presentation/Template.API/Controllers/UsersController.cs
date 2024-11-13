@@ -4,9 +4,9 @@ using Template.Application.Constants;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Services.V1;
-using Template.Identity.Dtos.Users;
-using Template.Identity.Specification.V1;
+using Template.Security.Contracts.Services.V1;
+using Template.Security.Dtos.Users;
+using Template.Security.Specification.V1;
 
 namespace Template.Api.Controllers
 {

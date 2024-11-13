@@ -5,7 +5,7 @@ using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Services.V1;
+using Template.Security.Contracts.Services.V1;
 
 namespace Template.Api.Controllers.Admin
 {
@@ -22,7 +22,7 @@ namespace Template.Api.Controllers.Admin
             _permissionService = permissionService;
         }
 
-        [Permission(Resources.Permission, Actions.Read)]
+        [Permission(Resources.ResourceAction, ActionType.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions()
         {
@@ -30,7 +30,7 @@ namespace Template.Api.Controllers.Admin
             return Ok(permissions);
         }
 
-        [Permission(Resources.Permission, Actions.Read)]
+        [Permission(Resources.ResourceAction, ActionType.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<PermissionDetailDto>>> GetPermission(int id)
         {
@@ -38,7 +38,7 @@ namespace Template.Api.Controllers.Admin
             return Ok(permission);
         }
 
-        [Permission(Resources.Permission, Actions.Create)]
+        [Permission(Resources.ResourceAction, ActionType.Create)]
         [HttpPost]
         public async Task<ActionResult> CreatePermission([FromBody] PermissionCreateDto permissionCreateDto)
         {
@@ -47,7 +47,7 @@ namespace Template.Api.Controllers.Admin
             return CreatedAtAction(nameof(GetPermission), new { id = permission.Id }, permission);
         }
 
-        [Permission(Resources.Permission, Actions.Update)]
+        [Permission(Resources.ResourceAction, ActionType.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDto permissionUpdateDTO)
         {
@@ -55,7 +55,7 @@ namespace Template.Api.Controllers.Admin
             return NoContent();
         }
 
-        [Permission(Resources.Permission, Actions.Delete)]
+        [Permission(Resources.ResourceAction, ActionType.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePermission(int id)
         {

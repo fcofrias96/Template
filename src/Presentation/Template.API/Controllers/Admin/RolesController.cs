@@ -5,7 +5,7 @@ using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
-using Template.Identity.Contracts.Services.V1;
+using Template.Security.Contracts.Services.V1;
 
 namespace Template.Api.Controllers.Admin
 {
@@ -24,7 +24,7 @@ namespace Template.Api.Controllers.Admin
             _rolePermissionService = rolePermissionService;
         }
 
-        [Permission(Resources.Role, Actions.Read)]
+        [Permission(Resources.Role, ActionType.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetRoles()
         {
@@ -32,7 +32,7 @@ namespace Template.Api.Controllers.Admin
             return Ok(roles);
         }
 
-        [Permission(Resources.Role, Actions.Read)]
+        [Permission(Resources.Role, ActionType.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<RoleDetailDto>>> GetRole(Guid id)
         {
@@ -40,7 +40,7 @@ namespace Template.Api.Controllers.Admin
             return Ok(role);
         }
 
-        [Permission(Resources.Role, Actions.Create)]
+        [Permission(Resources.Role, ActionType.Create)]
         [HttpPost]
         public async Task<ActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)
         {
@@ -49,7 +49,7 @@ namespace Template.Api.Controllers.Admin
             return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
         }
 
-        [Permission(Resources.Role, Actions.Update)]
+        [Permission(Resources.Role, ActionType.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateDto roleUpdateDTO)
         {
@@ -57,7 +57,7 @@ namespace Template.Api.Controllers.Admin
             return NoContent();
         }
 
-        [Permission(Resources.Role, Actions.Delete)]
+        [Permission(Resources.Role, ActionType.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRole(Guid id)
         {
@@ -65,7 +65,7 @@ namespace Template.Api.Controllers.Admin
             return NoContent();
         }
 
-        [Permission(Resources.Role, Actions.Create)]
+        [Permission(Resources.Role, ActionType.Create)]
         [HttpPost("{id}/AddPermission")]
         public async Task<ActionResult> AddPermissionToRole(Guid id, [FromBody] int[] permissionsId)
         {
@@ -73,7 +73,7 @@ namespace Template.Api.Controllers.Admin
             return NoContent();
         }
 
-        [Permission(Resources.Role, Actions.Delete)]
+        [Permission(Resources.Role, ActionType.Delete)]
         [HttpPost("{id}/RemovePermission")]
         public async Task<ActionResult> RemovePermissionToRole(Guid id, [FromBody] int[] permissionsId)
         {

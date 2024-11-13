@@ -1,0 +1,19 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.Security.Entities;
+using Template.Security.Seeds;
+
+namespace Template.Security.Configurations.V1
+{
+    public class RolePermissionConfiguration : IEntityTypeConfiguration<RolePermission>
+    {
+        public void Configure(EntityTypeBuilder<RolePermission> builder)
+        {
+            builder.ToTable("RolePermissions");
+
+            builder.HasKey(rp => new { rp.RoleId, rp.ResourceActionId });
+
+            builder.HasData(RolePermissionSeed.Data);
+        }
+    }
+}

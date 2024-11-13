@@ -9,12 +9,6 @@ namespace Template.Persistence.Configuration.V1
     {
         public override void Configure(EntityTypeBuilder<Item> builder)
         {
-            #region Table
-
-            builder.ToTable("Item");
-
-            #endregion Table
-
             #region Properties
 
             builder.Property(x => x.Id)

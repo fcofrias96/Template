@@ -10,11 +10,6 @@ namespace Template.Persistence.Configuration.V1
     {
         public override void Configure(EntityTypeBuilder<Category> builder)
         {
-            #region Table
-
-            builder.ToTable("Category");
-
-            #endregion Table
 
             #region Properties
 

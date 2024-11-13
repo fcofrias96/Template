@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json.Serialization;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
@@ -16,7 +17,13 @@ namespace Template.Application
         {
             services.AddApiVersioning(ApiVersioning.Options);
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().ConfigureApiBehaviorOptions(ApiBehavior.Options);
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(ApiBehavior.Options)
+                 .AddJsonOptions(options =>
+                 {
+                     //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                     //options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                 });
             services.AddCors(Cors.GetOptions(configuration));
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
