@@ -246,6 +246,9 @@ namespace Template.Security.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
@@ -263,9 +266,11 @@ namespace Template.Security.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.HasIndex("ResourceActionId");
+
+                    b.HasIndex("ParentId", "Order")
+                        .IsUnique()
+                        .HasFilter("[ParentId] IS NOT NULL");
 
                     b.ToTable("MenuItems");
 
@@ -276,6 +281,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "dashboard-icon",
                             IsDeleted = false,
+                            Order = 1,
                             Title = "Dashboard",
                             Url = "/dashboard"
                         },
@@ -285,6 +291,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "users-icon",
                             IsDeleted = false,
+                            Order = 2,
                             ParentId = 6,
                             ResourceActionId = 2,
                             Title = "Usuarios",
@@ -296,6 +303,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "roles-icon",
                             IsDeleted = false,
+                            Order = 1,
                             ParentId = 6,
                             ResourceActionId = 12,
                             Title = "Roles",
@@ -307,6 +315,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "categories-icon",
                             IsDeleted = false,
+                            Order = 3,
                             ResourceActionId = 23,
                             Title = "Categorías",
                             Url = "/categorias"
@@ -317,6 +326,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "items-icon",
                             IsDeleted = false,
+                            Order = 2,
                             ResourceActionId = 28,
                             Title = "Productos",
                             Url = "/productos"
@@ -327,6 +337,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "settings-icon",
                             IsDeleted = false,
+                            Order = 4,
                             ResourceActionId = 32,
                             Title = "Configuración",
                             Url = "/configuracion"
@@ -337,6 +348,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "permissions-icon",
                             IsDeleted = false,
+                            Order = 3,
                             ParentId = 6,
                             ResourceActionId = 17,
                             Title = "Permisos",
@@ -348,6 +360,7 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Icon = "resources-icon",
                             IsDeleted = false,
+                            Order = 4,
                             ParentId = 6,
                             ResourceActionId = 7,
                             Title = "Recursos",
@@ -807,7 +820,7 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            Id = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Admin",
@@ -815,7 +828,7 @@ namespace Template.Security.Migrations
                         },
                         new
                         {
-                            Id = "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf",
+                            Id = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "User",
@@ -840,172 +853,172 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            RoleId = "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf",
+                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
                             ResourceActionId = 23
                         },
                         new
                         {
-                            RoleId = "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf",
+                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
                             ResourceActionId = 28
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 1
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 2
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 3
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 4
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 5
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 6
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 7
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 8
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 9
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 10
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 11
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 12
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 13
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 14
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 15
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 16
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 17
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 18
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 19
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 20
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 21
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 22
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 23
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 24
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 25
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 26
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 27
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 28
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 29
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 30
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 31
                         },
                         new
                         {
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
                             ResourceActionId = 32
                         });
                 });
@@ -1120,9 +1133,9 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d1900cf8-5095-4d2f-8516-c106f13c35f9",
+                            Id = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2ac8be78-25ac-4bec-9ad9-138b3593ee30",
+                            ConcurrencyStamp = "df6185ac-3ea6-4434-9dcc-177b9f97871a",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -1133,19 +1146,19 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAECP9KUf3WENZHewVH+GX5+JX8Fq6m71atBTKpcuRgTl4zwMqZ8fUbIdZTcT6WyzkUg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIuqUpiwku/+KcBQhcXc8tAlPFxs/diIVH0S9VJHwXGXwOxyfyuMaxQ3KKsXGd246A==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "3c2aca22-9a5b-463c-b864-cb7107d38d7f",
+                            SecurityStamp = "998dd5f0-3a1b-4a37-9e41-5d779b11d0f6",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "7f017cfb-e8f6-4c91-83f5-6c5864563bc0",
+                            Id = "ecd79328-17c1-4420-8505-61f342df829c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c6aaf7f0-9f30-4841-9787-8d7ad28cacb1",
+                            ConcurrencyStamp = "cd0e6c55-0ab4-4875-b986-9fcede71a627",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -1156,11 +1169,11 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHt5gorIdu0szsqEtJrqw2ZfTRyOyzLlN9cM7615rfLnMuXYmaYckRakn8Mdxhn+GQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPq2BMW4H6ujeR//JuaGJn2oQFEeYWzjzm8KDRsJ1hsGUBCam3hlsGDPAUzA5rgVkQ==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "0bb810dc-1c04-46f7-8227-19022c0c63a8",
+                            SecurityStamp = "6b323eab-9317-408d-96f7-275b09b946f8",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -1181,18 +1194,18 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "d1900cf8-5095-4d2f-8516-c106f13c35f9",
-                            RoleId = "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1"
+                            UserId = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
+                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05"
                         },
                         new
                         {
-                            UserId = "d1900cf8-5095-4d2f-8516-c106f13c35f9",
-                            RoleId = "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf"
+                            UserId = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
+                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360"
                         },
                         new
                         {
-                            UserId = "7f017cfb-e8f6-4c91-83f5-6c5864563bc0",
-                            RoleId = "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf"
+                            UserId = "ecd79328-17c1-4420-8505-61f342df829c",
+                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360"
                         });
                 });
 

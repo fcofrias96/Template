@@ -1,35 +1,17 @@
-.root-menu {
-  display: flex;
-  position: relative;
-
-  > li {
-    position: relative;
-
-    &:hover > app-menu > ul.sub-menu {
-      display: block !important;
-    }
-
-    > app-menu > ul.sub-menu {
-      position: absolute;
-      display: none;
-    }
-  }
-}
-
-
-
 .menu {
   list-style: none;
   padding-left: 20px;
+  display: flex;
 
   li {
-    margin: 5px 0;
+    position: relative;
+    padding: 5px 10px;
 
     a {
       text-decoration: none;
       color: inherit;
-      display: flex;
       align-items: center;
+      position: relative;
 
       i {
         margin-right: 5px;
@@ -37,8 +19,54 @@
 
       &.active {
         font-weight: bold;
-        color: #007bff; // Cambia esto por el color que prefieras para el enlace activo
+        color: #007bff;
       }
     }
+
+    &:hover > app-menu > .sub-menu {
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: -1px;
+      width: calc(100% + 2px);
+    }
+
+    &:hover > app-menu > .sub-menu .sub-menu {
+      left: 100%;
+      top: -0.5px;
+    }
   }
+}
+
+.root-menu {
+  > li{
+    border-top: solid 1px;
+    border-right: solid 1px;
+    border-bottom: solid 1px;
+
+    &:first-child {
+      border-left: solid 1px;
+    }
+  }
+
+}
+
+.sub-menu {
+  display: none;
+  background-color: #f9f9f9;
+  z-index: 1;
+
+  > li{
+    border-top: solid 1px;
+    border-right: solid 1px;
+    border-left: solid 1px;
+
+    &:last-child {
+      border-bottom: solid 1px;
+    }
+  }
+}
+
+ul {
+  padding: 0 !important;
 }

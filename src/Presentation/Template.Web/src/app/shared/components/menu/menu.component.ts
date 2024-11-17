@@ -16,6 +16,7 @@ export class MenuComponent implements OnInit {
   public menu: Menu[] = [];
   @Input() public subMenu: Menu[] = [];
   @Input() public isRootMenu: boolean = true;
+  @Input() public parentRoute: string = '';
 
 
   constructor(private menuService: MenuService) {}

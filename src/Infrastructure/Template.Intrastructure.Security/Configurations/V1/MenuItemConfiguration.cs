@@ -10,6 +10,10 @@ namespace Template.Security.Configurations.V1
     {
         public override void Configure(EntityTypeBuilder<MenuItem> builder)
         {
+
+            builder.HasIndex(x => new { x.ParentId, x.Order })
+                .IsUnique();
+
             builder.HasOne(e => e.Parent)
             .WithMany(e => e.Children)
             .HasForeignKey(e => e.ParentId)

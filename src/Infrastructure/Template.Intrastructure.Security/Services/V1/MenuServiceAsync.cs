@@ -31,8 +31,12 @@ namespace Template.Security.Services.V1
                                         Url = m.Url,
                                         Icon = m.Icon,
                                         ParentId = m.ParentId,
-                                        ResourceActionId = m.ResourceActionId
+                                        ResourceActionId = m.ResourceActionId,
+                                        Order = m.Order
+
                                     })
+                                    .OrderBy(m => m.ParentId)
+                                    .ThenBy(m=> m.Order)
                                     .ToListAsync();
 
             var accessibleMenuItems = FilterMenuItemsByPermissions(menuItems, userResourceActionIds);
@@ -56,7 +60,7 @@ namespace Template.Security.Services.V1
         }
 
 
-        private bool HasAccessToMenuItem(HashSet<int> userResourceActionIds, MenuItem item)
+        private static bool HasAccessToMenuItem(HashSet<int> userResourceActionIds, MenuItem item)
         {
             if (!item.ResourceActionId.HasValue)
             {
@@ -67,7 +71,7 @@ namespace Template.Security.Services.V1
         }
 
 
-        private List<MenuItem> BuildMenuHierarchy(List<MenuItem> menuItems)
+        private static List<MenuItem> BuildMenuHierarchy(List<MenuItem> menuItems)
         {
             var menuItemDictionary = menuItems.ToDictionary(item => item.Id);
             List<MenuItem> rootItems = new List<MenuItem>();
@@ -96,7 +100,8 @@ namespace Template.Security.Services.V1
                 Title = item.Title,
                 Url = item.Url,
                 Icon = item.Icon,
-                Children = item.Children != null ? MapMenuItemsToDto(item.Children.ToList()) : null
+                Children = item.Children != null ? MapMenuItemsToDto(item.Children.ToList()) : [],
+                Order = item.Order
             }).ToList();
         }
 

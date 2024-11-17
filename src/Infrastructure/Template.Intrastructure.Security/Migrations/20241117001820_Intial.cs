@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Template.Security.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -252,6 +252,7 @@ namespace Template.Security.Migrations
                     Url = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Icon = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ParentId = table.Column<int>(type: "int", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
                     ResourceActionId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(30)", nullable: false, defaultValue: "System"),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -313,8 +314,8 @@ namespace Template.Security.Migrations
 
             migrationBuilder.InsertData(
                 table: "MenuItems",
-                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "ParentId", "ResourceActionId", "Title", "Url" },
-                values: new object[] { 1, "dashboard-icon", null, null, null, null, "Dashboard", "/dashboard" });
+                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "Order", "ParentId", "ResourceActionId", "Title", "Url" },
+                values: new object[] { 1, "dashboard-icon", null, null, 1, null, null, "Dashboard", "/dashboard" });
 
             migrationBuilder.InsertData(
                 table: "Resources",
@@ -336,8 +337,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "LastModified", "LastModifiedBy", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf", null, null, null, "User", "USER" },
-                    { "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1", null, null, null, "Admin", "ADMIN" }
+                    { "10debe31-cd0e-400d-acd6-c74bb3616c05", null, null, null, "Admin", "ADMIN" },
+                    { "73186cd2-14ea-4cdb-8e72-bae73eed8360", null, null, null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -345,8 +346,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsTokenRevoked", "LastModified", "LastModifiedBy", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TokenRevokedTime", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "7f017cfb-e8f6-4c91-83f5-6c5864563bc0", 0, "c6aaf7f0-9f30-4841-9787-8d7ad28cacb1", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEHt5gorIdu0szsqEtJrqw2ZfTRyOyzLlN9cM7615rfLnMuXYmaYckRakn8Mdxhn+GQ==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "0bb810dc-1c04-46f7-8227-19022c0c63a8", null, false, "johnJames" },
-                    { "d1900cf8-5095-4d2f-8516-c106f13c35f9", 0, "2ac8be78-25ac-4bec-9ad9-138b3593ee30", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAECP9KUf3WENZHewVH+GX5+JX8Fq6m71atBTKpcuRgTl4zwMqZ8fUbIdZTcT6WyzkUg==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "3c2aca22-9a5b-463c-b864-cb7107d38d7f", null, false, "johnDoe" }
+                    { "ecd79328-17c1-4420-8505-61f342df829c", 0, "cd0e6c55-0ab4-4875-b986-9fcede71a627", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEPq2BMW4H6ujeR//JuaGJn2oQFEeYWzjzm8KDRsJ1hsGUBCam3hlsGDPAUzA5rgVkQ==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "6b323eab-9317-408d-96f7-275b09b946f8", null, false, "johnJames" },
+                    { "f7a027a0-19d9-4c56-8f87-36ab4bb98e44", 0, "df6185ac-3ea6-4434-9dcc-177b9f97871a", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEIuqUpiwku/+KcBQhcXc8tAlPFxs/diIVH0S9VJHwXGXwOxyfyuMaxQ3KKsXGd246A==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "998dd5f0-3a1b-4a37-9e41-5d779b11d0f6", null, false, "johnDoe" }
                 });
 
             migrationBuilder.InsertData(
@@ -393,19 +394,19 @@ namespace Template.Security.Migrations
                 columns: new[] { "RoleId", "UserId", "Discriminator" },
                 values: new object[,]
                 {
-                    { "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf", "7f017cfb-e8f6-4c91-83f5-6c5864563bc0", "UserRole" },
-                    { "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf", "d1900cf8-5095-4d2f-8516-c106f13c35f9", "UserRole" },
-                    { "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1", "d1900cf8-5095-4d2f-8516-c106f13c35f9", "UserRole" }
+                    { "73186cd2-14ea-4cdb-8e72-bae73eed8360", "ecd79328-17c1-4420-8505-61f342df829c", "UserRole" },
+                    { "10debe31-cd0e-400d-acd6-c74bb3616c05", "f7a027a0-19d9-4c56-8f87-36ab4bb98e44", "UserRole" },
+                    { "73186cd2-14ea-4cdb-8e72-bae73eed8360", "f7a027a0-19d9-4c56-8f87-36ab4bb98e44", "UserRole" }
                 });
 
             migrationBuilder.InsertData(
                 table: "MenuItems",
-                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "ParentId", "ResourceActionId", "Title", "Url" },
+                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "Order", "ParentId", "ResourceActionId", "Title", "Url" },
                 values: new object[,]
                 {
-                    { 4, "categories-icon", null, null, null, 23, "Categorías", "/categorias" },
-                    { 5, "items-icon", null, null, null, 28, "Productos", "/productos" },
-                    { 6, "settings-icon", null, null, null, 32, "Configuración", "/configuracion" }
+                    { 4, "categories-icon", null, null, 3, null, 23, "Categorías", "/categorias" },
+                    { 5, "items-icon", null, null, 2, null, 28, "Productos", "/productos" },
+                    { 6, "settings-icon", null, null, 4, null, 32, "Configuración", "/configuracion" }
                 });
 
             migrationBuilder.InsertData(
@@ -413,57 +414,59 @@ namespace Template.Security.Migrations
                 columns: new[] { "ResourceActionId", "RoleId" },
                 values: new object[,]
                 {
-                    { 23, "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf" },
-                    { 28, "1e37776f-5ac6-43d6-b8d8-c1ef3ded1ecf" },
-                    { 1, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 2, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 3, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 4, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 5, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 6, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 7, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 8, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 9, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 10, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 11, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 12, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 13, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 14, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 15, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 16, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 17, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 18, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 19, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 20, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 21, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 22, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 23, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 24, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 25, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 26, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 27, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 28, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 29, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 30, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 31, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" },
-                    { 32, "e630cfc5-d2e2-41d6-aff2-994ed21ee9f1" }
+                    { 1, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 2, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 3, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 4, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 5, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 6, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 7, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 8, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 9, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 10, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 11, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 12, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 13, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 14, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 15, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 16, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 17, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 18, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 19, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 20, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 21, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 22, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 23, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 24, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 25, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 26, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 27, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 28, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 29, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 30, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 31, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 32, "10debe31-cd0e-400d-acd6-c74bb3616c05" },
+                    { 23, "73186cd2-14ea-4cdb-8e72-bae73eed8360" },
+                    { 28, "73186cd2-14ea-4cdb-8e72-bae73eed8360" }
                 });
 
             migrationBuilder.InsertData(
                 table: "MenuItems",
-                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "ParentId", "ResourceActionId", "Title", "Url" },
+                columns: new[] { "Id", "Icon", "LastModified", "LastModifiedBy", "Order", "ParentId", "ResourceActionId", "Title", "Url" },
                 values: new object[,]
                 {
-                    { 2, "users-icon", null, null, 6, 2, "Usuarios", "/usuarios" },
-                    { 3, "roles-icon", null, null, 6, 12, "Roles", "/roles" },
-                    { 7, "permissions-icon", null, null, 6, 17, "Permisos", "/permisos" },
-                    { 8, "resources-icon", null, null, 6, 7, "Recursos", "/recursos" }
+                    { 2, "users-icon", null, null, 2, 6, 2, "Usuarios", "/usuarios" },
+                    { 3, "roles-icon", null, null, 1, 6, 12, "Roles", "/roles" },
+                    { 7, "permissions-icon", null, null, 3, 6, 17, "Permisos", "/permisos" },
+                    { 8, "resources-icon", null, null, 4, 6, 7, "Recursos", "/recursos" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MenuItems_ParentId",
+                name: "IX_MenuItems_ParentId_Order",
                 table: "MenuItems",
-                column: "ParentId");
+                columns: new[] { "ParentId", "Order" },
+                unique: true,
+                filter: "[ParentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_ResourceActionId",
