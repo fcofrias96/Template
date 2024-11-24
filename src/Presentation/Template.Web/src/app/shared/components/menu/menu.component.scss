@@ -39,16 +39,10 @@
 }
 
 .root-menu {
-  > li{
-    border-top: solid 1px;
-    border-right: solid 1px;
-    border-bottom: solid 1px;
-
-    &:first-child {
-      border-left: solid 1px;
-    }
-  }
-
+  background: lightskyblue;
+  margin-top: 0;
+  margin-left: -20px;
+  margin-right: -20px;
 }
 
 .sub-menu {

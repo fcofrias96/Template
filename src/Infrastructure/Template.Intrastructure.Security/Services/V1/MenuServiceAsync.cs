@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Dtos.Menu;
@@ -19,7 +20,7 @@ namespace Template.Security.Services.V1
             _context = context;
         }
 
-        public async Task<List<MenuItemDto>> GetMenuForUser(ClaimsPrincipal user)
+        public async Task<ApiResponse<List<MenuItemDto>>> GetMenuForUser(ClaimsPrincipal user)
         {
             var userResourceActionIds = _permissionService.GetUserResourceActionIds(user);
 
@@ -45,7 +46,7 @@ namespace Template.Security.Services.V1
 
             var menuDto = MapMenuItemsToDto(menuHierarchy);
 
-            return menuDto;
+            return new ApiResponse<List<MenuItemDto>>(menuDto);
         }
 
 

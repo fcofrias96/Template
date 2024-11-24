@@ -1,10 +1,13 @@
+<app-loading-spinner/>
+<app-notification/>
 <div class="container">
+  <app-nav-bar/>
   <main>
-    <app-menu/>
+    <app-menu *ngIf="isAuthenticated"/>
     <router-outlet />
   </main>
 
   <footer>
-    <p>&copy; 2023 My Angular App</p>
+    <p>&copy; 2024 My Angular App</p>
   </footer>
 </div>

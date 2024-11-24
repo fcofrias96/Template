@@ -15,6 +15,8 @@ namespace Template.Security.Services.V1
 
         public HashSet<int> GetUserResourceActionIds(ClaimsPrincipal user)
         {
+            if(user == null ||  !user.Identity.IsAuthenticated) { return new HashSet<int>(); }
+            
             var userId = GetUserIdFromClaims(user);
 
             return _context.UserRoles

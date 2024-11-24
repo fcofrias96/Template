@@ -1,0 +1,26 @@
+<div>
+  <label [for]="id">{{ label }}</label>
+  <ng-container [ngSwitch]="type">
+    <input
+      *ngSwitchCase="'text'"
+      [id]="id"
+      [formControlName]="controlName"
+      [type]="type"
+      class="form-control"
+      [ngClass]="getValidationClass()"
+      [attr.placeholder]="placeholder"
+      (keydown)="onKeydown($event)"
+    />
+    <textarea
+      *ngSwitchCase="'textarea'"
+      [id]="id"
+      [formControlName]="controlName"
+      class="form-control"
+      [ngClass]="getValidationClass()"
+      [attr.placeholder]="placeholder"
+    ></textarea>
+  </ng-container>
+  <div class="invalid-feedback" *ngIf="getValidationMessage()">
+    {{ getValidationMessage() }}
+  </div>
+</div>

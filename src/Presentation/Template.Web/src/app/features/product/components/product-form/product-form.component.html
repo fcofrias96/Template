@@ -1,0 +1,38 @@
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
+  <app-form-field
+    controlName="name"
+    label="Nombre del Producto"
+    id="name"
+    type="text"
+  ></app-form-field>
+
+  <app-form-field
+    controlName="categoryId"
+    label="Categoría"
+    id="categoryId"
+    type="text"
+  ></app-form-field>
+
+  <app-form-field
+    controlName="price"
+    label="Precio"
+    id="price"
+    type="text"
+    [onlyNumbers]="true"
+  ></app-form-field>
+
+  <app-form-field
+    controlName="description"
+    label="Descripción"
+    id="description"
+    type="textarea"
+  ></app-form-field>
+
+  <button
+    class="btn btn-primary mt-4"
+    type="submit"
+    [disabled]="productForm.invalid"
+  >
+    Crear Producto
+  </button>
+</form>

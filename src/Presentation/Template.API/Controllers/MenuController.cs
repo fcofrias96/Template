@@ -9,16 +9,15 @@ namespace Template.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class MenusController : ControllerBase
+    public class MenuController : ControllerBase
     {
         private readonly IMenuServiceAsync _menuService;
 
-        public MenusController(IMenuServiceAsync menuService)
+        public MenuController(IMenuServiceAsync menuService)
         {
             _menuService = menuService;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<MenuItemDto>>> GetMenusAsync()
         {

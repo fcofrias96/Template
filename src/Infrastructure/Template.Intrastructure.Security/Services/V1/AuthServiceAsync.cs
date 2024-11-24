@@ -226,7 +226,7 @@ namespace Template.Security.Services.V1
                 throw new BadRequestException($"Email for user '{loginDto.Email}' is not confirmed.");
             }
 
-            if (user.LockoutEnd is not null)
+            if (user.LockoutEnabled)
             {
                 throw new BadRequestException($"User account '{loginDto.Email}' is locked.");
             }

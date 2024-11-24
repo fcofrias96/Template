@@ -1,0 +1,8 @@
+<div class="product-list">
+  <h2>Product List</h2>
+  <ul>
+    <li *ngFor="let product of  products$ | async" (click)="selectProduct(product.id)">
+      {{ product.name }} - ${{ product.price }}
+    </li>
+  </ul>
+</div>
