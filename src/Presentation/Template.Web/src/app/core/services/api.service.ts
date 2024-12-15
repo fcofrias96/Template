@@ -36,16 +36,12 @@ export abstract class ApiService {
   }
 
 
-  putData<T>(url: string, body: any, showLoading: boolean = true): Observable<T> {
-    return this.apiRepository.put<T>(url, body, showLoading).pipe(
-      map(response => response.data)
-    );
+  putData<T>(url: string, body: any, showLoading: boolean = true): Observable<void> {
+    return this.apiRepository.put<T>(url, body, showLoading);
   }
 
-  deleteData<T>(url: string, showLoading: boolean = true): Observable<T> {
-    return this.apiRepository.delete<T>(url, showLoading).pipe(
-      map(response => response.data)
-    );
+  deleteData<T>(url: string, showLoading: boolean = true): Observable<void> {
+    return this.apiRepository.delete<T>(url, showLoading);
   }
 
   private getHeaders(showLoading: boolean): HttpHeaders {

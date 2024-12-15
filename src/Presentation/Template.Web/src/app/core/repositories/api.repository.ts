@@ -22,7 +22,7 @@ export class ApiRepository {
     const headers = this.getHeaders(showLoading);
     return this.http
       .get<ApiResponse<T>>(url, { headers })
-      .pipe(catchError(error => this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   post<T>(
@@ -33,28 +33,28 @@ export class ApiRepository {
     const headers = this.getHeaders(showLoading);
     return this.http
       .post<ApiResponse<T>>(url, body, { headers })
-      .pipe(catchError(error => this.handleError(error)));
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   put<T>(
     url: string,
     body: any,
     showLoading: boolean = true
-  ): Observable<ApiResponse<T>> {
+  ): Observable<void> {
     const headers = this.getHeaders(showLoading);
     return this.http
-      .put<ApiResponse<T>>(url, body, { headers })
-      .pipe(catchError(error => this.handleError(error)));
+      .put<void>(url, body, { headers })
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   delete<T>(
     url: string,
     showLoading: boolean = true
-  ): Observable<ApiResponse<T>> {
+  ): Observable<void> {
     const headers = this.getHeaders(showLoading);
     return this.http
-      .delete<ApiResponse<T>>(url, { headers })
-      .pipe(catchError(error => this.handleError(error)));
+      .delete<void>(url, { headers })
+      .pipe(catchError((error) => this.handleError(error)));
   }
 
   private getHeaders(showLoading: boolean): HttpHeaders {

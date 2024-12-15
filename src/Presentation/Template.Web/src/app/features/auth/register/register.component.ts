@@ -33,7 +33,7 @@ export class RegisterComponent implements OnInit {
 
   onRegister(): void {
     if (this.registerForm.valid) {
-      // Lógica para registrarse
+
       console.log('Registration successful', this.registerForm.value);
     }
   }

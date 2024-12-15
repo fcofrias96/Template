@@ -24,7 +24,7 @@ export class ForgotPasswordComponent implements OnInit {
   onSubmit(): void {
     if (this.forgotPasswordForm.valid) {
       const email = this.forgotPasswordForm.get('email')?.value;
-      // Lógica para enviar el enlace de restablecimiento de contraseña
+
       console.log(`Password reset link sent to ${email}`);
     }
   }

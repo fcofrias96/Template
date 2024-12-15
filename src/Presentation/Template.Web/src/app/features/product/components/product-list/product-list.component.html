@@ -1,8 +1,7 @@
-<div class="product-list">
-  <h2>Product List</h2>
-  <ul>
-    <li *ngFor="let product of  products$ | async" (click)="selectProduct(product.id)">
-      {{ product.name }} - ${{ product.price }}
-    </li>
-  </ul>
-</div>
+
+<app-generic-table
+  [columns]="columns"
+  [data]="(products$ | async) ?? []"
+  [itemsPerPage]="itemsPerPage"
+  (actionClicked)="handleAction($event)"
+  ></app-generic-table>

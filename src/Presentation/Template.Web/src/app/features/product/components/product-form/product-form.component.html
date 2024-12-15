@@ -6,12 +6,14 @@
     type="text"
   ></app-form-field>
 
-  <app-form-field
-    controlName="categoryId"
-    label="Categoría"
-    id="categoryId"
-    type="text"
-  ></app-form-field>
+  <app-filter-select
+        formControlName="categoryId"
+        [options]="categories"
+        [placeholder]="'Seleccione una opción'"
+        [required]="true"
+        [label]="'Categoría'"
+      >
+      </app-filter-select>
 
   <app-form-field
     controlName="price"
@@ -33,6 +35,6 @@
     type="submit"
     [disabled]="productForm.invalid"
   >
-    Crear Producto
+   {{ edit ? 'Actualizar' : 'Agregar' }}
   </button>
 </form>

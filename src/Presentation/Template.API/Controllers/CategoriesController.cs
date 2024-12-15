@@ -47,9 +47,9 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetAllCategoriesAsync([FromQuery] CategoryQueryParameters request)
+        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetAllCategoriesAsync()
         {
-            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request);
+            var response = await _categoryServiceAsync.GetProjectedAsync<CategoryListDto>();
             return Ok(response);
         }
 

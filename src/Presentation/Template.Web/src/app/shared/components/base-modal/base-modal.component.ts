@@ -37,14 +37,14 @@ export class BaseModalComponent implements OnInit, OnDestroy {
     this.dynamicComponent.clear();
     this.componentRef = this.dynamicComponent.createComponent(this.component);
 
-    // Pasar datos al componente hijo
+
     if (this.data) {
       Object.keys(this.data).forEach((key) => {
         this.componentRef.instance[key] = this.data[key];
       });
     }
 
-    // Escuchar eventos del componente hijo y almacenar la suscripción
+
     if (this.componentRef.instance.closeModal) {
       const sub = this.componentRef.instance.closeModal.subscribe(() => this.close());
       this.subscriptions.add(sub);
@@ -56,10 +56,10 @@ export class BaseModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cancelar todas las suscripciones
+
     this.subscriptions.unsubscribe();
 
-    // Destruir el componente dinámico
+
     if (this.componentRef) {
       this.componentRef.destroy();
     }

@@ -62,7 +62,7 @@ export class FormFieldComponent {
     if (control.errors['pattern']) {
       return `${this.label} format is invalid.`;
     }
-    // Add other error messages as needed
+
     return null;
   }
 

@@ -18,11 +18,13 @@ export class ProductComponent {
   constructor(private modalService: ModalService) {}
 
   addProduct() {
-
-    const modal =this.modalService.openModal(ProductFormComponent, 'Add Product', null, {
-      backdrop: 'static',
-
-    });
-
+    const modal = this.modalService.openModal(
+      ProductFormComponent,
+      'Add Product',
+      null,
+      {
+        backdrop: 'static',
+      }
+    );
   }
 }
