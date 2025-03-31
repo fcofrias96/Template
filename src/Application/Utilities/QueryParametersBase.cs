@@ -8,8 +8,8 @@ namespace Template.Application.Utilities
     {
         public abstract string? SortBy { get; set; }
         public bool IsDescending { get; set; }
-        public int Offset { get; }
-        public int Limit { get; } = 30;
+        public int Offset { get; set; }
+        public int Limit { get; set; } = 30;
 
         private readonly (Type AttributeType, string Separator, bool IsRange)[] AttributeFormats =
         {

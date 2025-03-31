@@ -8,7 +8,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 })
 export class ConfirmModalComponent {
   @Input() title!: string;
-  public result: boolean = false;
+  public result = false;
 
   constructor(public bsModalRef: BsModalRef) {}
 

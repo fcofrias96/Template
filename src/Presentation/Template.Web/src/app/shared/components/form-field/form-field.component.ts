@@ -1,88 +1,142 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ControlContainer, FormGroupDirective, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, forwardRef, Input } from '@angular/core';
+import {
+  ControlContainer,
+  FormGroupDirective,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  ValidationErrors,
+} from '@angular/forms';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-form-field',
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
+  imports: [ReactiveFormsModule, CommonModule, NgxMaskDirective],
+  viewProviders: [
+    { provide: ControlContainer, useExisting: FormGroupDirective },
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormFieldComponent),
+      multi: true,
+    },
+  ],
 })
-export class FormFieldComponent {
-  @Input() controlName!: string;
+export class FormFieldComponent implements ControlValueAccessor {
+  @Input() formControlName!: string;
   @Input() label!: string;
-  @Input() type: 'text' | 'textarea' = 'text';
-  @Input() id!: string;
-  @Input() placeholder: string = '';
-  @Input() onlyNumbers: boolean = false;
+  @Input() type: 'text' | 'textarea' | 'password' = 'text';
+  @Input() placeholder = '';
+  @Input() onlyNumbers = false;
+  @Input() mask!: string;
+  @Input() dropSpecialCharacters!: boolean | string[];
+
+  passwordVisible = false;
+
+  // Allowed keys for number inputs
+  private allowedKeys = [
+    'Backspace',
+    'Tab',
+    'ArrowLeft',
+    'ArrowRight',
+    'Delete',
+  ];
 
   constructor(private controlContainer: ControlContainer) {}
+  value: any;
 
-  /** Getter for the FormControl based on controlName */
-  get control(): FormControl {
-    return this.controlContainer.control?.get(this.controlName) as FormControl;
+  onChange: any = () => {};
+  onTouched: any = () => {};
+
+  writeValue(value: any): void {
+    this.value = value;
   }
 
-  /** Determines the validation class to apply */
-  getValidationClass(): string {
-    const control = this.control;
-    if (!control) {
-      return '';
-    }
-    if ((control.touched || control.dirty) && control.invalid) {
-      return 'is-invalid';
-    }
-    if ((control.touched || control.dirty) && control.valid) {
-      return 'is-valid';
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {}
+
+  /** Returns the corresponding FormControl */
+  get control(): FormControl {
+    return this.controlContainer.control?.get(
+      this.formControlName
+    ) as FormControl;
+  }
+
+  /** Computes the validation class to apply */
+  get validationClass(): string {
+    if (!this.control) return '';
+
+    const { touched, dirty, valid, invalid } = this.control;
+    const interacted = touched || dirty;
+
+    if (interacted) {
+      return invalid ? 'invalid' : valid ? 'valid' : '';
     }
     return '';
   }
 
-  /** Retrieves the validation message based on control errors */
-  getValidationMessage(): string | null {
-    const control = this.control;
-    if (!control || !control.errors) {
-      return null;
-    }
-
-    if (control.errors['required']) {
-      return `${this.label} is required.`;
-    }
-    if (control.errors['invalidNumber']) {
-      return `${this.label} must be a valid number.`;
-    }
-    if (control.errors['minlength']) {
-      return `${this.label} must be at least ${control.errors['minlength'].requiredLength} characters long.`;
-    }
-    if (control.errors['maxlength']) {
-      return `${this.label} cannot exceed ${control.errors['maxlength'].requiredLength} characters.`;
-    }
-    if (control.errors['pattern']) {
-      return `${this.label} format is invalid.`;
-    }
-
-    return null;
+  /** Checks if the field is required */
+  get isRequired(): boolean {
+    return this.control.hasValidator(Validators.required);
   }
 
-  /** Handles keydown events to allow only numbers if specified */
+  /** Generates the validation message based on control errors */
+  get validationMessage(): string | null {
+    const control = this.control;
+    if (!control || !control.errors) return null;
+
+    const errorMessages: Record<string, (error: ValidationErrors) => string> = {
+      required: () => `${this.label} is required.`,
+      invalidNumber: () => `${this.label} must be a valid number.`,
+      minlength: (error) =>
+        `${this.label} must be at least ${error['requiredLength']} characters long.`,
+      maxlength: (error) =>
+        `${this.label} cannot be longer than ${error['requiredLength']} characters.`,
+      pattern: () => `The format of ${this.label} is incorrect.`,
+      email: () => `Please enter a valid email address.`,
+      passwordMismatch: () => `Passwords do not match. Please try again.`,
+    };
+
+    const errorKey = Object.keys(control.errors)[0];
+    return errorMessages[errorKey]
+      ? errorMessages[errorKey](control.errors[errorKey])
+      : null;
+  }
+
+  /** Handles the keydown event to allow only numbers when specified */
   onKeydown(event: KeyboardEvent): void {
-    if (this.onlyNumbers) {
-      const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
-      const isNumberKey = event.key >= '0' && event.key <= '9';
-      const isAllowedKey = allowedKeys.includes(event.key);
+    if (!this.onlyNumbers) return;
 
-      const inputElement = event.target as HTMLInputElement;
-      const isDecimalKey = event.key === '.' && !inputElement.value.includes('.');
-      const isNegativeKey =
-        event.key === '-' &&
-        inputElement.selectionStart === 0 &&
-        !inputElement.value.includes('-');
+    const inputElement = event.target as HTMLInputElement;
+    const { key } = event;
+    const isNumberKey = key >= '0' && key <= '9';
+    const isAllowedKey = this.allowedKeys.includes(key);
+    const isDecimalKey = key === '.' && !inputElement.value.includes('.');
+    const isNegativeKey =
+      key === '-' &&
+      inputElement.selectionStart === 0 &&
+      !inputElement.value.includes('-');
 
-      if (!isNumberKey && !isAllowedKey && !isDecimalKey && !isNegativeKey) {
-        event.preventDefault();
-      }
+    if (!isNumberKey && !isAllowedKey && !isDecimalKey && !isNegativeKey) {
+      event.preventDefault();
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
   }
 }

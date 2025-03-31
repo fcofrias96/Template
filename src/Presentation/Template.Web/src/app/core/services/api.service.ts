@@ -1,56 +1,40 @@
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { ApiRepository } from '../repositories/api.repository';
-import { HttpHeaders } from '@angular/common/http';
 import { PagedCollection } from '@models/paged-collection.interface';
+import { Cacheable } from 'ts-cacheable';
 
-@Injectable({
-  providedIn: 'root'
-})
 export abstract class ApiService {
-  constructor(private apiRepository: ApiRepository) {}
+  constructor(protected apiRepository: ApiRepository, protected url: string) {}
 
-  getData<T>(url: string, showLoading: boolean = true): Observable<T> {
-    return this.apiRepository.get<T>(url, showLoading).pipe(
-      map(response => response.data)
+  getById<T>(id: string | number, showLoading = true): Observable<T> {
+    return this.apiRepository.get<T>(`${this.url}/${id}`, showLoading);
+  }
+
+  @Cacheable()
+  getList<T>(showLoading = true): Observable<T[]> {
+    return this.apiRepository.get<T[]>(this.url, showLoading);
+  }
+
+  @Cacheable()
+  getPagedList<T>(
+    searchParams: string | null,
+    showLoading = true
+  ): Observable<PagedCollection<T>> {
+    return this.apiRepository.get<PagedCollection<T>>(
+      `${this.url}${searchParams ? '?' + searchParams : ''}`,
+      showLoading
     );
   }
 
-  getList<T>(url: string, showLoading: boolean = true): Observable<T[]> {
-    return this.apiRepository.get<T[]>(url, showLoading).pipe(
-      map(response => response.data)
-    );
+  create<T>(body: unknown, showLoading = true): Observable<T> {
+    return this.apiRepository.post<T>(this.url, body, showLoading);
   }
 
-  getPagedList<T>(url: string, showLoading: boolean = true): Observable<PagedCollection<T>> {
-    return this.apiRepository.get<PagedCollection<T>>(url, showLoading).pipe(
-      map(response => response.data)
-    );
+  update(body: unknown, showLoading = true): Observable<void> {
+    return this.apiRepository.put(this.url, body, showLoading);
   }
 
-  postData<T>(url: string, body: any, showLoading: boolean = true): Observable<T> {
-    return this.apiRepository.post<T>(url, body, showLoading).pipe(
-      map(response => response.data)
-    );
+  delete(showLoading = true): Observable<void> {
+    return this.apiRepository.delete(this.url, showLoading);
   }
-
-
-  putData<T>(url: string, body: any, showLoading: boolean = true): Observable<void> {
-    return this.apiRepository.put<T>(url, body, showLoading);
-  }
-
-  deleteData<T>(url: string, showLoading: boolean = true): Observable<void> {
-    return this.apiRepository.delete<T>(url, showLoading);
-  }
-
-  private getHeaders(showLoading: boolean): HttpHeaders {
-    let headers = new HttpHeaders();
-    if (!showLoading) {
-      headers = headers.set('X-No-Loading', 'true');
-    }
-    return headers;
-  }
-
-
 }

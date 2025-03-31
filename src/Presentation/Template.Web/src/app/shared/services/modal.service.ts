@@ -8,8 +8,6 @@ import { ConfirmModalComponent } from '@shared/components/confirm-modal/confirm-
   providedIn: 'root',
 })
 export class ModalService {
-  bsModalRef: BsModalRef | null = null;
-
   constructor(private modalService: BsModalService) {}
 
   openModal(
@@ -29,8 +27,7 @@ export class ModalService {
       ...config,
     };
 
-    this.bsModalRef = this.modalService.show(BaseModalComponent, modalConfig);
-    return this.bsModalRef;
+    return this.modalService.show(BaseModalComponent, modalConfig);
   }
 
   openConfirmModal(
@@ -57,12 +54,5 @@ export class ModalService {
         resolve(result);
       });
     });
-  }
-
-  closeModal() {
-    if (this.bsModalRef) {
-      this.bsModalRef.hide();
-      this.bsModalRef = null;
-    }
   }
 }

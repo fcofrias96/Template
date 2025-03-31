@@ -11,28 +11,32 @@ import { guestGuard } from './core/guards/guest.guard';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { ProductComponent } from './features/product/product.component';
 import { CategoryComponent } from './features/category/category.component';
+import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 
 export const routes: Routes = [
   {
-    path: 'configuracion/usuarios',
-    component: UserComponent,
+    path: 'configuracion',
     canActivate: [authGuard],
+    children: [
+      {
+        path: 'usuarios',
+        component: UserComponent,
+      },
+      {
+        path: 'roles',
+        component: RoleComponent,
+      },
+      {
+        path: 'permisos',
+        component: PermissionComponent,
+      },
+      {
+        path: 'recursos',
+        component: ResourceComponent,
+      },
+    ],
   },
-  {
-    path: 'configuracion/roles',
-    component: RoleComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'configuracion/permisos',
-    component: PermissionComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'configuracion/recursos',
-    component: ResourceComponent,
-    canActivate: [authGuard],
-  },
+
   {
     path: 'categorias',
     component: CategoryComponent,
@@ -45,7 +49,8 @@ export const routes: Routes = [
   },
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
-  { path: 'dashboard', component: DashboardComponent},
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '**', component: NotFoundComponent  },
 ];

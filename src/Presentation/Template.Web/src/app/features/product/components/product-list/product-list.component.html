@@ -1,7 +1,9 @@
 
 <app-generic-table
   [columns]="columns"
-  [data]="(products$ | async) ?? []"
+  [data]="(products$ | async) ?? undefined"
   [itemsPerPage]="itemsPerPage"
   (actionClicked)="handleAction($event)"
+  (filterChanged)="handleFilter($event)"
+  [itemsPerPage]="30"
   ></app-generic-table>

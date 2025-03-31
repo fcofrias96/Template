@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Menu } from '@models/menu';
 import { AuthService } from 'app/features/auth/shared/services/auth.service';
 import { MenuService } from 'app/shared/services/menu.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
@@ -13,12 +13,13 @@ import { MenuService } from 'app/shared/services/menu.service';
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss',
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
   public menu: Menu[] = [];
   @Input() public subMenu: Menu[] = [];
-  @Input() public isRootMenu: boolean = true;
-  @Input() public parentRoute: string = '';
-  isAuthenticated: boolean = false;
+  @Input() public isRootMenu = true;
+  @Input() public parentRoute = '';
+  public isAuthenticated = false;
+  private readonly unsubscribe$ = new Subject<void>();
 
   constructor(
     private menuService: MenuService,
@@ -26,16 +27,32 @@ export class MenuComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.authService.isAuthenticated$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isAuthenticated) => {
+        this.isAuthenticated = isAuthenticated;
+        this.getMenu();
+      });
+
     if (this.subMenu.length) {
       this.menu = this.subMenu;
     } else {
-      this.menuService.getMenu().subscribe((menu: Menu[]) => {
-        this.menu = menu;
-      });
+      this.getMenu();
     }
+  }
+
+  getMenu(): void {
+    this.menuService.getList<Menu>().subscribe((menu: Menu[]) => {
+      this.menu = menu;
+    });
   }
 
   logout(): void {
     this.authService.logout();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

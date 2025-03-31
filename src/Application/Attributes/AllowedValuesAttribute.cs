@@ -28,7 +28,7 @@ namespace Template.Application.Attributes
 
             var valueString = value.ToString();
 
-            if (!AllowedValues.Select(v => v?.ToString()).Contains(valueString))
+            if (!AllowedValues.Select(v => v?.ToString()).Contains(valueString, StringComparer.OrdinalIgnoreCase))
             {
                 return new ValidationResult($"El valor debe ser uno de los siguientes: {GetAllowedValuesAsString()}.");
             }

@@ -1,0 +1,49 @@
+.form-field {
+  input,
+  textarea {
+    display: block;
+    width: 100%;
+    border: solid 1px #c9c9c9;
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    &:focus-visible {
+      outline: auto #0088ff;
+    }
+  }
+
+  button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+
+  }
+
+  &.invalid {
+    input,
+    textarea {
+      border-color: #ff0000;
+    }
+
+    .feedback {
+      display: inherit;
+      color: #ff0000;
+      font-size: 12px;
+    }
+  }
+
+  .feedback {
+    display: none;
+  }
+
+  &.required {
+    label::after {
+      content: "*";
+      color: #ff0000;
+    }
+  }
+}

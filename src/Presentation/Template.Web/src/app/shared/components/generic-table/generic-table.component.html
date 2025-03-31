@@ -3,7 +3,7 @@
     <tr>
       <th *ngFor="let column of columns">
         <div class="d-flex align-items-center">
-          <span
+          <button
             (click)="column.sortable ? sortBy(column.key) : null"
             [style.cursor]="column.sortable ? 'pointer' : 'default'"
           >
@@ -16,22 +16,42 @@
                 'bi-arrow-down': sortDirection === 'desc'
               }"
             ></i>
-          </span>
+          </button>
         </div>
         <div *ngIf="column.filterable">
-          <input
-            type="text"
-            class="form-control form-control-sm"
-            (input)="onFilterChange(column.key, $event)"
-            placeholder="Filter"
-          />
+          <ng-container [ngSwitch]="column.filterType">
+            <div *ngSwitchCase="'number'">
+              <input
+                type="text"
+                placeholder="min"
+                (input)="onNumberFilterChange(column.key, $event, 'start')"
+              />
+              <input
+                type="text"
+                placeholder="max"
+                (input)="onNumberFilterChange(column.key, $event, 'end')"
+              />
+            </div>
+            <div *ngSwitchCase="'date'">
+              <input type="date" />
+              <input type="date" />
+            </div>
+            <div *ngSwitchDefault>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                (input)="onFilterChange(column.key, $event)"
+                placeholder="Filter"
+              />
+            </div>
+          </ng-container>
         </div>
       </th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of displayedData">
+    <tr *ngFor="let item of data?.elements">
       <td *ngFor="let column of columns">
         {{ item[column.key] }}
       </td>
@@ -51,10 +71,10 @@
 <!-- Paginación -->
 <nav aria-label="Page navigation">
   <ul class="pagination">
-    <li class="page-item" [class.disabled]="currentPage === 1">
-      <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Previous">
+    <li class="page-item" [class.disabled]="1 === 1">
+      <button class="page-link" (click)="GoPrevious()" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
-      </a>
+      </button>
     </li>
 
     <li
@@ -62,13 +82,23 @@
       *ngFor="let page of [].constructor(totalPages); let i = index"
       [class.active]="currentPage === i + 1"
     >
-      <a class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+      <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
     </li>
 
     <li class="page-item" [class.disabled]="currentPage === totalPages">
-      <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Next">
+      <button
+        class="page-link"
+        (click)="goNext()"
+        aria-label="Next"
+      >
         <span aria-hidden="true">&raquo;</span>
-      </a>
+      </button>
     </li>
   </ul>
 </nav>
+<app-select
+  [options]="itemsPerPageOptions"
+  (change)="onItemsPerPageChange($event)"
+>
+</app-select>
+<p>{{data?.total}}</p>

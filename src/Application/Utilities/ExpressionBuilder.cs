@@ -8,7 +8,6 @@ namespace Template.Application.Utilities
         public static Expression<Func<TEntity, bool>> BuildContainsOrEqualsExpression<TEntity>(object value, PropertyInfo property)
         {
             var parameter = Expression.Parameter(typeof(TEntity), "entity");
-
             var propertyExpression = Expression.Property(parameter, property);
 
             if (value == null)
@@ -21,15 +20,11 @@ namespace Template.Application.Utilities
             if (value.GetType().IsArray)
             {
                 var array = (Array)value;
-
                 var arrayExpression = Expression.Constant(array);
-
                 var containsMethod = typeof(Enumerable).GetMethods()
-                                    .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
-                                    .MakeGenericMethod(propertyType);
-
+                                        .First(m => m.Name == "Contains" && m.GetParameters().Length == 2)
+                                        .MakeGenericMethod(propertyType);
                 var containsExpression = Expression.Call(null, containsMethod, arrayExpression, propertyExpression);
-
                 return Expression.Lambda<Func<TEntity, bool>>(containsExpression, parameter);
             }
             else
@@ -37,23 +32,40 @@ namespace Template.Application.Utilities
                 if (propertyType == typeof(string) && value is string)
                 {
                     var valueExpression = Expression.Constant(value, typeof(string));
-
                     var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-
                     var containsExpression = Expression.Call(propertyExpression, containsMethod, valueExpression);
-
                     return Expression.Lambda<Func<TEntity, bool>>(containsExpression, parameter);
                 }
                 else
                 {
-                    var valueExpression = Expression.Constant(value, propertyType);
+                    if (propertyType.IsClass && propertyType != typeof(string))
+                    {
+                        var defaultProperty = propertyType.GetProperty("Name", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                        if (defaultProperty != null && defaultProperty.PropertyType == typeof(string))
+                        {
+                            
+                            var nestedPropertyExpression = Expression.Property(propertyExpression, defaultProperty);
 
-                    var equalsExpression = Expression.Equal(propertyExpression, valueExpression);
+                           
+                            var defaultValue = defaultProperty.GetValue(value);
+                            var valueExpression = Expression.Constant(defaultValue, typeof(string));
 
-                    return Expression.Lambda<Func<TEntity, bool>>(equalsExpression, parameter);
+                            
+                            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                            var containsExpression = Expression.Call(nestedPropertyExpression, containsMethod, valueExpression);
+                            return Expression.Lambda<Func<TEntity, bool>>(containsExpression, parameter);
+                        }
+                    }
+
+                   
+                    var defaultValueExpression = Expression.Constant(value, propertyType);
+                    var equalsExpr = Expression.Equal(propertyExpression, defaultValueExpression);
+                    return Expression.Lambda<Func<TEntity, bool>>(equalsExpr, parameter);
                 }
             }
         }
+
+
 
         public static Expression<Func<TEntity, bool>> BuildRangeExpression<TEntity>(
           object? minValue, object? maxValue, PropertyInfo property)

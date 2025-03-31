@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MenuComponent } from './shared/components/menu/menu.component';
 import { NavBarComponent } from './shared/components/nav-bar/nav-bar.component';
@@ -23,14 +23,4 @@ import { NotificationComponent } from './shared/components/notification/notifica
 })
 export class AppComponent {
   title = 'Template.Web';
-
-  isAuthenticated: boolean = false;
-
-  constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
-      this.isAuthenticated = isAuthenticated;
-    });
-  }
 }

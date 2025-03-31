@@ -7,16 +7,15 @@ import {
 } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CreateProduct } from '../../types/create-product.interface';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValue } from '@angular/common';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { validateNumberOrNegative } from 'app/core/utils/validate-number-negative';
-import { Observable } from 'rxjs';
 import { CategoryService } from '@features/category/services/category.service';
-import { KeyValueOption } from '@models/key-value-option';
-import { FilterSelectComponent } from '@shared/components/filter-select/filter-select.component';
-import { Product } from '@features/product/types/product.interface';
-import { UpdateProduct } from '@features/product/types/update-product.interface';
+import { FilterSelectComponent } from '@shared/components/filter-select/filter-select.component';import { UpdateProduct } from '@features/product/types/update-product.interface';
 import { ProductDetail } from '@features/product/types/product-detail.interface';
+import { Category } from '@features/category/types/product.interface';
+import { Product } from '@features/product/types/product.interface';
+
 
 @Component({
   selector: 'app-product-form',
@@ -25,17 +24,17 @@ import { ProductDetail } from '@features/product/types/product-detail.interface'
     CommonModule,
     FormFieldComponent,
     ReactiveFormsModule,
-    FilterSelectComponent,
+    FilterSelectComponent
   ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
 })
 export class ProductFormComponent implements OnInit {
-  productForm: FormGroup;
-  product: ProductDetail | null = null;
-  categories: KeyValueOption[] = [];
+  public productForm: FormGroup;
+  public product!: ProductDetail;
+  public categories: KeyValue<string, string> [] = [];
   @Input() productId: number | null = null;
-  @Input() edit: boolean = false;
+  @Input() edit = false;
   @Output() closeModal = new EventEmitter<void>();
 
   constructor(
@@ -47,15 +46,19 @@ export class ProductFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe((categories) => {
+    this.categoryService.getList<KeyValue<string, string>>().subscribe((categories) => {
       this.categories = categories;
       if (this.productId && this.edit) {
-        this.productService.getProduct(this.productId).subscribe((product) => {
+        this.productService.getById<ProductDetail>(this.productId).subscribe((product) => {
           this.product = product;
           this.productForm.patchValue(product);
         });
       }
     });
+
+    this.productForm
+      .get('description')
+      ?.valueChanges.subscribe((value) => console.log(value));
   }
 
   initForm(): FormGroup {
@@ -68,28 +71,27 @@ export class ProductFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.productForm.valid) {
-      if (this.edit) {
-        const updatedProduct: UpdateProduct = {
-          ...this.product,
-          ...this.productForm.value,
-        };
-        this.productService.updateProduct(updatedProduct).subscribe({
-          next: () => {
-            this.productService.refreshProducts$.next();
-            this.closeModal.emit();
-          },
-          error: (err) => {
-            console.error(err);
-          },
-        });
-      } else {
-        const newProduct: CreateProduct = this.productForm.value;
-        this.productService.createProduct(newProduct).subscribe(() => {
+    if (this.edit) {
+      const updatedProduct: UpdateProduct = {
+        ...this.product,
+        ...this.productForm.value,
+      };
+      this.productService.update(updatedProduct).subscribe({
+        next: () => {
           this.productService.refreshProducts$.next();
           this.closeModal.emit();
-        });
-      }
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+    } else {
+      const newProduct: CreateProduct = this.productForm.value;
+      this.productService.create(newProduct).subscribe(() => {
+        this.productService.refreshProducts$.next();
+        this.closeModal.emit();
+      });
     }
   }
 }
+

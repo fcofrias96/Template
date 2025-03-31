@@ -3,6 +3,7 @@ export interface TableColumn {
   title: string;
   sortable?: boolean;
   filterable?: boolean;
+  filterType?: 'text' | 'date' | 'number';
 }
 
 export interface TableAction {

@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -46,20 +47,52 @@ namespace Template.Application.Models.Specification
         /// <param name="propertyName">The name of the property to sort by.</param>
         public void ApplySortBy(string propertyName)
         {
-            var parameter = Expression.Parameter(typeof(TEntity), "p");
-            var propertyInfo = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-            if (propertyInfo == null)
+            if (string.IsNullOrWhiteSpace(propertyName))
             {
-                throw new BadRequestException($"Could not find {propertyName} on {typeof(TEntity).Name}");
+                throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
             }
 
-            var property = Expression.Property(parameter, propertyInfo);
-            var conversion = Expression.Convert(property, typeof(object));
+            // Determine the property path to use.
+            // If the property is a complex type (navigation property) and no nested property is specified,
+            // use the "Name" property by default if it exists.
+            var propertyPath = propertyName;
+            var directProperty = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            if (directProperty != null && !propertyName.Contains("."))
+            {
+                if (directProperty.PropertyType.IsClass && directProperty.PropertyType != typeof(string))
+                {
+                    var defaultProperty = directProperty.PropertyType.GetProperty("Name", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (defaultProperty != null)
+                    {
+                        propertyPath = $"{propertyName}.Name";
+                    }
+                }
+            }
+
+            var parameter = Expression.Parameter(typeof(TEntity), "p");
+            var propertyExpression = GetNestedPropertyExpression(parameter, propertyPath);
+            var conversion = Expression.Convert(propertyExpression, typeof(object));
             var lambda = Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
 
             SortBy = lambda;
         }
+
+     
+        private static Expression GetNestedPropertyExpression(Expression expression, string propertyPath)
+        {
+            foreach (var member in propertyPath.Split('.'))
+            {
+                var propertyInfo = expression.Type.GetProperty(member, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo == null)
+                {
+                    throw new BadRequestException($"Property '{member}' was not found on type '{expression.Type.Name}'.");
+                }
+                expression = Expression.Property(expression, propertyInfo);
+            }
+            return expression;
+        }
+
+
 
         /// <summary>
         /// Updates the current filtering criteria by combining it with a new expression.
@@ -167,6 +200,27 @@ namespace Template.Application.Models.Specification
                 {
                     return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
                 }
+
+                // Intentar usar TypeConverter para tipos complejos
+                var converter = TypeDescriptor.GetConverter(type);
+                if (converter != null && converter.CanConvertFrom(value.GetType()))
+                {
+                    return converter.ConvertFrom(null, CultureInfo.InvariantCulture, value);
+                }
+
+                // Si es una clase compleja (no primitiva ni string), intenta asignar la propiedad "Name"
+                if (type.IsClass && type != typeof(string))
+                {
+                    var defaultProperty = type.GetProperty("Name", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (defaultProperty != null)
+                    {
+                        var instance = Activator.CreateInstance(type);
+                        var convertedValue = Convert.ChangeType(value, defaultProperty.PropertyType, CultureInfo.InvariantCulture);
+                        defaultProperty.SetValue(instance, convertedValue);
+                        return instance;
+                    }
+                }
+
 
                 return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             }

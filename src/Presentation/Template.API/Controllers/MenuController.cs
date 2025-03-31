@@ -21,7 +21,6 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<MenuItemDto>>> GetMenusAsync()
         {
-           
             var response = await  _menuService.GetMenuForUser(User);
             return Ok(response);
         }

@@ -1,17 +1,17 @@
-<ul class="menu"  [ngClass]="isRootMenu ? 'root-menu' : 'sub-menu'">
+<ng-container *ngIf="isAuthenticated">
+  <ul class="menu" [ngClass]="isRootMenu ? 'root-menu' : 'sub-menu'">
+    <li *ngFor="let item of menu">
+      <a [routerLink]="parentRoute + item.url" routerLinkActive="active">
+        <i *ngIf="item.icon" [class]="item.icon"></i>
+        {{ item.title }}
+      </a>
 
-  <li *ngFor="let item of menu">
-    <a
-      [routerLink]="parentRoute + item.url"
-      routerLinkActive="active"
+      <app-menu
+        *ngIf="item.children && item.children.length > 0"
+        [subMenu]="item.children"
+        [parentRoute]="parentRoute + item.url"
+        [isRootMenu]="false"
       >
-      <i *ngIf="item.icon" [class]="item.icon"></i>
-      {{ item.title }}
-    </a>
-
-    <app-menu
-      *ngIf="item.children && item.children.length > 0"
-      [subMenu]="item.children" [parentRoute]="parentRoute + item.url"  [isRootMenu]="false">
-    </app-menu>
-  </li>
-</ul>
+      </app-menu>
+    </li></ul
+></ng-container>

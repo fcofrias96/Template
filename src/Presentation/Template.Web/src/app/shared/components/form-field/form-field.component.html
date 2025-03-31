@@ -1,26 +1,46 @@
-<div>
-  <label [for]="id">{{ label }}</label>
+<div
+  class="form-field"
+  [ngClass]="[validationClass, isRequired ? 'required' : '']"
+>
+  <label [attr.for]="formControlName"> {{ label }}</label>
   <ng-container [ngSwitch]="type">
     <input
       *ngSwitchCase="'text'"
-      [id]="id"
-      [formControlName]="controlName"
+      [formControlName]="formControlName"
+      [id]="formControlName"
       [type]="type"
-      class="form-control"
-      [ngClass]="getValidationClass()"
       [attr.placeholder]="placeholder"
       (keydown)="onKeydown($event)"
+      [mask]="mask"
+      [dropSpecialCharacters]="dropSpecialCharacters"
     />
+
+    <ng-container *ngSwitchCase="'password'">
+      <div class="position-relative">
+        <input
+          [formControlName]="formControlName"
+          [id]="formControlName"
+          [type]="passwordVisible ? 'text' : 'password'"
+          [attr.placeholder]="placeholder"
+        />
+
+        <button type="button" (click)="togglePasswordVisibility()">
+          <i
+            class="bi"
+            [ngClass]="passwordVisible ? 'bi-eye-slash' : 'bi-eye'"
+          ></i>
+        </button>
+      </div>
+    </ng-container>
+
     <textarea
       *ngSwitchCase="'textarea'"
-      [id]="id"
-      [formControlName]="controlName"
-      class="form-control"
-      [ngClass]="getValidationClass()"
+      [formControlName]="formControlName"
+      [id]="formControlName"
       [attr.placeholder]="placeholder"
     ></textarea>
   </ng-container>
-  <div class="invalid-feedback" *ngIf="getValidationMessage()">
-    {{ getValidationMessage() }}
+  <div class="feedback">
+    {{ validationMessage }}
   </div>
 </div>

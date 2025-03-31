@@ -11,7 +11,8 @@
     color: #fff !important;
     text-decoration: none;
 
-    a {
+    a
+    {
       color: #fff;
       text-decoration: none;
     }
@@ -32,5 +33,12 @@
         text-decoration: underline;
       }
     }
+  }
+
+  button {
+    border: none;
+    background-color: unset;
+    color: #fff;
+    font-weight: bold;
   }
 }

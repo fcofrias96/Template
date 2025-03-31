@@ -1,0 +1,12 @@
+<div class="form-field" [ngClass]="[validationClass || '', isRequired ? 'required' : '']">
+  <label>{{ label }}</label>
+  <select [value]="value" (change)="onSelectChange($event)">
+    <option *ngIf="placeholder" value="" disabled selected>{{ placeholder }}</option>
+    <option *ngFor="let option of options" [value]="option.value">
+      {{ option.key }}
+    </option>
+  </select>
+  <div class="feedback">
+    {{ validationMessage }}
+  </div>
+</div>

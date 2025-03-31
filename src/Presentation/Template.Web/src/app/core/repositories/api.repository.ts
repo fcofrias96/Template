@@ -1,60 +1,32 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ApiResponse } from '../models/api-response.interface';
-import { NotificationService } from '../services/notification.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiRepository {
-  constructor(
-    private http: HttpClient,
-    private notificationService: NotificationService
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  get<T>(url: string, showLoading: boolean = true): Observable<ApiResponse<T>> {
+  get<T>(url: string, showLoading = true): Observable<T> {
     const headers = this.getHeaders(showLoading);
-    return this.http
-      .get<ApiResponse<T>>(url, { headers })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.get<T>(url, { headers });
   }
 
-  post<T>(
-    url: string,
-    body: any,
-    showLoading: boolean = true
-  ): Observable<ApiResponse<T>> {
+
+  post<T>(url: string, body: unknown, showLoading = true): Observable<T> {
     const headers = this.getHeaders(showLoading);
-    return this.http
-      .post<ApiResponse<T>>(url, body, { headers })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.post<T>(url, body, { headers });
   }
 
-  put<T>(
-    url: string,
-    body: any,
-    showLoading: boolean = true
-  ): Observable<void> {
+  put(url: string, body: unknown, showLoading = true): Observable<void> {
     const headers = this.getHeaders(showLoading);
-    return this.http
-      .put<void>(url, body, { headers })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.put<void>(url, body, { headers });
   }
 
-  delete<T>(
-    url: string,
-    showLoading: boolean = true
-  ): Observable<void> {
+  delete(url: string, showLoading = true): Observable<void> {
     const headers = this.getHeaders(showLoading);
-    return this.http
-      .delete<void>(url, { headers })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.delete<void>(url, { headers });
   }
 
   private getHeaders(showLoading: boolean): HttpHeaders {
@@ -63,27 +35,5 @@ export class ApiRepository {
       headers = headers.set('X-No-Loading', 'true');
     }
     return headers;
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred!';
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Client error: ${error.error.message}`;
-      this.notificationService.showWarning(errorMessage);
-    } else {
-      if (error.status >= 400 && error.status < 500) {
-        errorMessage = `Warning: ${
-          error.error?.message || 'Request could not be processed.'
-        }`;
-        this.notificationService.showWarning(errorMessage);
-      } else {
-        errorMessage = `Server error: ${error.message}`;
-        this.notificationService.showError(errorMessage);
-      }
-    }
-
-    console.error('An error occurred:', error);
-    return throwError(() => new Error(errorMessage));
   }
 }

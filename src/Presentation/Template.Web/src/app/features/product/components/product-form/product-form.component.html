@@ -1,30 +1,28 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
   <app-form-field
-    controlName="name"
+    formControlName="name"
     label="Nombre del Producto"
     id="name"
-    type="text"
   ></app-form-field>
 
   <app-filter-select
-        formControlName="categoryId"
-        [options]="categories"
-        [placeholder]="'Seleccione una opción'"
-        [required]="true"
-        [label]="'Categoría'"
-      >
-      </app-filter-select>
+    formControlName="categoryId"
+    [options]="categories"
+    [placeholder]="'Seleccione una opción'"
+    [required]="true"
+    [label]="'Categoría'"
+  >
+  </app-filter-select>
 
   <app-form-field
-    controlName="price"
+    formControlName="price"
     label="Precio"
     id="price"
-    type="text"
     [onlyNumbers]="true"
   ></app-form-field>
 
   <app-form-field
-    controlName="description"
+    formControlName="description"
     label="Descripción"
     id="description"
     type="textarea"
@@ -35,6 +33,6 @@
     type="submit"
     [disabled]="productForm.invalid"
   >
-   {{ edit ? 'Actualizar' : 'Agregar' }}
+    {{ edit ? "Actualizar" : "Agregar" }}
   </button>
 </form>

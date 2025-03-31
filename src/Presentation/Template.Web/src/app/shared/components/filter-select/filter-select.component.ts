@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValue } from '@angular/common';
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -10,7 +10,6 @@ import {
   FormControl,
   FormsModule,
 } from '@angular/forms';
-import { KeyValueOption } from '@models/key-value-option';
 
 @Component({
   selector: 'app-filter-select',
@@ -34,17 +33,17 @@ import { KeyValueOption } from '@models/key-value-option';
 export class FilterSelectComponent
   implements ControlValueAccessor, Validator, OnInit
 {
-  @Input() options: KeyValueOption[] = [];
-  @Input() placeholder: string = 'Select an option';
-  @Input() required: boolean = false;
-  @Input() label: string = '';
+  @Input() options: KeyValue<string, string>[] = [];
+  @Input() placeholder = 'Select an option';
+  @Input() required = false;
+  @Input() label = '';
 
-  filteredOptions: KeyValueOption[] = [];
+  filteredOptions: KeyValue<string, string>[] = [];
   selectedKey: string | null = null;
-  filterText: string = '';
-  selectedFilterText: string = '';
-  isOpen: boolean = false;
-  isTouched: boolean = false;
+  filterText = '';
+  selectedFilterText = '';
+  isOpen = false;
+  isTouched = false;
 
   onChange = (value: any) => {};
   onTouched = () => {};
@@ -68,7 +67,6 @@ export class FilterSelectComponent
     if (filterText) {
       this.filterText = this.selectedFilterText = filterText;
     }
-
   }
 
   registerOnChange(fn: any): void {
@@ -95,7 +93,7 @@ export class FilterSelectComponent
     }
   }
 
-  selectOption(option: KeyValueOption): void {
+  selectOption(option: KeyValue<string, string>): void {
     this.selectedKey = option.key;
     this.filterText = option.value;
     this.selectedFilterText = option.value;

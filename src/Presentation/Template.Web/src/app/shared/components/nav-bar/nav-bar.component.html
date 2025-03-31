@@ -3,14 +3,18 @@
     <a routerLink="/">MyApp</a>
   </div>
   <ul class="navbar-links">
-    <li *ngIf="!isAuthenticated">
-      <a routerLink="/login">Login</a>
-    </li>
-    <li *ngIf="!isAuthenticated">
-      <a routerLink="/register">Register</a>
-    </li>
-    <li *ngIf="isAuthenticated">
-      <a (click)="logout()">Logout</a>
-    </li>
+    <ng-container *ngIf="isAuthenticated; else noAuthenticated">
+      <li>
+        <button (click)="logout()">Logout</button>
+      </li>
+    </ng-container>
+    <ng-template #noAuthenticated>
+      <li>
+        <a routerLink="/login">Login</a>
+      </li>
+      <li>
+        <a routerLink="/register">Register</a>
+      </li>
+    </ng-template>
   </ul>
 </nav>
