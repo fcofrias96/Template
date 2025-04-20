@@ -29,13 +29,6 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [HttpPost("{id}/roles")]
-        public async Task<ActionResult> AddToRolesAsync(Guid id, [FromBody] RoleIdsDto roleIdsDTO)
-        {
-            await _userServiceAsync.AddToRolesAsync(id, roleIdsDTO.RoleIds);
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -65,12 +58,7 @@ namespace Template.Api.Controllers
         }
 
 
-        [HttpDelete("{id}/roles")]
-        public async Task<ActionResult> RemoveRolesAsync(Guid id, [FromBody] RoleIdsDto roleIdsDTO)
-        {
-            await _userServiceAsync.RemoveFromRolesAsync(id, roleIdsDTO.RoleIds);
-            return NoContent();
-        }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] UserUpdateDto userUpdateDTO)

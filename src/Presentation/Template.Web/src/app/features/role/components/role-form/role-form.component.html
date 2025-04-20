@@ -1,0 +1,25 @@
+<form [formGroup]="roleForm" (ngSubmit)="onSubmit()" novalidate>
+  <app-form-field
+    formControlName="name"
+    label="Nombre del Roleo"
+    id="name"
+  ></app-form-field>
+
+
+  <app-checkbox-list
+  [items]="(permissions$ | async) ?? []"
+  labelKey="name"
+  valueKey="id"
+  formControlName="permissions"
+  label="Permissions"
+/>
+
+  <button
+    class="btn btn-primary mt-4"
+    type="submit"
+    [disabled]="roleForm.invalid"
+  >
+    {{ edit ? "Actualizar" : "Agregar" }}
+  </button>
+</form>
+

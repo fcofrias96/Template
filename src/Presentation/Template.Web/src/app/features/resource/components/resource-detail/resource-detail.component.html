@@ -1,0 +1,7 @@
+<div class="resource-detail" *ngIf="resource$ | async as resource">
+  <h2>{{ resource.name }}</h2>
+  <p><strong>Permissions:</strong></p>
+  <ul>
+    <li *ngFor="let permission of resource.permissions">{{ permission }}</li>
+  </ul>
+</div>

@@ -1,0 +1,17 @@
+<div class="role-detail" *ngIf="role$ | async as role">
+  <h2>{{ role.name }}</h2>
+  <p><strong>Resources:</strong></p>
+  <ul>
+    <li *ngFor="let resource of role.resources">
+      {{ resource.name }}
+      <ul>
+        <li><strong>Permissions:</strong></li>
+        <ul>
+          <li *ngFor="let permission of resource.permissions">
+            {{ permission.name }}
+          </li>
+        </ul>
+      </ul>
+    </li>
+  </ul>
+</div>

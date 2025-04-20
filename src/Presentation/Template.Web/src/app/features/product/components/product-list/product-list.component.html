@@ -3,7 +3,9 @@
   [columns]="columns"
   [data]="(products$ | async) ?? undefined"
   [itemsPerPage]="itemsPerPage"
-  (actionClicked)="handleAction($event)"
+
+  [actions]="actions()"
   (filterChanged)="handleFilter($event)"
-  [itemsPerPage]="30"
+  (exportTo)="handleExporting($event)"
+  [itemsPerPage]= "itemsPerPage"
   ></app-generic-table>

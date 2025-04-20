@@ -1,7 +1,30 @@
+<div class="header">
+  <div class="export">
+    <button><i class="bi bi-download"></i></button>
+
+    <div class="export-buttons">
+      <button (click)="exportToCSV()">
+        <i class="bi bi-filetype-csv"></i>
+      </button>
+      <button (click)="exportToDOC()">
+        <i class="bi bi-filetype-docx"></i>
+      </button>
+      <button (click)="exportToPDF()">
+        <i class="bi bi-filetype-pdf"></i>
+      </button>
+    </div>
+  </div>
+  <div class="filter">
+    <button (click)="toggle()">
+      <i class="bi" [ngClass]="showFilter ? 'bi-funnel-fill' : 'bi-funnel'"></i>
+    </button>
+  </div>
+</div>
+
 <table class="table table-striped">
   <thead>
     <tr>
-      <th *ngFor="let column of columns">
+      <th *ngFor="let column of columns" title="sort">
         <div class="d-flex align-items-center">
           <button
             (click)="column.sortable ? sortBy(column.key) : null"
@@ -18,26 +41,49 @@
             ></i>
           </button>
         </div>
-        <div *ngIf="column.filterable">
-          <ng-container [ngSwitch]="column.filterType">
-            <div *ngSwitchCase="'number'">
+        <div
+          *ngIf="column.filterable"
+          class="filter-input"
+          [hidden]="!showFilter"
+        >
+          <ng-container [ngSwitch]="column.type">
+            <div *ngSwitchCase="'number'" class="number-input">
               <input
-                type="text"
+                #filterInput
+                class="form-control form-control-sm no-spinner"
+                type="number"
                 placeholder="min"
-                (input)="onNumberFilterChange(column.key, $event, 'start')"
+                (input)="onInputFilterChange(column.key, $event, 'start')"
               />
               <input
-                type="text"
+                #filterInput
+                class="form-control form-control-sm no-spinner"
+                type="number"
                 placeholder="max"
-                (input)="onNumberFilterChange(column.key, $event, 'end')"
+                (input)="onInputFilterChange(column.key, $event, 'end')"
               />
             </div>
-            <div *ngSwitchCase="'date'">
-              <input type="date" />
-              <input type="date" />
+            <div *ngSwitchCase="'date'" class="date-input">
+              <input
+                #filterInput
+                #startDateInput
+                [max]="endDateInput.value"
+                class="form-control form-control-sm"
+                type="date"
+                (input)="onInputFilterChange(column.key, $event, 'start')"
+              />
+              <input
+                #endDateInput
+                #filterInput
+                [min]="startDateInput.value"
+                class="form-control form-control-sm"
+                type="date"
+                (input)="onInputFilterChange(column.key, $event, 'end')"
+              />
             </div>
             <div *ngSwitchDefault>
               <input
+                #filterInput
                 type="text"
                 class="form-control form-control-sm"
                 (input)="onFilterChange(column.key, $event)"
@@ -53,52 +99,128 @@
   <tbody>
     <tr *ngFor="let item of data?.elements">
       <td *ngFor="let column of columns">
-        {{ item[column.key] }}
+        <ng-container [ngSwitch]="column.type">
+          <ng-container *ngSwitchCase="'number'">
+            {{
+              column.currency
+                ? (item[column.key] | currency : column.currency)
+                : (item[column.key] | number)
+            }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'boolean'">
+            <i
+              [ngClass]="[
+                'bi boolean',
+                item[column.key]
+                  ? 'bi-check-circle-fill text-success'
+                  : 'bi-x-circle-fill text-danger'
+              ]"
+            ></i>
+          </ng-container>
+          <ng-container *ngSwitchCase="'date'">
+            {{ item[column.key] | date : column.dateFormat }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ item[column.key] }}
+          </ng-container>
+        </ng-container>
       </td>
-      <td>
+      <td [width]="100">
         <!-- Botones de acciones -->
-        <button class="btn btn-sm btn-primary me-1" (click)="onEditClick(item)">
-          <i class="bi bi-pencil"></i>
+        <button (click)="onViewClick(item)">
+          <i class="bi bi-eye-fill"></i>
         </button>
-        <button class="btn btn-sm btn-danger" (click)="onDeleteClick(item)">
-          <i class="bi bi-trash"></i>
+        <button (click)="onEditClick(item)">
+          <i class="bi bi-pencil-fill"></i>
+        </button>
+        <button (click)="onDeleteClick(item)">
+          <i class="bi bi-trash-fill"></i>
         </button>
       </td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="100%">
+        <div class="table-footer">
+          <app-select
+            [options]="itemsPerPageOptions"
+            (change)="onItemsPerPageChange($event)"
+          >
+          </app-select>
+          <p>
+            {{ currentPage === 1 ? "1" : (currentPage - 1) * itemsPerPage + 1 }}
+            -
+            {{
+              currentPage === totalPages
+                ? data?.total
+                : currentPage * itemsPerPage
+            }}
+            of {{ data?.total }}
+          </p>
+
+          <!-- Paginación -->
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <!-- Botón anterior -->
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button
+                  class="page-link"
+                  (click)="goPrevious()"
+                  aria-label="Previous"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                </button>
+              </li>
+
+              <!-- Primera página -->
+              <li class="page-item" [class.active]="currentPage === 1">
+                <button class="page-link" (click)="goToPage(1)">1</button>
+              </li>
+
+              <!-- Puntos suspensivos si la página actual es mayor a 4 -->
+              <li class="page-item" *ngIf="currentPage > 4">
+                <span class="page-link">...</span>
+              </li>
+
+              <!-- Páginas intermedias (entre la primera y la última) -->
+              <ng-container *ngFor="let page of getPages()">
+                <li class="page-item" [class.active]="currentPage === page">
+                  <button class="page-link" (click)="goToPage(page)">
+                    {{ page }}
+                  </button>
+                </li>
+              </ng-container>
+
+              <!-- Puntos suspensivos si la página actual es menor que totalPages - 3 -->
+              <li class="page-item" *ngIf="currentPage < totalPages - 3">
+                <span class="page-link">...</span>
+              </li>
+
+              <!-- Última página -->
+              <li
+                class="page-item"
+                [class.active]="currentPage === totalPages"
+                *ngIf="totalPages > 1"
+              >
+                <button class="page-link" (click)="goToPage(totalPages)">
+                  {{ totalPages }}
+                </button>
+              </li>
+
+              <!-- Botón siguiente -->
+              <li
+                class="page-item"
+                [class.disabled]="currentPage === totalPages"
+              >
+                <button class="page-link" (click)="goNext()" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </td>
+    </tr>
+  </tfoot>
 </table>
-
-<!-- Paginación -->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-    <li class="page-item" [class.disabled]="1 === 1">
-      <button class="page-link" (click)="GoPrevious()" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </button>
-    </li>
-
-    <li
-      class="page-item"
-      *ngFor="let page of [].constructor(totalPages); let i = index"
-      [class.active]="currentPage === i + 1"
-    >
-      <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
-    </li>
-
-    <li class="page-item" [class.disabled]="currentPage === totalPages">
-      <button
-        class="page-link"
-        (click)="goNext()"
-        aria-label="Next"
-      >
-        <span aria-hidden="true">&raquo;</span>
-      </button>
-    </li>
-  </ul>
-</nav>
-<app-select
-  [options]="itemsPerPageOptions"
-  (change)="onItemsPerPageChange($event)"
->
-</app-select>
-<p>{{data?.total}}</p>

@@ -16,12 +16,12 @@ namespace Template.Security.Seeds
             new RolePermission
             {
                 RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
-                ResourceActionId = 23
+                PermissionId = 23
             },
             new RolePermission
             {
                 RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
-                ResourceActionId = 28
+                PermissionId = 28
             },
 
             #endregion Admin
@@ -42,7 +42,7 @@ namespace Template.Security.Seeds
                 rolePermissions.Add(new RolePermission
                 {
                     RoleId = roleId,
-                    ResourceActionId = index
+                    PermissionId = index
                 });
             }
 

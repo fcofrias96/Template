@@ -4,7 +4,7 @@
     {
         public string RoleId { get; set; }
         public Role Role { get; set; }
-        public int ResourceActionId { get; set; }
-        public ResourceAction ResourceAction { get; set; }
+        public int PermissionId { get; set; }
+        public Permission Permission { get; set; }
     }
 }

@@ -32,9 +32,8 @@ import { NgxMaskDirective } from 'ngx-mask';
 export class FormFieldComponent implements ControlValueAccessor {
   @Input() formControlName!: string;
   @Input() label!: string;
-  @Input() type: 'text' | 'textarea' | 'password' = 'text';
+  @Input() type: 'text' | 'number' | 'textarea' | 'password' = 'text';
   @Input() placeholder = '';
-  @Input() onlyNumbers = false;
   @Input() mask!: string;
   @Input() dropSpecialCharacters!: boolean | string[];
 
@@ -117,24 +116,7 @@ export class FormFieldComponent implements ControlValueAccessor {
       : null;
   }
 
-  /** Handles the keydown event to allow only numbers when specified */
-  onKeydown(event: KeyboardEvent): void {
-    if (!this.onlyNumbers) return;
 
-    const inputElement = event.target as HTMLInputElement;
-    const { key } = event;
-    const isNumberKey = key >= '0' && key <= '9';
-    const isAllowedKey = this.allowedKeys.includes(key);
-    const isDecimalKey = key === '.' && !inputElement.value.includes('.');
-    const isNegativeKey =
-      key === '-' &&
-      inputElement.selectionStart === 0 &&
-      !inputElement.value.includes('-');
-
-    if (!isNumberKey && !isAllowedKey && !isDecimalKey && !isNegativeKey) {
-      event.preventDefault();
-    }
-  }
 
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;

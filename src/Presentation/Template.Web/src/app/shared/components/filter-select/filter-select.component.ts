@@ -1,5 +1,12 @@
-import { CommonModule, KeyValue } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  forwardRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -31,14 +38,20 @@ import {
   ],
 })
 export class FilterSelectComponent
-  implements ControlValueAccessor, Validator, OnInit
+  implements ControlValueAccessor, Validator, OnInit, OnChanges
 {
-  @Input() options: KeyValue<string, string>[] = [];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['options'] && changes['options'].currentValue) {
+      this.setFilterText();
+    }
+  }
+  @Input() options: any[] = [];
   @Input() placeholder = 'Select an option';
   @Input() required = false;
   @Input() label = '';
+  @Input() bind!: { key: string; value: string };
 
-  filteredOptions: KeyValue<string, string>[] = [];
+  filteredOptions: any[] = [];
   selectedKey: string | null = null;
   filterText = '';
   selectedFilterText = '';
@@ -63,7 +76,9 @@ export class FilterSelectComponent
     this.internalControl.setValue(value);
     this.updateValidation();
 
-    const filterText = this.options.find((opt) => opt.key === value)?.value;
+    const filterText = this.options.find(
+      (opt) => opt[this.bind.key] === value
+    )?.[this.bind.value];
     if (filterText) {
       this.filterText = this.selectedFilterText = filterText;
     }
@@ -93,10 +108,10 @@ export class FilterSelectComponent
     }
   }
 
-  selectOption(option: KeyValue<string, string>): void {
-    this.selectedKey = option.key;
-    this.filterText = option.value;
-    this.selectedFilterText = option.value;
+  selectOption(option: any): void {
+    this.selectedKey = option[this.bind.key];
+    this.filterText = option[this.bind.value];
+    this.selectedFilterText = option[this.bind.value];
     this.isOpen = false;
     this.onChange(this.selectedKey);
     this.internalControl.setValue(this.selectedKey);
@@ -118,7 +133,9 @@ export class FilterSelectComponent
     const inputElement = event.target as HTMLInputElement;
     this.filterText = inputElement.value;
     this.filteredOptions = this.options.filter((option) =>
-      option.value.toLowerCase().includes(this.filterText.toLowerCase())
+      option[this.bind.value]
+        .toLowerCase()
+        .includes(this.filterText.toLowerCase())
     );
   }
 
@@ -133,10 +150,10 @@ export class FilterSelectComponent
   private setFilterText(): void {
     if (this.selectedKey) {
       const selectedOption = this.options.find(
-        (option) => option.key === this.selectedKey
+        (option) => option[this.bind.key] === this.selectedKey
       );
       if (selectedOption) {
-        this.filterText = selectedOption.value;
+        this.filterText = selectedOption[this.bind.value];
       }
     } else {
       this.filterText = '';

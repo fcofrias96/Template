@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Data;
@@ -41,25 +42,8 @@ namespace Template.Security.Services.V1
             _readService = readService;
         }
 
-        public async Task AddToRolesAsync(Guid userId, IReadOnlyList<Guid> roles)
-        {
-            var user = await GetUser(userId);
 
-            var userRoles = roles.Select(role => new IdentityUserRole<string>
-            {
-                UserId = user.Id,
-                RoleId = role.ToString()
-            }).ToList();
 
-            await _userRepository.AddToRolesAsync(userRoles);
-        }
-
-        public async Task AddToRolesAsync(Guid userId, Guid roleId)
-        {
-            var user = await GetUser(userId);
-            var userRole = new IdentityUserRole<string> { UserId = user.Id, RoleId = roleId.ToString() };
-            await _userRepository.AddToRoleAsync(userRole);
-        }
 
         public async Task DeleteAsync(Guid userId)
         {
@@ -102,24 +86,7 @@ namespace Template.Security.Services.V1
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
         }
 
-        public async Task RemoveFromRolesAsync(Guid userId, IReadOnlyList<Guid> roles)
-        {
-            var user = await GetUser(userId);
-            var userRoles = roles.Select(role => new IdentityUserRole<string>
-            {
-                UserId = user.Id,
-                RoleId = role.ToString()
-            }).ToList();
 
-            await _userRepository.RemoveFromRolesAsync(userRoles);
-        }
-
-        public async Task RemoveFromRolesAsync(Guid userId, Guid roleId)
-        {
-            var user = await GetUser(userId);
-            var userRole = new IdentityUserRole<string> { UserId = user.Id, RoleId = roleId.ToString() };
-            await _userRepository.RemoveFromRoleAsync(userRole);
-        }
 
         public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO)
         {
@@ -138,6 +105,7 @@ namespace Template.Security.Services.V1
             var user = await GetUser(userId);
             _mapper.Map(userUpdateDTO, user);
             await _userManager.UpdateAsync(user);
+            await _userRepository.UpdateUserRolesAsync(userId.ToString(), userUpdateDTO.Roles);
         }
 
 

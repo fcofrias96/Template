@@ -12,9 +12,9 @@ namespace Template.Security.Configurations.V1
             builder.Property(r => r.Name)
                 .IsRequired();
 
-            builder.HasMany(r => r.ResourceActionId)
-                .WithOne(r => r.Action)
-                .HasForeignKey(r => r.ActionId);
+            builder.HasMany(r => r.Permissions)
+                .WithOne(r => r.ActionType)
+                .HasForeignKey(r => r.ActionTypeId);
 
             builder.HasData(ActionSeed.Data);
 

@@ -13,7 +13,7 @@ namespace Template.Security.Seeds
                 Url = "/dashboard",
                 Icon = "dashboard-icon",
                 ParentId = null,
-                ResourceActionId = null,
+                PermissionId = null,
                 Order = 1,
             },
             new MenuItem
@@ -23,7 +23,7 @@ namespace Template.Security.Seeds
                 Url = "/usuarios",
                 Icon = "users-icon",
                 ParentId = 6,
-                ResourceActionId = 2,
+                PermissionId = 2,
                 Order = 2,
             },
             new MenuItem
@@ -33,7 +33,7 @@ namespace Template.Security.Seeds
                 Url = "/roles",
                 Icon = "roles-icon",
                 ParentId = 6,
-                ResourceActionId = 12,
+                PermissionId = 12,
                 Order = 1,
             },
             new MenuItem
@@ -43,7 +43,7 @@ namespace Template.Security.Seeds
                 Url = "/categorias",
                 Icon = "categories-icon",
                 ParentId = null,
-                ResourceActionId = 23,
+                PermissionId = 23,
                 Order = 3
             },
             new MenuItem
@@ -53,7 +53,7 @@ namespace Template.Security.Seeds
                 Url = "/productos",
                 Icon = "items-icon",
                 ParentId = null,
-                ResourceActionId = 28,
+                PermissionId = 28,
                 Order = 2,
             },
             new MenuItem
@@ -63,7 +63,7 @@ namespace Template.Security.Seeds
                 Url = "/configuracion",
                 Icon = "settings-icon",
                 ParentId = null,
-                ResourceActionId = 32,
+                PermissionId = 32,
                 Order = 4
             },
             new MenuItem
@@ -73,7 +73,7 @@ namespace Template.Security.Seeds
                 Url = "/permisos",
                 Icon = "permissions-icon",
                 ParentId = 6,
-                ResourceActionId = 17,
+                PermissionId = 17,
                 Order = 3
             },
             new MenuItem
@@ -83,7 +83,7 @@ namespace Template.Security.Seeds
                 Url = "/recursos",
                 Icon = "resources-icon",
                 ParentId = 6,
-                ResourceActionId = 7,
+                PermissionId = 7,
                 Order = 4,
             }
 

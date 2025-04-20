@@ -1,0 +1,18 @@
+<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" novalidate>
+  <app-form-field
+    formControlName="name"
+    label="Nombre del Resourceo"
+    id="name"
+  ></app-form-field>
+
+
+
+  <button
+    class="btn btn-primary mt-4"
+    type="submit"
+    [disabled]="resourceForm.invalid"
+  >
+    {{ edit ? "Actualizar" : "Agregar" }}
+  </button>
+</form>
+

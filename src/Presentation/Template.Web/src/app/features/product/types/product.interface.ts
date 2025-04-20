@@ -5,6 +5,8 @@ export interface Product {
   categoryId: number;
   price: number;
   description: string;
+  created: Date
+  isDeleted: boolean;
 }
 
 

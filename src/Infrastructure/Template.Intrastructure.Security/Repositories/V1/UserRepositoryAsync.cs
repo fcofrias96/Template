@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ using Template.Application.Models.DTOs.V1.Users;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
+
 
 namespace Template.Security.Repositories.V1
 {
@@ -32,17 +34,40 @@ namespace Template.Security.Repositories.V1
             _readRepository = readRepository;
         }
 
-        public async Task AddToRoleAsync(IdentityUserRole<string> userRoles)
+
+
+
+        public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds)
         {
-            //_dbContext.UserRoles.Add(userRoles);
-            // await _dbContext.SaveChangesAsync();
+            var newRolesSet = new HashSet<string>(newRoleIds);
+
+            await _dbContext.UserRoles
+                .Where(ur => ur.UserId == userId && !newRolesSet.Contains(ur.RoleId))
+                .ExecuteDeleteAsync();
+
+            var currentRoleIds = await _dbContext.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .Select(ur => ur.RoleId)
+                .ToListAsync();
+
+            var currentRoleSet = currentRoleIds.ToHashSet();
+
+            var toAdd = newRolesSet
+                .Where(roleId => !currentRoleSet.Contains(roleId))
+                .Select(roleId => new UserRole
+                {
+                    UserId = userId,
+                    RoleId = roleId
+                })
+                .ToList();
+
+            if (toAdd.Count > 0)
+            {
+                await _dbContext.UserRoles.AddRangeAsync(toAdd);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
-        public async Task AddToRolesAsync(List<IdentityUserRole<string>> identityUserRoles)
-        {
-            //await _dbContext.UserRoles.AddRangeAsync(identityUserRoles);
-            //await _dbContext.SaveChangesAsync();
-        }
 
         public async Task<User?> GetByIdAsync<TKey>(TKey id)
         {
@@ -99,15 +124,15 @@ namespace Template.Security.Repositories.V1
                         .ToArray(),
                     Resources = u.UserRoles
                         .SelectMany(ur => ur.Role.RolePermissions)
-                        .GroupBy(rp => rp.ResourceAction.Resource)
+                        .GroupBy(rp => rp.Permission.Resource)
                         .Select(g => new ResourcePermissionDto
                         {
                             Id = g.Key.Id,
-                            Resource = g.Key.Name,
+                            Name = g.Key.Name,
                             Permissions = g.Select(rp => new PermissionListDto
                             {
-                                Id = rp.ResourceActionId,
-                                Name = rp.ResourceAction.Action.Name
+                                Id = rp.PermissionId,
+                                Name = rp.Permission.ActionType.Name
                             }).ToArray()
                         })
                         .ToArray()
@@ -123,18 +148,6 @@ namespace Template.Security.Repositories.V1
         public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
         {
             return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
-        }
-
-        public async Task RemoveFromRoleAsync(IdentityUserRole<string> userRole)
-        {
-            //_dbContext.UserRoles.Remove(userRole);
-            //await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task RemoveFromRolesAsync(List<IdentityUserRole<string>> identityUserRoles)
-        {
-            //_dbContext.UserRoles.RemoveRange(identityUserRoles);
-            //await _dbContext.SaveChangesAsync();
         }
     }
 }

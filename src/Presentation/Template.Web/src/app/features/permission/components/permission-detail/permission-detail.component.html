@@ -1,0 +1,14 @@
+<div class="permission-detail" *ngIf="permission$ | async as permission">
+  <p>
+    <strong>Action: </strong> <span>{{ permission.actionType }}</span>
+  </p>
+  <p>
+    <strong>Resource: </strong> <span>{{ permission.resource }}</span>
+  </p>
+  <p><strong>Roles that have this permission:</strong></p>
+  <ul>
+    <li *ngFor="let role of permission.roles">
+      {{ role }}
+    </li>
+  </ul>
+</div>

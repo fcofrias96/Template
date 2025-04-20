@@ -2,8 +2,6 @@
 {
     public interface IRolePermissionServiceAsync
     {
-        Task AddPermissionToRoleAsync(Guid roleId, int[] permissionsId);
 
-        Task RemovePermissionToRoleAsync(Guid roleId, int[] permissionsId);
     }
 }

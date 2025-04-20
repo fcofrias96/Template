@@ -1,4 +1,6 @@
-﻿using Template.Application.Contracts.Repositories.Base;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.EntityFrameworkCore;
+using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
@@ -17,5 +19,7 @@ namespace Template.Security.Repositories.V1
             ) : base(createRepository, updateRepository, deleteRepository, readRepository)
         {
         }
+
+
     }
 }

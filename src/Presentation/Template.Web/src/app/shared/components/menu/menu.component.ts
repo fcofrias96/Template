@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Menu } from '@models/menu';
+import { Menu, MenuResponse } from '@models/menu';
 import { AuthService } from 'app/features/auth/shared/services/auth.service';
 import { MenuService } from 'app/shared/services/menu.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -27,12 +27,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.authService.isAuthenticated$
+
+    this.menuService.getList$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((isAuthenticated) => {
-        this.isAuthenticated = isAuthenticated;
+      .subscribe(() => {
         this.getMenu();
       });
+
 
     if (this.subMenu.length) {
       this.menu = this.subMenu;
@@ -42,14 +43,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   getMenu(): void {
-    this.menuService.getList<Menu>().subscribe((menu: Menu[]) => {
-      this.menu = menu;
+    this.menuService.get<MenuResponse>().subscribe((response: MenuResponse) => {
+      this.menu = response.menus;
+      if (!response.isAuthenticated && this.authService.isAuthenticated) {
+        this.authService.logout(false);
+      }
     });
   }
 
-  logout(): void {
-    this.authService.logout();
-  }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();

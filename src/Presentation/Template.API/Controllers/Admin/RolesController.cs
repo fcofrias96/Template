@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
+using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
+using Template.Security.Dtos.Roles;
+using Template.Security.Specification.V1;
 
 namespace Template.Api.Controllers.Admin
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    [Authorize(Roles = Roles.Admin)]
+    //[Authorize(Roles = Roles.Admin)]
     public class RolesController : ControllerBase
     {
         private readonly IRoleServiceAsync _roleService;
@@ -26,9 +29,9 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Role, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetRoles()
+        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery]RoleQueryParameters request )
         {
-            var roles = await _roleService.GetProjectedAsync<RoleListDto>();
+            var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto, RoleSpecification>(request);
             return Ok(roles);
         }
 
@@ -53,7 +56,7 @@ namespace Template.Api.Controllers.Admin
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateDto roleUpdateDTO)
         {
-            await _roleService.UpdateAsync(id, roleUpdateDTO);
+            await _roleService.UpdateAsync(id.ToString(), roleUpdateDTO);
             return NoContent();
         }
 
@@ -65,20 +68,13 @@ namespace Template.Api.Controllers.Admin
             return NoContent();
         }
 
-        [Permission(Resources.Role, ActionType.Create)]
-        [HttpPost("{id}/AddPermission")]
-        public async Task<ActionResult> AddPermissionToRole(Guid id, [FromBody] int[] permissionsId)
+        [Permission(Resources.Role, ActionType.Read)]
+        [HttpGet("dropdown")]
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
         {
-            await _rolePermissionService.AddPermissionToRoleAsync(id, permissionsId);
-            return NoContent();
+            var resources = await _roleService.GetProjectedAsync<Dropdown>();
+            return Ok(resources);
         }
 
-        [Permission(Resources.Role, ActionType.Delete)]
-        [HttpPost("{id}/RemovePermission")]
-        public async Task<ActionResult> RemovePermissionToRole(Guid id, [FromBody] int[] permissionsId)
-        {
-            await _rolePermissionService.RemovePermissionToRoleAsync(id, permissionsId);
-            return NoContent();
-        }
     }
 }

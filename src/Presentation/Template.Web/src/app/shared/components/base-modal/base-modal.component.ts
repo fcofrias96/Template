@@ -8,8 +8,9 @@ import {
   Type,
   ComponentRef,
 } from '@angular/core';
+import { DynamicModalComponent } from '@models/dynamic-modal.interface';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-base-modal',
@@ -18,14 +19,14 @@ import { Subscription } from 'rxjs';
 })
 export class BaseModalComponent implements OnInit, OnDestroy {
   @Input() title!: string;
-  @Input() component!: Type<any>;
-  @Input() data: any;
+  @Input() component!: Type<DynamicModalComponent>;
+  @Input() data!: Record<string, unknown>;
 
   @ViewChild('dynamicComponent', { read: ViewContainerRef, static: true })
   dynamicComponent!: ViewContainerRef;
 
-  private componentRef!: ComponentRef<any>;
-  private subscriptions: Subscription = new Subscription();
+  private componentRef!: ComponentRef<DynamicModalComponent>;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(public bsModalRef: BsModalRef) {}
 
@@ -33,32 +34,28 @@ export class BaseModalComponent implements OnInit, OnDestroy {
     this.loadComponent();
   }
 
-  loadComponent() {
+  loadComponent(): void {
     this.dynamicComponent.clear();
     this.componentRef = this.dynamicComponent.createComponent(this.component);
 
-
     if (this.data) {
-      Object.keys(this.data).forEach((key) => {
-        this.componentRef.instance[key] = this.data[key];
+      Object.entries(this.data).forEach(([key, value]) => {
+        this.componentRef.setInput(key, value);
       });
     }
 
-
-    if (this.componentRef.instance.closeModal) {
-      const sub = this.componentRef.instance.closeModal.subscribe(() => this.close());
-      this.subscriptions.add(sub);
-    }
+    this.componentRef.instance.closeModal
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.close());
   }
 
-  close() {
+  close(): void {
     this.bsModalRef.hide();
   }
 
   ngOnDestroy(): void {
-
-    this.subscriptions.unsubscribe();
-
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
 
     if (this.componentRef) {
       this.componentRef.destroy();

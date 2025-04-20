@@ -2,17 +2,27 @@
 import { CommonModule, KeyValue } from '@angular/common';
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   Output,
+  QueryList,
   SimpleChanges,
+  ViewChildren,
 } from '@angular/core';
-import { TableAction, TableColumn } from './types/table-column';
+import {
+  ActionType,
+  TableColumn,
+  TableExporting,
+  TableExportType,
+} from './types/table-column';
 import { SelectComponent } from '../select/select.component';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { PagedCollection } from '@models/paged-collection.interface';
+import { NotificationService } from 'app/core/services/notification.service';
+import { Dropdown } from '@models/dropdown';
 
 @Component({
   selector: 'app-generic-table',
@@ -25,19 +35,25 @@ export class GenericTableComponent implements OnChanges, OnDestroy {
   @Input() data: PagedCollection<any> | undefined;
   @Input() columns: TableColumn[] = [];
   @Input() itemsPerPage = 10;
-  @Output() actionClicked = new EventEmitter<TableAction>();
-  @Output() filterChanged = new EventEmitter<string>();
-  public readonly itemsPerPageOptions: KeyValue<string, string>[] = [];
+  @Output() filterChanged = new EventEmitter<URLSearchParams>();
+  @Output() exportTo = new EventEmitter<TableExporting>();
+  @ViewChildren('filterInput') filterInputs!: QueryList<
+    ElementRef<HTMLInputElement>
+  >;
+  @Input() actions!: Partial<Record<ActionType, (element: any) => void>>;
+
+  public readonly itemsPerPageOptions: Dropdown[] = [];
   private filterSubject = new Subject<{ column: string; value: string }>();
   private unsubscribe$: Subject<void> = new Subject<void>();
   searchParams: URLSearchParams = new URLSearchParams();
   totalPages = 1;
+  showFilter = false;
 
   sortDirection: 'asc' | 'desc' = 'asc';
   sortColumn = '';
-  currentPage: any;
+  currentPage = 1;
 
-  constructor() {
+  constructor(private notificationService: NotificationService) {
     this.filterSubject
       .pipe(debounceTime(500), takeUntil(this.unsubscribe$))
       .subscribe(({ column, value }) => {
@@ -46,17 +62,25 @@ export class GenericTableComponent implements OnChanges, OnDestroy {
         } else {
           this.searchParams.delete(column);
         }
+        this.searchParams.set('offset', '0');
+        this.currentPage = 1;
         this.emitFilter();
       });
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['data']) {
+      const data = changes['data'].currentValue;
+      const total = data?.total || 0;
+      this.totalPages = Math.ceil(total / this.itemsPerPage);
+    }
+
     if (changes['itemsPerPage']) {
       this.itemsPerPage = changes['itemsPerPage'].currentValue;
       this.itemsPerPageOptions.length = 0;
       for (let i = 1; i < 5; i++) {
         const value = (i * this.itemsPerPage).toString();
-        this.itemsPerPageOptions.push({ key: value, value: value });
+        this.itemsPerPageOptions.push({ id: value, name: value });
       }
     }
   }
@@ -66,84 +90,152 @@ export class GenericTableComponent implements OnChanges, OnDestroy {
     this.filterSubject.next({ column, value });
   }
 
-  onNumberFilterChange(
+  onInputFilterChange(
     column: string,
     event: any,
     position: 'start' | 'end' = 'start'
   ): void {
-    const value = event.target.value;
-    let newValue;
-    const existingValue = this.searchParams.get(column);
-    const [startValue, endValue] = existingValue?.split('..') ?? ['', ''];
+    const inputValue = event.target.value;
+    const [startValue = '', endValue = ''] = this.searchParams
+      .get(column)
+      ?.split('..') ?? ['', ''];
 
-    if (position === 'start') {
-      newValue = value ? `${value}..${endValue}` : `..${endValue}`;
-    } else {
-      newValue = value ? `${startValue}..${value}` : `${startValue}..`;
+    const isStart = position === 'start';
+    const start = isStart ? inputValue : startValue;
+    const end = isStart ? endValue : inputValue;
+
+    if (start && end && Number(start) > Number(end)) {
+      this.notificationService.showWarning(
+        'Min price cannot be greater than max price'
+      );
+      return;
     }
+
+    let newValue = [start, end].join('..');
 
     if (newValue === '..') {
       newValue = '';
     }
+
     this.filterSubject.next({ column, value: newValue });
   }
 
-  sortBy(columnKey: string) {
-    if (this.sortColumn === columnKey) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = columnKey;
-      this.sortDirection = 'asc';
-    }
+  sortBy(columnKey: string): void {
+    const isSameColumn = this.sortColumn === columnKey;
 
-    const isDescending = this.sortDirection === 'desc' ? 'true' : 'false';
+    this.sortColumn = columnKey;
+    this.sortDirection =
+      isSameColumn && this.sortDirection === 'asc' ? 'desc' : 'asc';
+
     this.searchParams.set('sortBy', columnKey);
-    this.searchParams.set('isDescending', isDescending);
+    this.searchParams.set(
+      'isDescending',
+      (this.sortDirection === 'desc').toString()
+    );
+
     this.emitFilter();
   }
 
   goToPage(page: number) {
     if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.searchParams.set(
+      'offset',
+      ((page - 1) * this.itemsPerPage).toString()
+    );
+    this.emitFilter();
   }
 
   goNext() {
-    const nextUrl = this.data?.next;
-    if (nextUrl) {
-      const url = new URL(nextUrl);
-      this.searchParams = new URLSearchParams(url.search);
-      this.emitFilter();
-    }
+    this.searchParams.set(
+      'offset',
+      (this.currentPage * this.itemsPerPage).toString()
+    );
+    this.emitFilter();
+    this.currentPage++;
   }
-  GoPrevious() {
-    const prevUrl = this.data?.prev;
-    if (prevUrl) {
-      const url = new URL(prevUrl);
-      this.searchParams = new URLSearchParams(url.search);
-      this.emitFilter();
+
+  goPrevious() {
+    this.searchParams.set(
+      'offset',
+      ((this.currentPage - 2) * this.itemsPerPage).toString()
+    );
+    this.emitFilter();
+    this.currentPage--;
+  }
+
+  public getPages(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(2, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages - 1, this.currentPage + 2);
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
     }
+    return pages;
   }
 
   onEditClick(item: any) {
-    this.actionClicked.emit({ action: 'edit', item });
+    this.actions['edit']?.(item);
   }
 
   onDeleteClick(item: any) {
-    this.actionClicked.emit({ action: 'delete', item });
+    this.actions['delete']?.(item);
   }
 
   onViewClick(item: any) {
-    this.actionClicked.emit({ action: 'view', item });
+    this.actions['view']?.(item);
   }
+
 
   onItemsPerPageChange(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    this.searchParams.set('limit', selectedValue);
+    this.itemsPerPage = Number(selectedValue);
     this.searchParams.set('offset', '0');
+    this.currentPage = 1;
     this.emitFilter();
   }
 
   emitFilter() {
-    this.filterChanged.emit(this.searchParams.toString());
+    this.searchParams.set('limit', this.itemsPerPage.toString());
+    this.filterChanged.emit(this.searchParams);
+  }
+
+  exportToCSV(): void {
+    this.exportTo.emit({
+      type: TableExportType.CSV,
+      searchParams: this.searchParams.toString(),
+    } as TableExporting);
+  }
+  exportToPDF(): void {
+    this.exportTo.emit({
+      type: TableExportType.PDF,
+      searchParams: this.searchParams.toString(),
+    } as TableExporting);
+  }
+  exportToDOC(): void {
+    this.exportTo.emit({
+      type: TableExportType.DOC,
+      searchParams: this.searchParams.toString(),
+    } as TableExporting);
+  }
+
+  toggle() {
+    this.showFilter = !this.showFilter;
+
+    if (!this.showFilter) {
+      this.initializeFilterInputs();
+      this.resetSearchParams();
+      this.emitFilter();
+    }
+  }
+
+  private resetSearchParams() {
+    this.searchParams = new URLSearchParams();
+    this.currentPage = 1;
+  }
+
+  private initializeFilterInputs() {
+    this.filterInputs.forEach((input) => (input.nativeElement.value = ''));
   }
 
   ngOnDestroy(): void {

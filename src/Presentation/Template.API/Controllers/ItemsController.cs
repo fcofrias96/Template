@@ -68,11 +68,11 @@ namespace Template.Api.Controllers
         }
 
         [Permission(Resources.Item, ActionType.Export)]
-        [HttpGet("export/word")]
-        public async Task<FileResult> ExportToWordAsync([FromQuery] ItemQueryParameters request)
+        [HttpGet("export/docx")]
+        public async Task<FileResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToWordAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request);
-            return File(file, FileContentType.Word, "Items.docx");
+            var file = await _itemServiceAsync.ExportToDocxAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request);
+            return File(file, FileContentType.DOC, "Items.docx");
         }
 
         [Permission(Resources.Item, ActionType.Export)]
@@ -80,15 +80,15 @@ namespace Template.Api.Controllers
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request)
         {
             var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request);
-            return File(file, FileContentType.Pdf, "Items.pdf");
+            return File(file, FileContentType.PDF, "Items.pdf");
         }
 
         [Permission(Resources.Item, ActionType.Export)]
-        [HttpGet("export/excel")]
-        public async Task<FileResult> ExportToExcelAsync([FromQuery] ItemQueryParameters request)
+        [HttpGet("export/csv")]
+        public async Task<FileResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request)
         {
-            var file = await _itemServiceAsync.ExportToExcelAsync<ItemExportDto, ItemSpecification>("Artículos", request);
-            return File(file, FileContentType.Excel, "Items.xlsx");
+            var file = await _itemServiceAsync.ExportToCSVAsync<ItemExportDto, ItemSpecification>("Artículos", request);
+            return File(file, FileContentType.CSV, "Items.csv");
         }
 
         #endregion Actions

@@ -3,10 +3,24 @@ export interface TableColumn {
   title: string;
   sortable?: boolean;
   filterable?: boolean;
-  filterType?: 'text' | 'date' | 'number';
+  type?: 'text' | 'date' | 'number' | 'boolean' ;
+  currency?: 'USD' | 'EUR' | 'DOP';
+  dateFormat?: 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy/MM/dd';
 }
 
-export interface TableAction {
-  action: 'view' | 'edit' | 'delete';
-  item: any;
+
+
+export interface TableExporting {
+  type: TableExportType;
+  searchParams: string;
+  entityName: string;
 }
+
+export enum TableExportType {
+  CSV = 'csv',
+  PDF = 'pdf',
+  DOC = 'doc',
+}
+
+
+export type ActionType = 'view' | 'edit' | 'delete';

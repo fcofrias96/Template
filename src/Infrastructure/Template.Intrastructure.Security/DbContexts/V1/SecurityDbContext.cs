@@ -13,7 +13,7 @@ namespace Template.Security.DbContexts.V1
         }
 
         public DbSet<RolePermission> RolePermissions { get; set; }
-        public DbSet<ResourceAction> Permissions { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
         public DbSet<Resource> Resources { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
 
@@ -26,7 +26,7 @@ namespace Template.Security.DbContexts.V1
 
             builder.ApplyConfiguration(new ActionConfiguration());
             builder.ApplyConfiguration(new MenuItemConfiguration());
-            builder.ApplyConfiguration(new ResourceActionConfiguration());
+            builder.ApplyConfiguration(new PermissionConfiguration());
             builder.ApplyConfiguration(new ResourceConfiguration());
             builder.ApplyConfiguration(new RoleClaimConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());

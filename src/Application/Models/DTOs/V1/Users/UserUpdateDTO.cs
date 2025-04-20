@@ -12,5 +12,15 @@ namespace Template.Application.Models.DTOs.V1.Users
 
         [Required]
         public string LastName { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string[] Roles { get; set; }
     }
 }

@@ -17,22 +17,37 @@ export const routes: Routes = [
   {
     path: 'configuracion',
     canActivate: [authGuard],
+    data: {
+      title: 'Configuración',
+    },
     children: [
       {
         path: 'usuarios',
         component: UserComponent,
+        data: {
+          title: 'Usuarios',
+        },
       },
       {
         path: 'roles',
         component: RoleComponent,
+        data: {
+          title: 'Roles',
+        },
       },
       {
         path: 'permisos',
         component: PermissionComponent,
+        data: {
+          title: 'Permisos',
+        },
       },
       {
         path: 'recursos',
         component: ResourceComponent,
+        data: {
+          title: 'Recursos',
+        },
       },
     ],
   },
@@ -41,16 +56,27 @@ export const routes: Routes = [
     path: 'categorias',
     component: CategoryComponent,
     canActivate: [authGuard],
+    data: {
+      title: 'Categorias',
+    },
   },
   {
     path: 'productos',
     component: ProductComponent,
     canActivate: [authGuard],
+    data: {
+      title: 'Productos',
+    },
   },
-  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: '**', component: NotFoundComponent  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [guestGuard],
+    data: { title: 'Iniciar Sesión' },
+  },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] , data: { title: 'Registrar' } },
+  { path: 'dashboard', component: DashboardComponent , data: { title: 'Dashboard' } },
+  { path: 'forgot-password', component: ForgotPasswordComponent, data: { title: 'Recuperar Contraseña' } },
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full', },
+  { path: '**', component: NotFoundComponent, data: { title: '404 - Not Found' } },
 ];

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Enums;
+using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Categories;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
@@ -47,9 +47,9 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetAllCategoriesAsync()
+        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request)
         {
-            var response = await _categoryServiceAsync.GetProjectedAsync<CategoryListDto>();
+            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request);
             return Ok(response);
         }
 
@@ -69,12 +69,21 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
+
+        [Permission(Resources.Resource, ActionType.Read)]
+        [HttpGet("dropdown")]
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
+        {
+            var resources = await _categoryServiceAsync.GetProjectedAsync<Dropdown>();
+            return Ok(resources);
+        }
+
         [Permission(Resources.Category, ActionType.Export)]
-        [HttpGet("export/word")]
+        [HttpGet("export/docx")]
         public async Task<FileResult> ExportToWordAsync()
         {
-            var file = await _categoryServiceAsync.ExportToWordAsync<CategoryExportDto>("Lista de Categorias");
-            return File(file, FileContentType.Word, "Categories.docx");
+            var file = await _categoryServiceAsync.ExportToDocxAsync<CategoryExportDto>("Lista de Categorias");
+            return File(file, FileContentType.DOC, "Categories.docx");
         }
 
         [Permission(Resources.Category, ActionType.Export)]
@@ -82,15 +91,15 @@ namespace Template.Api.Controllers
         public async Task<FileResult> ExportToPdfAsync()
         {
             var file = await _categoryServiceAsync.ExportToPdfAsync<CategoryExportDto>("Lista de Categorias");
-            return File(file, FileContentType.Pdf, "Categories.pdf");
+            return File(file, FileContentType.PDF, "Categories.pdf");
         }
 
         [Permission(Resources.Category, ActionType.Export)]
-        [HttpGet("export/excel")]
-        public async Task<FileResult> ExportToExcelAsync()
+        [HttpGet("export/csv")]
+        public async Task<FileResult> ExportToCSVAsync()
         {
-            var file = await _categoryServiceAsync.ExportToExcelAsync<CategoryExportDto>("Categorias");
-            return File(file, FileContentType.Excel, "Categories.xlsx");
+            var file = await _categoryServiceAsync.ExportToCSVAsync<CategoryExportDto>("Categorias");
+            return File(file, FileContentType.CSV, "Categories.csv");
         }
 
         #endregion Actions

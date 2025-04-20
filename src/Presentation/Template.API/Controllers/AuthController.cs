@@ -108,7 +108,8 @@ namespace Template.Api.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                Path = "/",
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays)
             };
         }

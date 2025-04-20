@@ -7,6 +7,6 @@ namespace Template.Security.Entities
         public override int Id { get; set; }
         public string Name { get; set; }
 
-        public ICollection<ResourceAction> ResourceActions { get; set; } = [];
+        public ICollection<Permission> Permissions { get; set; } = [];
     }
 }

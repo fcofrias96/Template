@@ -11,7 +11,7 @@ namespace Template.Security.Configurations.V1
         {
             builder.ToTable("RolePermissions");
 
-            builder.HasKey(rp => new { rp.RoleId, rp.ResourceActionId });
+            builder.HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
             builder.HasData(RolePermissionSeed.Data);
         }

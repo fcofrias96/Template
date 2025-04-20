@@ -20,9 +20,9 @@ namespace Template.Security.Services.V1
             _context = context;
         }
 
-        public async Task<ApiResponse<List<MenuItemDto>>> GetMenuForUser(ClaimsPrincipal user)
+        public async Task<ApiResponse<MenuItemResponse>> GetMenuForUser(ClaimsPrincipal user)
         {
-            var userResourceActionIds = _permissionService.GetUserResourceActionIds(user);
+            var userPermissionIds = _permissionService.GetUserPermissionIds(user);
 
             var menuItems = await _context.MenuItems
                                     .Select(m => new MenuItem
@@ -32,7 +32,7 @@ namespace Template.Security.Services.V1
                                         Url = m.Url,
                                         Icon = m.Icon,
                                         ParentId = m.ParentId,
-                                        ResourceActionId = m.ResourceActionId,
+                                        PermissionId = m.PermissionId,
                                         Order = m.Order
 
                                     })
@@ -40,35 +40,40 @@ namespace Template.Security.Services.V1
                                     .ThenBy(m=> m.Order)
                                     .ToListAsync();
 
-            var accessibleMenuItems = FilterMenuItemsByPermissions(menuItems, userResourceActionIds);
+            var accessibleMenuItems = FilterMenuItemsByPermissions(menuItems, userPermissionIds);
 
             var menuHierarchy = BuildMenuHierarchy(accessibleMenuItems);
 
             var menuDto = MapMenuItemsToDto(menuHierarchy);
+            var menuResponse = new MenuItemResponse
+            {
+                Menus = menuDto,
+                IsAuthenticated = user?.Identity?.IsAuthenticated ?? false,
+            };
 
-            return new ApiResponse<List<MenuItemDto>>(menuDto);
+            return new ApiResponse<MenuItemResponse>(menuResponse);
         }
 
 
 
-        private List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userResourceActionIds)
+        private List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userPermissionIds)
         {
             var accessibleMenuItems = menuItems
-                .Where(item => HasAccessToMenuItem(userResourceActionIds, item))
+                .Where(item => HasAccessToMenuItem(userPermissionIds, item))
                 .ToList();
 
             return accessibleMenuItems;
         }
 
 
-        private static bool HasAccessToMenuItem(HashSet<int> userResourceActionIds, MenuItem item)
+        private static bool HasAccessToMenuItem(HashSet<int> userPermissionIds, MenuItem item)
         {
-            if (!item.ResourceActionId.HasValue)
+            if (!item.PermissionId.HasValue)
             {
                 return true;
             }
 
-            return userResourceActionIds.Contains(item.ResourceActionId.Value);
+            return userPermissionIds.Contains(item.PermissionId.Value);
         }
 
 

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Template.Application.Models.DTOs.V1.Actions;
+using Template.Application.Models.DTOs;
 using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Mappings.V1
@@ -8,7 +8,8 @@ namespace Template.Security.Mappings.V1
     {
         public ActionProfile()
         {
-            CreateMap<ActionType, ActionListDto>();
+            CreateMap<ActionType, Dropdown>();
+
         }
     }
 }

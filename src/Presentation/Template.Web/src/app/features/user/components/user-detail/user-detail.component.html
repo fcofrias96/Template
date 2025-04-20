@@ -1,0 +1,27 @@
+<div class="user-detail" *ngIf="user$ | async as user">
+  <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Is Verify:</strong> {{ user.isVerified ? "Yes" : "No" }}</p>
+
+  <p><strong>Roles:</strong></p>
+  <ul>
+    <li *ngFor="let role of user.roles">
+      {{ role.name }}
+    </li>
+  </ul>
+
+  <p><strong>Resources:</strong></p>
+  <ul>
+    <li *ngFor="let resource of user.resources">
+      {{ resource.resource }}
+      <ul>
+        <li><strong>Permissions:</strong></li>
+        <ul>
+          <li *ngFor="let permission of resource.permissions">
+            {{ permission.name }}
+          </li>
+        </ul>
+      </ul>
+    </li>
+  </ul>
+</div>

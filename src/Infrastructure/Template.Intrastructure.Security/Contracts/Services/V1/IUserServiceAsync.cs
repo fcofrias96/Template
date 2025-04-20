@@ -9,9 +9,6 @@ namespace Template.Security.Contracts.Services.V1
 {
     public interface IUserServiceAsync : IReadServiceAsync<User, SecurityDbContext>
     {
-        Task AddToRolesAsync(Guid userId, IReadOnlyList<Guid> roles);
-
-        Task AddToRolesAsync(Guid userId, Guid roleId);
 
         Task DeleteAsync(Guid userId);
 
@@ -19,9 +16,6 @@ namespace Template.Security.Contracts.Services.V1
 
         Task<User> GetUserByRefreshToken(string refreshToken);
 
-        Task RemoveFromRolesAsync(Guid userId, IReadOnlyList<Guid> roles);
-
-        Task RemoveFromRolesAsync(Guid userId, Guid roles);
 
         Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO);
 

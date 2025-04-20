@@ -44,15 +44,15 @@ namespace Template.Application.Services.Base
             return _deleteService.PermanentDeleteAsync(id);
         }
 
-        public virtual Task<byte[]> ExportToExcelAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public virtual Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
             where TSpecification : ISpecification<TEntity>
         {
-            return _exportService.ExportToExcelAsync<TDestination, TSpecification>(title, queryParameters);
+            return _exportService.ExportToCSVAsync<TDestination, TSpecification>(title, queryParameters);
         }
 
-        public virtual Task<byte[]> ExportToExcelAsync<TDestination>(string title)
+        public virtual Task<byte[]> ExportToCSVAsync<TDestination>(string title)
         {
-            return _exportService.ExportToExcelAsync<TDestination>(title);
+            return _exportService.ExportToCSVAsync<TDestination>(title);
         }
 
         public virtual Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
@@ -66,15 +66,15 @@ namespace Template.Application.Services.Base
             return _exportService.ExportToPdfAsync<TDestination>(title);
         }
 
-        public virtual Task<byte[]> ExportToWordAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public virtual Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
             where TSpecification : ISpecification<TEntity>
         {
-            return _exportService.ExportToWordAsync<TDestination, TSpecification>(title, queryParameters);
+            return _exportService.ExportToDocxAsync<TDestination, TSpecification>(title, queryParameters);
         }
 
-        public virtual Task<byte[]> ExportToWordAsync<TDestination>(string title)
+        public virtual Task<byte[]> ExportToDocxAsync<TDestination>(string title)
         {
-            return _exportService.ExportToWordAsync<TDestination>(title);
+            return _exportService.ExportToDocxAsync<TDestination>(title);
         }
 
         public virtual Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)

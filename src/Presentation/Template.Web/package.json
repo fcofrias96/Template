@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --ssl true --ssl-cert ssl/localhost.pem --ssl-key ssl/localhost-key.pem",
+    "build": "ng build --configuration production && npm run copy-web-config",
+    "copy-web-config": "copy web.config dist\\template.web\\browser\\web.config",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

@@ -1,0 +1,168 @@
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-bottom: -16px;
+}
+
+thead {
+  position: sticky;
+  top: 47px;
+}
+
+tbody{
+  .bi.boolean {
+    font-size: 25px;
+  }
+}
+
+
+thead, tbody, .header {
+  button {
+    border: none;
+    background-color: unset;
+  }
+}
+
+
+.filter-input {
+  //display: none;
+
+  &:hover {
+    display: block;
+  }
+}
+tfoot {
+  td {
+    border: none;
+
+    p,
+    ul {
+      margin: 0;
+    }
+  }
+}
+
+.date-input {
+
+  display: flex;
+
+  input {
+    max-width: 115px;
+
+    &:last-child {
+      margin-left: 10px;
+    }
+  }
+}
+
+
+
+.number-input {
+  display: flex;
+
+  input {
+    max-width: 75px;
+
+    &:last-child {
+      margin-left: 10px;
+    }
+  }
+
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: flex-end;
+  background-color: #ffffff;
+}
+
+.filter {
+  .bi-funnel,
+  .bi-funnel-fill {
+    font-size: 30px;
+  }
+}
+
+.export {
+  position: relative;
+
+  margin-right: 8px;
+
+  &:hover {
+    .export-buttons {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  button {
+    border: none;
+    background-color: unset;
+  }
+
+  .bi {
+    font-size: 30px;
+  }
+
+  .export-buttons {
+    position: absolute;
+    z-index: 1;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    width: max-content;
+    left: -85px;
+    top: 0px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+}
+
+.bi-filetype-docx {
+  color: #0d4cb6;
+}
+
+.bi-filetype-csv {
+  color: #0a7336;
+}
+
+.bi-filetype-pdf {
+  color: #ff1b0e;
+}
+
+.bi-pencil-fill {
+  color: #676767;
+}
+
+.bi-trash-fill {
+  color: #dc3545;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: clip;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+}
+
+
+
+
+::ng-deep {
+  app-select {
+    select {
+      border-radius: 0.5rem;
+      border: 1px solid #e0e0e0;
+      padding: 6px;
+    }
+  }
+
+  .page-link {
+    color: unset;
+  }
+}

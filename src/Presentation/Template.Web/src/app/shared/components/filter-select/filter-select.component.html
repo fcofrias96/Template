@@ -60,11 +60,11 @@
       <button
         type="button"
         class="list-group-item list-group-item-action"
-        [ngClass]="{ 'selected': option.key === selectedKey }"
+        [ngClass]="{ 'selected': option[bind.key] === selectedKey }"
         *ngFor="let option of filteredOptions"
         (click)="selectOption(option)"
       >
-        {{ option.value }}
+        {{ option[bind.value] }}
       </button>
       <div *ngIf="filteredOptions.length === 0" class="list-group-item">
         No options found

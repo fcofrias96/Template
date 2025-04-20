@@ -12,7 +12,7 @@ namespace Template.Security.Configurations.V1
             builder.Property(r => r.Name)
                 .IsRequired();
 
-            builder.HasMany(r => r.ResourceActions)
+            builder.HasMany(r => r.Permissions)
                 .WithOne(r => r.Resource)
                 .HasForeignKey(r => r.ResourceId);
 

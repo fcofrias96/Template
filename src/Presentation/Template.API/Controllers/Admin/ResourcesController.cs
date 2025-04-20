@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
+using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
+using Template.Security.Dtos.Resources;
+using Template.Security.Specification.V1;
 
 namespace Template.Api.Controllers.Admin
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    [Authorize(Roles = Roles.Admin)]
+    //[Authorize(Roles = Roles.Admin)]
     public class ResourcesController : ControllerBase
     {
         private readonly IResourceServiceAsync _resourceService;
@@ -24,9 +28,17 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<ResourceListDto>>>> GetResources()
+        public async Task<ActionResult<ApiResponse<List<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] PermissionQueryParameters request)
         {
-            var resources = await _resourceService.GetProjectedAsync<ResourceListDto>();
+            var resources = await _resourceService.GetProjectedPaginatedAsync<ResourceListDto, ResourceSpecification>(request);
+            return Ok(resources);
+        }
+
+        [Permission(Resources.Resource, ActionType.Read)]
+        [HttpGet("dropdown")]
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
+        {
+            var resources = await _resourceService.GetProjectedAsync<Dropdown>();
             return Ok(resources);
         }
 

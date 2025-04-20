@@ -5,6 +5,7 @@ using iText.Layout.Properties;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
+using System.Text;
 using Template.Application.Attributes;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
@@ -28,19 +29,19 @@ namespace Template.Application.Services.Base
             _logger = logger;
         }
 
-        public async Task<byte[]> ExportToExcelAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public async Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger, false);
             var data = await _readDepositoryAsync.GetProjectedForExportAsync<TDestination>(spec);
 
-            return GenerateExcel(title, data);
+            return GenerateCSV(title, data);
         }
 
-        public async Task<byte[]> ExportToExcelAsync<TDestination>(string title)
+        public async Task<byte[]> ExportToCSVAsync<TDestination>(string title)
         {
             var data = await _readDepositoryAsync.GetProjectedAsync<TDestination>();
-            return GenerateExcel(title, data);
+            return GenerateCSV(title, data);
         }
 
         public async Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
@@ -57,53 +58,59 @@ namespace Template.Application.Services.Base
             return GeneratePdf(title, data);
         }
 
-        public async Task<byte[]> ExportToWordAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public async Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
                                         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger, false);
             var data = await _readDepositoryAsync.GetProjectedForExportAsync<TDestination>(spec);
-            return GenerateWord(title, data);
+            return GenerateDoc(title, data);
         }
 
-        public async Task<byte[]> ExportToWordAsync<TDestination>(string title)
+        public async Task<byte[]> ExportToDocxAsync<TDestination>(string title)
         {
             var data = await _readDepositoryAsync.GetProjectedAsync<TDestination>();
-            return GenerateWord(title, data);
+            return GenerateDoc(title, data);
         }
 
         #region Private Methods
 
-        private static byte[] GenerateExcel<TDestination>(string title, IReadOnlyList<TDestination> data)
+        private static byte[] GenerateCSV<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
-            using (var workbook = new XLWorkbook())
+            var properties = typeof(TDestination).GetProperties();
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"\"{title}\"");
+
+            for (int i = 0; i < properties.Length; i++)
             {
-                var worksheet = workbook.Worksheets.Add(title);
-                var properties = typeof(TDestination).GetProperties();
+                var propertyName = GetDisplayName(properties[i]);
+                sb.Append(propertyName);
 
-                // Header
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    var propertyName = GetDisplayName(properties[i]);
-                    worksheet.Cell(1, i + 1).Value = propertyName;
-                }
-
-                // Data
-                for (int i = 0; i < data.Count; i++)
-                {
-                    for (int j = 0; j < properties.Length; j++)
-                    {
-                        var value = properties[j].GetValue(data[i]);
-                        worksheet.Cell(i + 2, j + 1).Value = ConvertToFriendlyValue(value);
-                    }
-                }
-
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-                    return stream.ToArray();
-                }
+                if (i < properties.Length - 1)
+                    sb.Append(",");
             }
+
+            sb.AppendLine();
+
+            for (int i = 0; i < data.Count; i++)
+            {
+                for (int j = 0; j < properties.Length; j++)
+                {
+                    var value = properties[j].GetValue(data[i]);
+                    var friendlyValue = ConvertToFriendlyValue(value);
+                    sb.Append(friendlyValue);
+
+                    if (j < properties.Length - 1)
+                        sb.Append(",");
+                }
+
+                sb.AppendLine();
+            }
+
+            return Encoding.UTF8.GetBytes(sb.ToString());
         }
+
+
 
         private static byte[] GeneratePdf<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
@@ -155,7 +162,7 @@ namespace Template.Application.Services.Base
             }
         }
 
-        private static byte[] GenerateWord<TDestination>(string title, IReadOnlyList<TDestination> data)
+        private static byte[] GenerateDoc<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
             using (var stream = new MemoryStream())
             {

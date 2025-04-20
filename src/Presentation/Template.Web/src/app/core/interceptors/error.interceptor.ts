@@ -10,24 +10,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let errorMessage = 'An unknown error occurred!';
+      const errorMessage = error.error.message;
 
       if (error.error instanceof ErrorEvent) {
-        errorMessage = `Client error: ${error.error.message}`;
         notificationService.showWarning(errorMessage);
+        console.warn('An error EVENT occurred:', error.error.message);
       } else {
         if (error.status >= 400 && error.status < 500) {
-          errorMessage = `Warning: ${
-            error.error?.message || 'Request could not be processed.'
-          }`;
           notificationService.showWarning(errorMessage);
         } else {
-          errorMessage = `Server error: ${error.message}`;
           notificationService.showError(errorMessage);
         }
       }
 
-      console.error('An error occurred:', error);
       return throwError(() => new Error(errorMessage));
     })
   );

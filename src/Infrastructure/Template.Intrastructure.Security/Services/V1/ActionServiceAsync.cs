@@ -1,4 +1,6 @@
-﻿using Template.Application.Contracts.Repositories.Base;
+﻿using DocumentFormat.OpenXml.Office.CustomUI;
+using Template.Application.Contracts.Repositories.Base;
+using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Actions;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
@@ -15,9 +17,10 @@ namespace Template.Security.Services.V1
             _readRepository = readRepository;
         }
 
-        public async Task<IReadOnlyList<ActionListDto>> GetProjectedAsync()
+        public async Task<IReadOnlyList<Dropdown>> GetProjectedAsync()
         {
-            return await _readRepository.GetProjectedAsync<ActionListDto>();
+     
+            return await _readRepository.GetProjectedAsync<Dropdown>();
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,15 +7,17 @@ import {
 } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CreateProduct } from '../../types/create-product.interface';
-import { CommonModule, KeyValue } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormFieldComponent } from 'app/shared/components/form-field/form-field.component';
 import { validateNumberOrNegative } from 'app/core/utils/validate-number-negative';
 import { CategoryService } from '@features/category/services/category.service';
-import { FilterSelectComponent } from '@shared/components/filter-select/filter-select.component';import { UpdateProduct } from '@features/product/types/update-product.interface';
+import { FilterSelectComponent } from '@shared/components/filter-select/filter-select.component';
+import { UpdateProduct } from '@features/product/types/update-product.interface';
 import { ProductDetail } from '@features/product/types/product-detail.interface';
-import { Category } from '@features/category/types/product.interface';
-import { Product } from '@features/product/types/product.interface';
-
+import { CategoryDetail } from '@features/category/types/category-detail.interface';
+import { map, Observable, Subject } from 'rxjs';
+import { DynamicModalComponent } from '@models/dynamic-modal.interface';
+import { Dropdown } from '@models/dropdown';
 
 @Component({
   selector: 'app-product-form',
@@ -24,18 +26,17 @@ import { Product } from '@features/product/types/product.interface';
     CommonModule,
     FormFieldComponent,
     ReactiveFormsModule,
-    FilterSelectComponent
+    FilterSelectComponent,
   ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, DynamicModalComponent {
   public productForm: FormGroup;
-  public product!: ProductDetail;
-  public categories: KeyValue<string, string> [] = [];
-  @Input() productId: number | null = null;
+  public categories$: Observable<Dropdown[]>;
+  @Input() productId!: number;
   @Input() edit = false;
-  @Output() closeModal = new EventEmitter<void>();
+  closeModal = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -43,55 +44,57 @@ export class ProductFormComponent implements OnInit {
     private categoryService: CategoryService
   ) {
     this.productForm = this.initForm();
+    this.categories$ = this.categoryService.getDropdownList();
   }
 
   ngOnInit(): void {
-    this.categoryService.getList<KeyValue<string, string>>().subscribe((categories) => {
-      this.categories = categories;
-      if (this.productId && this.edit) {
-        this.productService.getById<ProductDetail>(this.productId).subscribe((product) => {
-          this.product = product;
-          this.productForm.patchValue(product);
-        });
-      }
-    });
-
-    this.productForm
-      .get('description')
-      ?.valueChanges.subscribe((value) => console.log(value));
+    this.getProductData();
   }
 
-  initForm(): FormGroup {
+  private getProductData() {
+    if (this.productId && this.edit) {
+      this.productService
+        .getById<ProductDetail>(this.productId)
+        .subscribe((product) => {
+          this.productForm.patchValue(product);
+        });
+    }
+  }
+
+  private initForm(): FormGroup {
     return this.fb.group({
-      name: ['', Validators.required],
+      id: [null],
+      name: [null, Validators.required],
       categoryId: [null, [Validators.required]],
       price: [null, [Validators.required, validateNumberOrNegative()]],
-      description: ['', Validators.required],
+      description: [null, Validators.required],
     });
   }
 
   onSubmit(): void {
     if (this.edit) {
-      const updatedProduct: UpdateProduct = {
-        ...this.product,
-        ...this.productForm.value,
-      };
-      this.productService.update(updatedProduct).subscribe({
-        next: () => {
-          this.productService.refreshProducts$.next();
-          this.closeModal.emit();
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+      this.update();
     } else {
-      const newProduct: CreateProduct = this.productForm.value;
-      this.productService.create(newProduct).subscribe(() => {
-        this.productService.refreshProducts$.next();
-        this.closeModal.emit();
-      });
+      this.create();
     }
   }
-}
 
+  private create() {
+    const newProduct: CreateProduct = this.productForm.value;
+    this.productService.create(newProduct).subscribe(() => {
+      this.productService.refreshProducts$.next();
+      this.closeModal.next();
+    });
+  }
+
+  private update() {
+    const updatedProduct: UpdateProduct = {
+      ...this.productForm.value,
+    };
+
+    this.productService.update(this.productId, updatedProduct).subscribe(() => {
+      this.productService.refreshProducts$.next();
+      this.closeModal.next();
+    });
+  }
+}

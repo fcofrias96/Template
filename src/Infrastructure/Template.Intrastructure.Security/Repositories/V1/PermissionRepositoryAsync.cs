@@ -7,15 +7,15 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class PermissionRepositoryAsync : RepositoryBaseAsync<ResourceAction, SecurityDbContext>, IPermissionRepositoryAsync
+    public class PermissionRepositoryAsync : RepositoryBaseAsync<Permission, SecurityDbContext>, IPermissionRepositoryAsync
     {
         private readonly SecurityDbContext _dbContext;
 
         public PermissionRepositoryAsync(
-                    ICreateRepositoryAsync<ResourceAction, SecurityDbContext> createRepository,
-                    IUpdateRepositoryAsync<ResourceAction, SecurityDbContext> updateRepository,
-                    IDeleteRepositoryAsync<ResourceAction, SecurityDbContext> deleteRepository,
-                    IReadRepositoryAsync<ResourceAction, SecurityDbContext> readRepository,
+                    ICreateRepositoryAsync<Permission, SecurityDbContext> createRepository,
+                    IUpdateRepositoryAsync<Permission, SecurityDbContext> updateRepository,
+                    IDeleteRepositoryAsync<Permission, SecurityDbContext> deleteRepository,
+                    IReadRepositoryAsync<Permission, SecurityDbContext> readRepository,
                     SecurityDbContext dbContext
 
                     ) : base(createRepository, updateRepository, deleteRepository, readRepository)
@@ -28,8 +28,8 @@ namespace Template.Security.Repositories.V1
             var hasPermission = await _dbContext.RolePermissions
                 .AnyAsync(rp =>
                     rp.Role.UserRoles.Any(ur => ur.UserId == userId) &&
-                    rp.ResourceAction.Resource.Id == resourceId &&
-                    rp.ResourceAction.Action.Id == actionId
+                    rp.Permission.Resource.Id == resourceId &&
+                    rp.Permission.ActionType.Id == actionId
                 );
 
             return hasPermission;

@@ -110,7 +110,7 @@ namespace Template.Security
             //Services
             services.AddScoped<IActionServiceAsync, ActionServiceAsync>();
             services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
-            services.AddScoped<IPermissionServiceAsync, ResourceActionServiceAsync>();
+            services.AddScoped<IPermissionServiceAsync, PermissionServiceAsync>();
             services.AddScoped<IResourceServiceAsync, ResourceService>();
             services.AddScoped<IRolePermissionServiceAsync, RolePermissionServiceAsync>();
             services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();

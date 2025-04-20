@@ -14,8 +14,8 @@ namespace Template.Security.Entities
         public MenuItem Parent { get; set; }
         public ICollection<MenuItem> Children { get; set; } = new List<MenuItem>();
 
-        public int? ResourceActionId { get; set; }
-        public ResourceAction ResourceAction { get; set; }
+        public int? PermissionId { get; set; }
+        public Permission Permission { get; set; }
     }
 
 }

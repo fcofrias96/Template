@@ -8,6 +8,8 @@ namespace Template.Application.SetupOptions
         public static Action<CorsOptions> GetOptions(IConfiguration configuration)
         {
             var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+            if (allowedOrigins is null)
+                throw new ArgumentNullException(nameof(configuration), "Allowed origins are not configured in the appsettings");
 
             return options =>
             {

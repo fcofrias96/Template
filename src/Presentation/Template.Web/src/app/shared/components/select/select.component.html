@@ -2,8 +2,8 @@
   <label>{{ label }}</label>
   <select [value]="value" (change)="onSelectChange($event)">
     <option *ngIf="placeholder" value="" disabled selected>{{ placeholder }}</option>
-    <option *ngFor="let option of options" [value]="option.value">
-      {{ option.key }}
+    <option *ngFor="let option of options" [value]="option.id">
+      {{ option.name }}
     </option>
   </select>
   <div class="feedback">

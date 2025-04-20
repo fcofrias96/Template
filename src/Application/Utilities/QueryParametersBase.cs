@@ -92,7 +92,7 @@ namespace Template.Application.Utilities
             var entityProperty = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             if (entityProperty == null)
             {
-                throw new Exception($"The class '{typeof(TEntity).Name}' does not contain a property named '{propertyName}'.");
+                throw new InvalidOperationException($"The class '{typeof(TEntity).Name}' does not contain a property named '{propertyName}'.");
             }
             return entityProperty;
         }

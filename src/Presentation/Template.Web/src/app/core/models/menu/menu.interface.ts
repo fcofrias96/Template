@@ -5,3 +5,8 @@ export interface Menu {
   icon: string;
   children: Menu[];
 }
+
+export interface MenuResponse {
+  menus: Menu[];
+  isAuthenticated: boolean;
+}

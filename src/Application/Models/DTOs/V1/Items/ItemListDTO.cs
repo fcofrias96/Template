@@ -1,4 +1,8 @@
-﻿namespace Template.Application.Models.DTOs.V1.Items
+﻿
+
+using DocumentFormat.OpenXml.Wordprocessing;
+
+namespace Template.Application.Models.DTOs.V1.Items
 {
     public class ItemListDto
     {
@@ -6,5 +10,10 @@
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Category { get; set; }
+        public DateTime Created { get; set; } // delete
+
+        public bool IsDeleted { get; set; } // delete
+
+
     }
 }

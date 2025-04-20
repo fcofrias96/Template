@@ -14,6 +14,7 @@ import { provideNgxMask } from 'ngx-mask';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { apiResponseInterceptor } from './core/interceptors/api-response.interceptor';
 import { retryInterceptor } from './core/interceptors/retry.interceptor';
+import { tokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
         loadingInterceptor,
         apiResponseInterceptor,
         errorInterceptor,
+        tokenRefreshInterceptor,
         retryInterceptor,
       ])
     ),

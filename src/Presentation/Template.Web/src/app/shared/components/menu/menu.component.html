@@ -1,4 +1,4 @@
-<ng-container *ngIf="isAuthenticated">
+<ng-container>
   <ul class="menu" [ngClass]="isRootMenu ? 'root-menu' : 'sub-menu'">
     <li *ngFor="let item of menu">
       <a [routerLink]="parentRoute + item.url" routerLinkActive="active">

@@ -10,10 +10,20 @@
       [id]="formControlName"
       [type]="type"
       [attr.placeholder]="placeholder"
-      (keydown)="onKeydown($event)"
       [mask]="mask"
       [dropSpecialCharacters]="dropSpecialCharacters"
     />
+
+    <input
+    *ngSwitchCase="'number'"
+    [formControlName]="formControlName"
+    [id]="formControlName"
+    [type]="type"
+    [attr.placeholder]="placeholder"
+    [mask]="mask"
+    [dropSpecialCharacters]="dropSpecialCharacters"
+    class="no-spinner"
+  />
 
     <ng-container *ngSwitchCase="'password'">
       <div class="position-relative">

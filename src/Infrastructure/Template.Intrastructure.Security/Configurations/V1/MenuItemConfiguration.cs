@@ -30,9 +30,9 @@ namespace Template.Security.Configurations.V1
             builder.Property(e => e.Icon)
                 .HasMaxLength(100);
 
-            builder.HasOne(e => e.ResourceAction)
+            builder.HasOne(e => e.Permission)
                 .WithMany()
-                .HasForeignKey(e => e.ResourceActionId);
+                .HasForeignKey(e => e.PermissionId);
 
             builder.HasData(MenuItemSeed.Data);
 

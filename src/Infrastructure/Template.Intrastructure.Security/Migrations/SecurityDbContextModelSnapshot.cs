@@ -252,7 +252,7 @@ namespace Template.Security.Migrations
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ResourceActionId")
+                    b.Property<int?>("PermissionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -266,7 +266,7 @@ namespace Template.Security.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ResourceActionId");
+                    b.HasIndex("PermissionId");
 
                     b.HasIndex("ParentId", "Order")
                         .IsUnique()
@@ -293,7 +293,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 2,
                             ParentId = 6,
-                            ResourceActionId = 2,
+                            PermissionId = 2,
                             Title = "Usuarios",
                             Url = "/usuarios"
                         },
@@ -305,7 +305,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 1,
                             ParentId = 6,
-                            ResourceActionId = 12,
+                            PermissionId = 12,
                             Title = "Roles",
                             Url = "/roles"
                         },
@@ -316,7 +316,7 @@ namespace Template.Security.Migrations
                             Icon = "categories-icon",
                             IsDeleted = false,
                             Order = 3,
-                            ResourceActionId = 23,
+                            PermissionId = 23,
                             Title = "Categorías",
                             Url = "/categorias"
                         },
@@ -327,7 +327,7 @@ namespace Template.Security.Migrations
                             Icon = "items-icon",
                             IsDeleted = false,
                             Order = 2,
-                            ResourceActionId = 28,
+                            PermissionId = 28,
                             Title = "Productos",
                             Url = "/productos"
                         },
@@ -338,7 +338,7 @@ namespace Template.Security.Migrations
                             Icon = "settings-icon",
                             IsDeleted = false,
                             Order = 4,
-                            ResourceActionId = 32,
+                            PermissionId = 32,
                             Title = "Configuración",
                             Url = "/configuracion"
                         },
@@ -350,7 +350,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 3,
                             ParentId = 6,
-                            ResourceActionId = 17,
+                            PermissionId = 17,
                             Title = "Permisos",
                             Url = "/permisos"
                         },
@@ -362,9 +362,384 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 4,
                             ParentId = 6,
-                            ResourceActionId = 7,
+                            PermissionId = 7,
                             Title = "Recursos",
                             Url = "/recursos"
+                        });
+                });
+
+            modelBuilder.Entity("Template.Security.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResourceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionTypeId");
+
+                    b.HasIndex("ResourceId", "ActionTypeId")
+                        .IsUnique();
+
+                    b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating users",
+                            IsDeleted = false,
+                            Name = "Create User",
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading user details",
+                            IsDeleted = false,
+                            Name = "Read User",
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating users",
+                            IsDeleted = false,
+                            Name = "Update User",
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting users",
+                            IsDeleted = false,
+                            Name = "Delete User",
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting user data",
+                            IsDeleted = false,
+                            Name = "Export User",
+                            ResourceId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating resources",
+                            IsDeleted = false,
+                            Name = "Create Resource",
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading resources",
+                            IsDeleted = false,
+                            Name = "Read Resource",
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating resources",
+                            IsDeleted = false,
+                            Name = "Update Resource",
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting resources",
+                            IsDeleted = false,
+                            Name = "Delete Resource",
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting resource data",
+                            IsDeleted = false,
+                            Name = "Export Resource",
+                            ResourceId = 3
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating roles",
+                            IsDeleted = false,
+                            Name = "Create Role",
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading roles",
+                            IsDeleted = false,
+                            Name = "Read Role",
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating roles",
+                            IsDeleted = false,
+                            Name = "Update Role",
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting roles",
+                            IsDeleted = false,
+                            Name = "Delete Role",
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting role data",
+                            IsDeleted = false,
+                            Name = "Export Role",
+                            ResourceId = 2
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating permissions",
+                            IsDeleted = false,
+                            Name = "Create Permission",
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading permissions",
+                            IsDeleted = false,
+                            Name = "Read Permission",
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 18,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating permissions",
+                            IsDeleted = false,
+                            Name = "Update Permission",
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 19,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting permissions",
+                            IsDeleted = false,
+                            Name = "Delete Permission",
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 20,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting permission data",
+                            IsDeleted = false,
+                            Name = "Export Permission",
+                            ResourceId = 4
+                        },
+                        new
+                        {
+                            Id = 21,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading actions",
+                            IsDeleted = false,
+                            Name = "Read Action",
+                            ResourceId = 5
+                        },
+                        new
+                        {
+                            Id = 22,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating categories",
+                            IsDeleted = false,
+                            Name = "Create Category",
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 23,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading categories",
+                            IsDeleted = false,
+                            Name = "Read Category",
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 24,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating categories",
+                            IsDeleted = false,
+                            Name = "Update Category",
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 25,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting categories",
+                            IsDeleted = false,
+                            Name = "Delete Category",
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 26,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting category data",
+                            IsDeleted = false,
+                            Name = "Export Category",
+                            ResourceId = 7
+                        },
+                        new
+                        {
+                            Id = 27,
+                            ActionTypeId = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows creating items",
+                            IsDeleted = false,
+                            Name = "Create Item",
+                            ResourceId = 8
+                        },
+                        new
+                        {
+                            Id = 28,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading items",
+                            IsDeleted = false,
+                            Name = "Read Item",
+                            ResourceId = 8
+                        },
+                        new
+                        {
+                            Id = 29,
+                            ActionTypeId = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows updating items",
+                            IsDeleted = false,
+                            Name = "Update Item",
+                            ResourceId = 8
+                        },
+                        new
+                        {
+                            Id = 30,
+                            ActionTypeId = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows deleting items",
+                            IsDeleted = false,
+                            Name = "Delete Item",
+                            ResourceId = 8
+                        },
+                        new
+                        {
+                            Id = 31,
+                            ActionTypeId = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows exporting item data",
+                            IsDeleted = false,
+                            Name = "Export Item",
+                            ResourceId = 8
+                        },
+                        new
+                        {
+                            Id = 32,
+                            ActionTypeId = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Allows reading configuration settings",
+                            IsDeleted = false,
+                            Name = "Read Configuration",
+                            ResourceId = 6
                         });
                 });
 
@@ -433,7 +808,7 @@ namespace Template.Security.Migrations
                             Id = 4,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            Name = "ResourceAction"
+                            Name = "Permission"
                         },
                         new
                         {
@@ -462,310 +837,6 @@ namespace Template.Security.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Item"
-                        });
-                });
-
-            modelBuilder.Entity("Template.Security.Entities.ResourceAction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(30)")
-                        .HasDefaultValue("System");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("ResourceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionId");
-
-                    b.HasIndex("ResourceId", "ActionId")
-                        .IsUnique();
-
-                    b.ToTable("Permissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 3
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 3
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 2
-                        },
-                        new
-                        {
-                            Id = 12,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 2
-                        },
-                        new
-                        {
-                            Id = 13,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 2
-                        },
-                        new
-                        {
-                            Id = 14,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 2
-                        },
-                        new
-                        {
-                            Id = 15,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 2
-                        },
-                        new
-                        {
-                            Id = 16,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 4
-                        },
-                        new
-                        {
-                            Id = 17,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 4
-                        },
-                        new
-                        {
-                            Id = 18,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 4
-                        },
-                        new
-                        {
-                            Id = 19,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 4
-                        },
-                        new
-                        {
-                            Id = 20,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 4
-                        },
-                        new
-                        {
-                            Id = 21,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 5
-                        },
-                        new
-                        {
-                            Id = 22,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 7
-                        },
-                        new
-                        {
-                            Id = 23,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 7
-                        },
-                        new
-                        {
-                            Id = 24,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 7
-                        },
-                        new
-                        {
-                            Id = 25,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 7
-                        },
-                        new
-                        {
-                            Id = 26,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 7
-                        },
-                        new
-                        {
-                            Id = 27,
-                            ActionId = 1,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 8
-                        },
-                        new
-                        {
-                            Id = 28,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 8
-                        },
-                        new
-                        {
-                            Id = 29,
-                            ActionId = 3,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 8
-                        },
-                        new
-                        {
-                            Id = 30,
-                            ActionId = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 8
-                        },
-                        new
-                        {
-                            Id = 31,
-                            ActionId = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 8
-                        },
-                        new
-                        {
-                            Id = 32,
-                            ActionId = 2,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            ResourceId = 6
                         });
                 });
 
@@ -820,7 +891,7 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10debe31-cd0e-400d-acd6-c74bb3616c05",
+                            Id = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Admin",
@@ -828,7 +899,7 @@ namespace Template.Security.Migrations
                         },
                         new
                         {
-                            Id = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
+                            Id = "17c61777-49f8-44ff-aaad-eb9b4490c5b6",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "User",
@@ -841,185 +912,185 @@ namespace Template.Security.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ResourceActionId")
+                    b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
-                    b.HasKey("RoleId", "ResourceActionId");
+                    b.HasKey("RoleId", "PermissionId");
 
-                    b.HasIndex("ResourceActionId");
+                    b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions", (string)null);
 
                     b.HasData(
                         new
                         {
-                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
-                            ResourceActionId = 23
+                            RoleId = "17c61777-49f8-44ff-aaad-eb9b4490c5b6",
+                            PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360",
-                            ResourceActionId = 28
+                            RoleId = "17c61777-49f8-44ff-aaad-eb9b4490c5b6",
+                            PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 1
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 1
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 2
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 2
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 3
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 3
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 4
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 4
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 5
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 5
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 6
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 6
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 7
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 7
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 8
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 8
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 9
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 9
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 10
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 10
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 11
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 11
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 12
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 12
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 13
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 13
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 14
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 14
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 15
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 15
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 16
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 16
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 17
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 17
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 18
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 18
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 19
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 19
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 20
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 20
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 21
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 21
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 22
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 22
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 23
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 24
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 24
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 25
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 25
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 26
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 26
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 27
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 27
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 28
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 29
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 29
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 30
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 30
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 31
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 31
                         },
                         new
                         {
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05",
-                            ResourceActionId = 32
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3",
+                            PermissionId = 32
                         });
                 });
 
@@ -1133,9 +1204,9 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
+                            Id = "e0011881-5740-450f-b1cc-c302e8681abf",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "df6185ac-3ea6-4434-9dcc-177b9f97871a",
+                            ConcurrencyStamp = "da658be5-7bca-449a-80c1-cf695e4e64dd",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -1146,19 +1217,19 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIuqUpiwku/+KcBQhcXc8tAlPFxs/diIVH0S9VJHwXGXwOxyfyuMaxQ3KKsXGd246A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGcSJktWZuuF0X0VSorw7iel8bpgARpg2K4djOxSEgdCnrJ22lOpGV+DNuiRe9KfYw==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "998dd5f0-3a1b-4a37-9e41-5d779b11d0f6",
+                            SecurityStamp = "d41a6e71-735c-4970-a88e-9d17cf97e0d7",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "ecd79328-17c1-4420-8505-61f342df829c",
+                            Id = "5d3bf744-449f-4305-b935-cc0a3de55059",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cd0e6c55-0ab4-4875-b986-9fcede71a627",
+                            ConcurrencyStamp = "46b7993c-5be8-4f5c-b303-844162c48b07",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -1169,11 +1240,11 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPq2BMW4H6ujeR//JuaGJn2oQFEeYWzjzm8KDRsJ1hsGUBCam3hlsGDPAUzA5rgVkQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFAkidU+RequXTS61qMrsqKYMHf2K0SMF5yTfKRWsJB69tSKl6/5BwzM2nBLQR4WsA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "6b323eab-9317-408d-96f7-275b09b946f8",
+                            SecurityStamp = "5d15f56d-f061-4383-a009-97d15f7130b1",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -1194,18 +1265,18 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
-                            RoleId = "10debe31-cd0e-400d-acd6-c74bb3616c05"
+                            UserId = "e0011881-5740-450f-b1cc-c302e8681abf",
+                            RoleId = "5505a98f-78d5-4ef9-b7e3-483f2b4996d3"
                         },
                         new
                         {
-                            UserId = "f7a027a0-19d9-4c56-8f87-36ab4bb98e44",
-                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360"
+                            UserId = "e0011881-5740-450f-b1cc-c302e8681abf",
+                            RoleId = "17c61777-49f8-44ff-aaad-eb9b4490c5b6"
                         },
                         new
                         {
-                            UserId = "ecd79328-17c1-4420-8505-61f342df829c",
-                            RoleId = "73186cd2-14ea-4cdb-8e72-bae73eed8360"
+                            UserId = "5d3bf744-449f-4305-b935-cc0a3de55059",
+                            RoleId = "17c61777-49f8-44ff-aaad-eb9b4490c5b6"
                         });
                 });
 
@@ -1252,39 +1323,39 @@ namespace Template.Security.Migrations
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Template.Security.Entities.ResourceAction", "ResourceAction")
+                    b.HasOne("Template.Security.Entities.Permission", "Permission")
                         .WithMany()
-                        .HasForeignKey("ResourceActionId");
+                        .HasForeignKey("PermissionId");
 
                     b.Navigation("Parent");
 
-                    b.Navigation("ResourceAction");
+                    b.Navigation("Permission");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.ResourceAction", b =>
+            modelBuilder.Entity("Template.Security.Entities.Permission", b =>
                 {
-                    b.HasOne("Template.Security.Entities.ActionType", "Action")
-                        .WithMany("ResourceActionId")
-                        .HasForeignKey("ActionId")
+                    b.HasOne("Template.Security.Entities.ActionType", "ActionType")
+                        .WithMany("Permissions")
+                        .HasForeignKey("ActionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Template.Security.Entities.Resource", "Resource")
-                        .WithMany("ResourceActions")
+                        .WithMany("Permissions")
                         .HasForeignKey("ResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Action");
+                    b.Navigation("ActionType");
 
                     b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Template.Security.Entities.RolePermission", b =>
                 {
-                    b.HasOne("Template.Security.Entities.ResourceAction", "ResourceAction")
+                    b.HasOne("Template.Security.Entities.Permission", "Permission")
                         .WithMany("RolePermissions")
-                        .HasForeignKey("ResourceActionId")
+                        .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1294,7 +1365,7 @@ namespace Template.Security.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ResourceAction");
+                    b.Navigation("Permission");
 
                     b.Navigation("Role");
                 });
@@ -1320,7 +1391,7 @@ namespace Template.Security.Migrations
 
             modelBuilder.Entity("Template.Security.Entities.ActionType", b =>
                 {
-                    b.Navigation("ResourceActionId");
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Template.Security.Entities.MenuItem", b =>
@@ -1328,14 +1399,14 @@ namespace Template.Security.Migrations
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.Resource", b =>
-                {
-                    b.Navigation("ResourceActions");
-                });
-
-            modelBuilder.Entity("Template.Security.Entities.ResourceAction", b =>
+            modelBuilder.Entity("Template.Security.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("Template.Security.Entities.Resource", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Template.Security.Entities.Role", b =>

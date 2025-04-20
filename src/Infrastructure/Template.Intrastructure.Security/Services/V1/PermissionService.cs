@@ -13,7 +13,7 @@ namespace Template.Security.Services.V1
             _context = context;
         }
 
-        public HashSet<int> GetUserResourceActionIds(ClaimsPrincipal user)
+        public HashSet<int> GetUserPermissionIds(ClaimsPrincipal user)
         {
             if(user == null ||  !user.Identity.IsAuthenticated) { return new HashSet<int>(); }
             
@@ -22,7 +22,7 @@ namespace Template.Security.Services.V1
             return _context.UserRoles
                 .Where(ur => ur.UserId == userId)
                 .SelectMany(ur => ur.Role.RolePermissions)
-                .Select(rp => rp.ResourceActionId)
+                .Select(rp => rp.PermissionId)
                 .ToHashSet();
 
         }

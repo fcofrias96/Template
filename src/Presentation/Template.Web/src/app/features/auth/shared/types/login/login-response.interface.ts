@@ -17,3 +17,7 @@ export interface Permission {
   id: number;
   name: string;
 }
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+}
