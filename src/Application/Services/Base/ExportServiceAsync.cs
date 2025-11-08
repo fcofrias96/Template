@@ -221,7 +221,7 @@ namespace Template.Application.Services.Base
             if (value is null)
                 return string.Empty;
 
-            if (value is DateTime time)
+            if (value is DateTimeOffset time)
                 return time.ToString("yyyy-MM-dd");
 
             if (value is bool v)

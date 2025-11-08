@@ -72,12 +72,12 @@ namespace Template.Persistence.DbContexts.V1
                 {
                     case EntityState.Added:
                         entry.Entity.CreatedBy = _userName;
-                        entry.Entity.Created = DateTime.UtcNow;
+                        entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
                         break;
 
                     case EntityState.Modified:
                         entry.Entity.LastModifiedBy = _userName;
-                        entry.Entity.LastModified = DateTime.UtcNow;
+                        entry.Entity.LastModifiedAt = DateTimeOffset.UtcNow;
                         break;
 
                     default:

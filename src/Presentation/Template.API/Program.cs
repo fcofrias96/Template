@@ -30,12 +30,17 @@ using Template.Persistence;
         app.UseSwaggerUI();
         app.UseDeveloperExceptionPage();
     }
+    else
+    {
+        app.UseHttpsRedirection();
+        app.UseHsts();
+    }
 
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseMiddleware<ETagMiddleware>();
     app.UseSerilogRequestLogging();
-    app.UseHttpsRedirection();
     app.UseCors("CorsPolicy");
+    app.UseResponseCompression();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

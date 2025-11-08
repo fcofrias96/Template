@@ -14,23 +14,23 @@ namespace Template.Persistence
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<bool> ExecuteInTransactionAsync(Func<Task> action)
+        public async Task<bool> ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken)
         {
             var strategy = _context.Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>
             {
-                using var transaction = await _context.Database.BeginTransactionAsync();
+                using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
                 try
                 {
                     await action();
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                    await _context.SaveChangesAsync(cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
                     return true;
                 }
                 catch
                 {
-                    await transaction.RollbackAsync();
+                    await transaction.RollbackAsync(cancellationToken);
                     throw;
                 }
             });

@@ -259,7 +259,7 @@ namespace Template.Security.Services.V1
                 response.Resources = await _userServiceAsync.GetResourcesAsync(user.Id, cancellationToken);
 
                 user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
+                user.RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
                 user.IsTokenRevoked = false;
                 user.TokenRevokedTime = null;
                 cancellationToken.ThrowIfCancellationRequested();
@@ -290,20 +290,20 @@ namespace Template.Security.Services.V1
 
             var user = await _userServiceAsync.GetUserByRefreshToken(refreshToken, cancellationToken);
 
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow || user.IsTokenRevoked)
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTimeOffset.UtcNow || user.IsTokenRevoked)
             {
                 throw new ForbiddenException("Invalid refresh token");
             }
 
             var newJwtToken = await GenerateJWTokenAsync(user);
             var newRefreshToken = user.RefreshToken;
-            var timeToTokenExpiry = (user.RefreshTokenExpiryTime - DateTime.UtcNow).TotalDays;
+            var timeToTokenExpiry = (user.RefreshTokenExpiryTime - DateTimeOffset.UtcNow).TotalDays;
 
             if (timeToTokenExpiry < 1)
             {
                 newRefreshToken = GenerateRefreshToken();
                 user.RefreshToken = newRefreshToken;
-                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
+                user.RefreshTokenExpiryTime = DateTimeOffset.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -352,7 +352,7 @@ namespace Template.Security.Services.V1
             var user = await FindUserByIdAsync(userId, cancellationToken);
 
             user.IsTokenRevoked = true;
-            user.TokenRevokedTime = DateTime.UtcNow;
+            user.TokenRevokedTime = DateTimeOffset.UtcNow;
             cancellationToken.ThrowIfCancellationRequested();
             await _userManager.UpdateAsync(user);
         }
@@ -498,7 +498,7 @@ namespace Template.Security.Services.V1
             return jwtSecurityToken;
         }
 
-        private string GenerateRefreshToken()
+        private static string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();

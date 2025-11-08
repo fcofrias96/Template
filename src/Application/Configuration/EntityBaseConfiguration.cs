@@ -12,21 +12,18 @@ namespace Template.Application.Configuration
                    .HasColumnType("nvarchar(30)")
                    .HasDefaultValue("System");
 
-            builder.Property(x => x.Created)
+            builder.Property(x => x.CreatedAt)
                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Property(x => x.LastModifiedBy)
                 .HasColumnType("nvarchar(30)");
 
-            builder.Property(x => x.LastModified);
+            builder.Property(x => x.LastModifiedAt);
 
             builder.Property(x => x.IsDeleted)
                    .HasDefaultValue(false);
 
-            if (typeof(TEntity).Name != "Role")
-            {
-                builder.HasQueryFilter(x => !x.IsDeleted);
-            }
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IUnitOfWork
     {
-        Task<bool> ExecuteInTransactionAsync(Func<Task> action);
+        Task<bool> ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken);
     }
 }

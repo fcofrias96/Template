@@ -4,14 +4,12 @@ namespace Template.Application.Models.Wrappers
 {
     public class ApiResponse<TSource>
     {
+        [JsonIgnore]
         public int StatusCode { get; set; } = 200;
         public string? Message { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public TSource? Data { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Dictionary<string, string[]>? Errors { get; set; }
 
         public bool Success => StatusCode >= 200 && StatusCode < 300;
 
@@ -31,11 +29,10 @@ namespace Template.Application.Models.Wrappers
 
     public class ApiResponse
     {
+        [JsonIgnore]
         public int StatusCode { get; set; } = 200;
-        public string? Message { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Dictionary<string, string[]>? Errors { get; set; }
+        public string? Message { get; set; }
 
         public bool Success => StatusCode >= 200 && StatusCode < 300;
 
@@ -50,15 +47,5 @@ namespace Template.Application.Models.Wrappers
             Message = message;
         }
 
-        public ApiResponse(int statusCode, string message, Dictionary<string, string[]> errors)
-        {
-            StatusCode = statusCode;
-            Message = message;
-            Errors = errors;
-        }
-
-        public ApiResponse()
-        {
-        }
     }
 }

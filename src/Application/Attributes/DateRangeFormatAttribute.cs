@@ -26,13 +26,13 @@ namespace Template.Application.Attributes
             if (!hasStartDate && !hasEndDate)
                 return new ValidationResult("Debe proporcionar al menos una fecha en el formato 'yyyy-MM-dd'.");
 
-            DateTime startDate = default;
-            DateTime endDate = default;
+            DateTimeOffset startDate = default;
+            DateTimeOffset endDate = default;
 
-            if (hasStartDate && !DateTime.TryParseExact(parts[0], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
+            if (hasStartDate && !DateTimeOffset.TryParseExact(parts[0], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                 return new ValidationResult("La fecha inicial no es válida. El formato aceptado es 'yyyy-MM-dd'.");
 
-            if (hasEndDate && !DateTime.TryParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
+            if (hasEndDate && !DateTimeOffset.TryParseExact(parts[1], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out endDate))
                 return new ValidationResult("La fecha final no es válida. El formato aceptado es 'yyyy-MM-dd'.");
 
             if (hasStartDate && hasEndDate && startDate > endDate)

@@ -4,9 +4,9 @@
     {
         object Id { get; set; }
         string CreatedBy { get; set; }
-        DateTime Created { get; set; }
+        DateTimeOffset CreatedAt { get; set; }
         string? LastModifiedBy { get; set; }
-        DateTime? LastModified { get; set; }
+        DateTimeOffset? LastModifiedAt { get; set; }
         bool IsDeleted { get; set; }
     }
 }

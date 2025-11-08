@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json.Serialization;
+using System.IO.Compression;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
-using Template.Application.Contracts.Services.V1;
 using Template.Application.Repository;
 using Template.Application.Services.Base;
 using Template.Application.SetupOptions;
@@ -17,13 +18,6 @@ namespace Template.Application
         {
             services.AddApiVersioning(ApiVersioning.Options);
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers()
-                .ConfigureApiBehaviorOptions(ApiBehavior.Options)
-                 .AddJsonOptions(options =>
-                 {
-                     //options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                     //options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                 });
             services.AddCors(Cors.GetOptions(configuration));
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
@@ -31,6 +25,17 @@ namespace Template.Application
             services.AddMvc(options => options.SuppressAsyncSuffixInActionNames = false);
             services.AddSwaggerGen(SwaggerGen.Options);
             services.AddVersionedApiExplorer(ApiExplorer.Options);
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Optimal;
+            });
 
             #region Dependency Injection
 

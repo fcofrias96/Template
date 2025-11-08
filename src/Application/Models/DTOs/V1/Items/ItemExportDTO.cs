@@ -20,6 +20,6 @@ namespace Template.Application.Models.DTOs.V1.Items
         public bool Active { get; set; }
 
         [DisplayName("Creado")]
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
     }
 }

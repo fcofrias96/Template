@@ -13,7 +13,7 @@ namespace Template.Application.Extensions
                 UserName = entry.UserName,
                 Action = entry.Action.ToString(),
                 TableName = entry.TableName,
-                DateTime = DateTime.UtcNow,
+                DateTimeOffset = DateTimeOffset.UtcNow,
                 PrimaryKey = JsonConvert.SerializeObject(entry.KeyValues),
                 OldValues = entry.OldValues.Count == 0 ? null : JsonConvert.SerializeObject(entry.OldValues),
                 NewValues = entry.NewValues.Count == 0 ? null : JsonConvert.SerializeObject(entry.NewValues),

@@ -10,7 +10,7 @@ namespace Template.Application.Models.DTOs.V1.Items
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Category { get; set; }
-        public DateTime Created { get; set; } // delete
+        public DateTimeOffset Created { get; set; } // delete
 
         public bool IsDeleted { get; set; } // delete
 

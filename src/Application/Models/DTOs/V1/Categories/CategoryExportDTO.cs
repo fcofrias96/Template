@@ -8,7 +8,7 @@ namespace Template.Application.Models.DTOs.V1.Categories
         public string Name { get; set; }
 
         [DisplayName("Creado")]
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         [DisplayName("Activo")]
         public bool Active { get; set; }

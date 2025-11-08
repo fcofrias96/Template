@@ -130,7 +130,7 @@ namespace Template.Application.Models.Specification
                     var convetedMin = string.IsNullOrEmpty((string?)min) ? null : ConvertToType(type, min);
                     var convetedMax = string.IsNullOrEmpty((string?)max) ? null : ConvertToType(type, max);
 
-                    if (convetedMax is DateTime dateTime)
+                    if (convetedMax is DateTimeOffset dateTime)
                     {
                         convetedMax = dateTime.Date.AddHours(23).AddMinutes(59).AddSeconds(59).AddMilliseconds(999);
                     }
@@ -184,7 +184,7 @@ namespace Template.Application.Models.Specification
                 {
                     return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 }
-                else if (type == typeof(DateTime))
+                else if (type == typeof(DateTimeOffset))
                 {
                     return Convert.ToDateTime(value, CultureInfo.InvariantCulture);
                 }
