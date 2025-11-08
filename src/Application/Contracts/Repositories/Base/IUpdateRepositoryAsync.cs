@@ -2,6 +2,6 @@
 {
     public interface IUpdateRepositoryAsync<TEntity, TDbContext>
     {
-        Task UpdateAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity, CancellationToken cancellationToken);
     }
 }

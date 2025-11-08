@@ -29,77 +29,77 @@ namespace Template.Application.Services.Base
             _updateService = updateService;
         }
 
-        public virtual Task<TEntity> CreateAsync<TSource>(TSource source)
+        public virtual Task<TEntity> CreateAsync<TSource>(TSource source, CancellationToken cancellationToken)
         {
-            return _createService.CreateAsync(source);
+            return _createService.CreateAsync(source, cancellationToken);
         }
 
-        public virtual Task SoftDeleteAsync<TKey>(TKey id)
+        public virtual Task SoftDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return _deleteService.SoftDeleteAsync(id);
+            return _deleteService.SoftDeleteAsync(id, cancellationToken);
         }
 
-        public virtual Task PermanentDeleteAsync<TKey>(TKey id)
+        public virtual Task PermanentDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return _deleteService.PermanentDeleteAsync(id);
+            return _deleteService.PermanentDeleteAsync(id, cancellationToken);
         }
 
-        public virtual Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public virtual Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
             where TSpecification : ISpecification<TEntity>
         {
-            return _exportService.ExportToCSVAsync<TDestination, TSpecification>(title, queryParameters);
+            return _exportService.ExportToCSVAsync<TDestination, TSpecification>(title, queryParameters, cancellationToken  );
         }
 
-        public virtual Task<byte[]> ExportToCSVAsync<TDestination>(string title)
+        public virtual Task<byte[]> ExportToCSVAsync<TDestination>(string title, CancellationToken cancellationToken)
         {
-            return _exportService.ExportToCSVAsync<TDestination>(title);
+            return _exportService.ExportToCSVAsync<TDestination>(title, cancellationToken);
         }
 
-        public virtual Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public virtual Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
             where TSpecification : ISpecification<TEntity>
         {
-            return _exportService.ExportToPdfAsync<TDestination, TSpecification>(title, queryParameters);
+            return _exportService.ExportToPdfAsync<TDestination, TSpecification>(title, queryParameters, cancellationToken);
         }
 
-        public virtual Task<byte[]> ExportToPdfAsync<TDestination>(string title)
+        public virtual Task<byte[]> ExportToPdfAsync<TDestination>(string title, CancellationToken cancellationToken)
         {
-            return _exportService.ExportToPdfAsync<TDestination>(title);
+            return _exportService.ExportToPdfAsync<TDestination>(title, cancellationToken);
         }
 
-        public virtual Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters)
+        public virtual Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
             where TSpecification : ISpecification<TEntity>
         {
-            return _exportService.ExportToDocxAsync<TDestination, TSpecification>(title, queryParameters);
+            return _exportService.ExportToDocxAsync<TDestination, TSpecification>(title, queryParameters, cancellationToken);
         }
 
-        public virtual Task<byte[]> ExportToDocxAsync<TDestination>(string title)
+        public virtual Task<byte[]> ExportToDocxAsync<TDestination>(string title, CancellationToken cancellationToken)
         {
-            return _exportService.ExportToDocxAsync<TDestination>(title);
+            return _exportService.ExportToDocxAsync<TDestination>(title, cancellationToken);
         }
 
-        public virtual Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public virtual Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
-            return _readService.GetByIdProjectedAsync<TKey, TDestination>(id);
+            return _readService.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
         }
 
-        public virtual Task UpdateAsync<TKey, TSource>(TKey id, TSource source)
+        public virtual Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken )
         {
-            return _updateService.UpdateAsync(id, source);
+            return _updateService.UpdateAsync(id, source, cancellationToken);
         }
 
-        public virtual Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>()
+        public virtual Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-            return _readService.GetProjectedAsync<TDestination>();
+            return _readService.GetProjectedAsync<TDestination>(cancellationToken);
         }
 
-        public virtual Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters) where TSpecification : ISpecification<TEntity>
+        public virtual Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken) where TSpecification : ISpecification<TEntity>
         {
-            return _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters);
+            return _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters,cancellationToken);
         }
 
-        public Task<TEntity> GetByIdAsync<TKey>(TKey id)
+        public Task<TEntity> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return _readService.GetByIdAsync(id);
+            return _readService.GetByIdAsync(id, cancellationToken);
         }
     }
 }

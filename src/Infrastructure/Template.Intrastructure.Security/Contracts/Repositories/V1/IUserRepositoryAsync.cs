@@ -1,4 +1,5 @@
 ﻿using Template.Application.Contracts.Repositories.Base;
+using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Security.DbContexts.V1;
@@ -9,12 +10,14 @@ namespace Template.Security.Contracts.Repositories.V1
     public interface IUserRepositoryAsync : IReadRepositoryAsync<User, SecurityDbContext>
     {
 
-        Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
+        Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 
-        Task<IReadOnlyList<RoleListDto>> GetRoles(string userId);
+        Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken);
 
-        Task<UserDetailDto?> GetUserDetailAsync(string userId);
+        Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken);
 
-        Task UpdateUserRolesAsync(string userId, string[] newRoleIds);
+        Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken);
+
+        Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken);
     }
 }

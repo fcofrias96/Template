@@ -18,7 +18,7 @@ namespace Template.Email.Service.V1
             _mailSettings = option.Value;
         }
 
-        public async Task SendEmailAsync(EmailDto emailDto)
+        public async Task SendEmailAsync(EmailDto emailDto, CancellationToken cancellationToken)
         {
             var bodyBuilder = new BodyBuilder { HtmlBody = emailDto.Body };
             var mimeMessage = new MimeMessage
@@ -38,13 +38,13 @@ namespace Template.Email.Service.V1
 
             try
             {
-                await smtpClient.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, SecureSocketOptions.StartTls);
-                await smtpClient.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass);
-                await smtpClient.SendAsync(mimeMessage);
+                await smtpClient.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, SecureSocketOptions.StartTls, cancellationToken);
+                await smtpClient.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass, cancellationToken);
+                await smtpClient.SendAsync(mimeMessage, cancellationToken);
             }
             finally
             {
-                await smtpClient.DisconnectAsync(true);
+                await smtpClient.DisconnectAsync(true, cancellationToken);
             }
         }
     }

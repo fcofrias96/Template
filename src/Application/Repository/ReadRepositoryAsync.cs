@@ -21,54 +21,54 @@ namespace Template.Application.Repository
             _configurationProvider = configurationProvider;
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
             return await _dbSet.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync();
+                              .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
             var query = _dbSet.AsQueryable();
             query = ApplySpecification(query, spec);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync();
+                              .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
             var query = _dbSet.AsQueryable();
             query = ApplySpecification(query, spec, applyPagination: false);
             return await query.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync();
+                              .ToListAsync(cancellationToken);
         }
 
-        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id)
+        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet.FindAsync(new object?[] { id, cancellationToken }, cancellationToken: cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             var query = _dbSet.AsQueryable();
             return await query.AsNoTracking()
                               .Where(x => x.Id.Equals(id))
                               .ProjectTo<TDestination>(_configurationProvider)
-                              .FirstOrDefaultAsync();
+                              .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria)
+        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria, CancellationToken cancellationToken)
         {
             if (criteria == null)
             {
-                return await _dbSet.CountAsync();
+                return await _dbSet.CountAsync(cancellationToken);
             }
             else
             {
-                return await _dbSet.Where(criteria).CountAsync();
+                return await _dbSet.Where(criteria).CountAsync(cancellationToken);
             }
         }
 

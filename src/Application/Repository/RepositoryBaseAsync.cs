@@ -31,49 +31,49 @@ namespace Template.Application.Repository
 
         #endregion Private Variable
 
-        public async Task CreateAsync(TEntity entity)
+        public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
         {
-          await _createRepository.CreateAsync(entity);
+          await _createRepository.CreateAsync(entity, cancellationToken);
         }
 
-        public async Task DeleteAsync(TEntity entity)
+        public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
-           await _deleteRepository.DeleteAsync(entity);
+           await _deleteRepository.DeleteAsync(entity, cancellationToken);
         }
 
-        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id)
+        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetByIdAsync(id);
+            return await _readRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id);
+            return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-           return await _readRepository.GetProjectedAsync<TDestination>();
+           return await _readRepository.GetProjectedAsync<TDestination>(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetProjectedForExportAsync<TDestination>(spec);
+            return await _readRepository.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec);
+            return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria)
+        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetTotalCountAsync(criteria);
+            return await _readRepository.GetTotalCountAsync(criteria, cancellationToken);
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
-           await _updateRepository.UpdateAsync(entity);
+           await _updateRepository.UpdateAsync(entity, cancellationToken);
         }
     }
 }

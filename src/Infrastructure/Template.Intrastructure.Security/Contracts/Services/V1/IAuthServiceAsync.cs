@@ -7,24 +7,24 @@ namespace Template.Security.Contracts.Services.V1
 {
     public interface IAuthServiceAsync
     {
-        Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto);
+        Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto);
+        Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ForgotPassword(ForgotPasswordDto model);
+        Task<ApiResponse> ForgotPasswordAsync(ForgotPasswordDto model, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ResetPassword(ResetPasswordDto model);
+        Task<ApiResponse> ResetPasswordAsync(ResetPasswordDto model, CancellationToken cancellationToken);
 
-        Task<ApiResponse> CreateAsync(UserCreateDto userCreateDTO);
+        Task<ApiResponse> CreateAsync(UserCreateDto userCreateDTO, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto);
+        Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto);
+        Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto, CancellationToken cancellationToken);
 
-        Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto);
+        Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto, CancellationToken cancellationToken);
 
-        Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken);
+        Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken);
 
-        Task<ApiResponse> LogoutAsync();
+        Task<ApiResponse> LogoutAsync(CancellationToken cancellationToken);
     }
 }

@@ -28,20 +28,20 @@ namespace Template.Security.Services.V1
             _rolePermissionRepository = rolePermissionRepository;
         }
 
-        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             string idString = id?.ToString() ?? string.Empty;
-            return base.GetByIdProjectedAsync<string, TDestination>(idString);
+            return base.GetByIdProjectedAsync<string, TDestination>(idString, cancellationToken );
         }
 
 
-        public override  async Task UpdateAsync<TKey, TSource>(TKey id, TSource source)
+        public override  async Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken)
         {
             if (source is RoleUpdateDto roleUpdateDTO && id is string _id)
             {
-                await _rolePermissionRepository.UpdateAsync(_id, roleUpdateDTO.Permissions);
+                await _rolePermissionRepository.UpdateAsync(_id, roleUpdateDTO.Permissions, cancellationToken);
             }
-            await base.UpdateAsync(id, source);
+            await base.UpdateAsync(id, source, cancellationToken);
         }
     }
 

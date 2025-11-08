@@ -10,6 +10,7 @@ using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
+using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
@@ -37,13 +38,13 @@ namespace Template.Security.Repositories.V1
 
 
 
-        public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds)
+        public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken)
         {
             var newRolesSet = new HashSet<string>(newRoleIds);
 
             await _dbContext.UserRoles
                 .Where(ur => ur.UserId == userId && !newRolesSet.Contains(ur.RoleId))
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(cancellationToken);
 
             var currentRoleIds = await _dbContext.UserRoles
                 .Where(ur => ur.UserId == userId)
@@ -69,41 +70,41 @@ namespace Template.Security.Repositories.V1
         }
 
 
-        public async Task<User?> GetByIdAsync<TKey>(TKey id)
+        public async Task<User?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetByIdAsync(id);
+            return await _readRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken )
         {
-            return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id);
+            return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>()
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-            return await _readRepository.GetProjectedAsync<TDestination>();
+            return await _readRepository.GetProjectedAsync<TDestination>(cancellationToken);
         }
 
-        public Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<User> spec)
+        public Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<User> spec, CancellationToken cancellationToken)
         {
-            return _readRepository.GetProjectedForExportAsync<TDestination>(spec);
+            return _readRepository.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<User> spec)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<User> spec, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec);
+            return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<RoleListDto>> GetRoles(string userId)
+        public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.Id == userId)
-                .SelectMany(u => u.UserRoles.Select(ur => new RoleListDto { Id = ur.RoleId, Name = ur.Role.Name }))
-                .ToListAsync();
+                .SelectMany(u => u.UserRoles.Select(ur => new RoleListDto { Id = ur.RoleId, Name = ur.Role.Name ?? String.Empty }))
+                .ToListAsync(cancellationToken);
         }
 
 
-        public async Task<UserDetailDto?> GetUserDetailAsync(string userId)
+        public async Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.Id == userId)
@@ -137,17 +138,37 @@ namespace Template.Security.Repositories.V1
                         })
                         .ToArray()
                 })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<User, bool>>? criteria)
+        public async Task<int> GetTotalCountAsync(Expression<Func<User, bool>>? criteria, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetTotalCountAsync(criteria);
+            return await _readRepository.GetTotalCountAsync(criteria, cancellationToken);
         }
 
-        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
+        }
+
+        public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.UserRoles
+                    .SelectMany(ur => ur.Role.RolePermissions)
+                    .GroupBy(rp => rp.Permission.Resource)
+                    .Select(g => new ResourcePermissionDto
+                    {
+                        Id = g.Key.Id,
+                        Name = g.Key.Name,
+                        Permissions = g.Select(rp => new PermissionListDto
+                        {
+                            Id = rp.PermissionId,
+                            Name = rp.Permission.ActionType.Name
+                        }).ToArray()
+                    }))
+                .ToArrayAsync(cancellationToken);
         }
     }
 }

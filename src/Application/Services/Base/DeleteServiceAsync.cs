@@ -30,18 +30,18 @@ namespace Template.Application.Services.Base
             _readService = readService;
         }
 
-        public async Task SoftDeleteAsync<TKey>(TKey id)
+        public async Task SoftDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            var entity = await _readService.GetByIdAsync(id);
+            var entity = await _readService.GetByIdAsync(id, cancellationToken);
             entity.IsDeleted = true;
-            await _updateRepositoryAsync.UpdateAsync(entity);
+            await _updateRepositoryAsync.UpdateAsync(entity, cancellationToken);
             _cache.InvalidateCache<TEntity>();
         }
 
-        public virtual async Task PermanentDeleteAsync<TKey>(TKey id)
+        public virtual async Task PermanentDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            var entity = await _readService.GetByIdAsync(id);
-            await _deleteRepositoryAsync.DeleteAsync(entity);
+            var entity = await _readService.GetByIdAsync(id, cancellationToken);
+            await _deleteRepositoryAsync.DeleteAsync(entity, cancellationToken);
             _cache.InvalidateCache<TEntity>();
         }
     }

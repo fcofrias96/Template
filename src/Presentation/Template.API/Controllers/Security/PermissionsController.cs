@@ -27,50 +27,50 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Permission, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request)
+        public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
-            var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto, PermissionSpecification>(request);
+            var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto, PermissionSpecification>(request, cancellationToken);
             return Ok(permissions);
         }
 
         [Permission(Resources.Permission, ActionType.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<PermissionDetailDto>>> GetPermission(int id)
+        public async Task<ActionResult<ApiResponse<PermissionDetailDto>>> GetPermission(int id, CancellationToken cancellationToken)
         {
-            var permission = await _permissionService.GetByIdProjectedAsync<int, PermissionDetailDto>(id);
+            var permission = await _permissionService.GetByIdProjectedAsync<int, PermissionDetailDto>(id, cancellationToken);
             return Ok(permission);
         }
 
         [Permission(Resources.Permission, ActionType.Create)]
         [HttpPost]
-        public async Task<ActionResult> CreatePermission([FromBody] PermissionCreateDto permissionCreateDto)
+        public async Task<ActionResult> CreatePermission([FromBody] PermissionCreateDto permissionCreateDto, CancellationToken cancellationToken)
         {
-            var permission = await _permissionService.CreateAsync(permissionCreateDto);
+            var permission = await _permissionService.CreateAsync(permissionCreateDto, cancellationToken);
 
             return CreatedAtAction(nameof(GetPermission), new { id = permission.Id }, permission);
         }
 
         [Permission(Resources.Permission, ActionType.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDto permissionUpdateDTO)
+        public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDto permissionUpdateDTO, CancellationToken cancellationToken)
         {
-            await _permissionService.UpdateAsync(id, permissionUpdateDTO);
+            await _permissionService.UpdateAsync(id, permissionUpdateDTO, cancellationToken);
             return NoContent();
         }
 
         [Permission(Resources.Permission, ActionType.Delete)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeletePermission(int id)
+        public async Task<ActionResult> DeletePermission(int id, CancellationToken cancellationToken)
         {
-            await _permissionService.SoftDeleteAsync(id);
+            await _permissionService.SoftDeleteAsync(id, cancellationToken);
             return NoContent();
         }
 
         [Permission(Resources.Permission, ActionType.Read)]
         [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _permissionService.GetProjectedAsync<Dropdown>();
+            var resources = await _permissionService.GetProjectedAsync<Dropdown>(cancellationToken);
             return Ok(resources);
         }
     }

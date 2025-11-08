@@ -8,6 +8,7 @@ using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
+using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
@@ -45,50 +46,51 @@ namespace Template.Security.Services.V1
 
 
 
-        public async Task DeleteAsync(Guid userId)
+        public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var user = await GetUser(userId);
             user.IsDeleted = true;
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<User> GetByIdAsync<TKey>(TKey id)
+        public async Task<User> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(id);
-            return await _readService.GetByIdAsync(parsedId);
+            return await _readService.GetByIdAsync(parsedId, cancellationToken);
         }
-        public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(id);
-            return await _readService.GetByIdProjectedAsync<string, TDestination>(parsedId);
+            return await _readService.GetByIdProjectedAsync<string, TDestination>(parsedId, cancellationToken);
         }
 
-        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>()
+        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-            return await _readService.GetProjectedAsync<TDestination>();
+            return await _readService.GetProjectedAsync<TDestination>(cancellationToken);
         }
 
-        public async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters) where TSpecification : ISpecification<User>
+        public async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken) where TSpecification : ISpecification<User>
         {
-            return await _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters);
+            return await _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters, cancellationToken);
         }
 
-        public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId)
+        public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(userId);
 
-            var roles = await _userRepository.GetRoles(parsedId);
+            var roles = await _userRepository.GetRolesAsync(parsedId, cancellationToken);
             return new ApiResponse<IReadOnlyList<RoleListDto>>(roles);
         }
 
-        public async Task<User> GetUserByRefreshToken(string refreshToken)
+        public async Task<User?> GetUserByRefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+            return await _userRepository.GetUserByRefreshTokenAsync(refreshToken, cancellationToken);
         }
 
 
 
-        public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO)
+        public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContext?.HttpContext?.GetUserId();
 
@@ -105,19 +107,27 @@ namespace Template.Security.Services.V1
             var user = await GetUser(userId);
             _mapper.Map(userUpdateDTO, user);
             await _userManager.UpdateAsync(user);
-            await _userRepository.UpdateUserRolesAsync(userId.ToString(), userUpdateDTO.Roles);
+            await _userRepository.UpdateUserRolesAsync(userId.ToString(), userUpdateDTO.Roles, cancellationToken);
         }
 
 
-        public async Task<UserDetailDto> GetUserDetailAsync(Guid userId)
+        public async Task<UserDetailDto> GetUserDetailAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserDetailAsync(userId.ToString());
+            var user = await _userRepository.GetUserDetailAsync(userId.ToString(), cancellationToken);
             if (user == null)
             {
                 throw new NotFoundException("User", userId);
             }
             return user;
         }
+
+
+        public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
+        {
+            return await _userRepository.GetResourcesAsync(userId, cancellationToken);
+
+        }
+
 
         #region Private Methods
 

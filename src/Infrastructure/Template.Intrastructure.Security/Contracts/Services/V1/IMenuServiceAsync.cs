@@ -6,6 +6,6 @@ namespace Template.Security.Contracts.Services.V1
 {
     public interface IMenuServiceAsync
     {
-        Task<ApiResponse<MenuItemResponse>> GetMenuForUser(ClaimsPrincipal user);
+        Task<ApiResponse<MenuItemResponse>> GetMenuForUserAsync(ClaimsPrincipal user, CancellationToken cancellationToken);
     }
 }

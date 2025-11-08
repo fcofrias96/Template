@@ -29,9 +29,9 @@ namespace Template.Application.Services.Base
             _cache = cache;
         }
 
-        public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id)
+        public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
-            var mappedEntity = await _readRepositoryAsync.GetByIdProjectedAsync<TKey, TDestination>(id);
+            var mappedEntity = await _readRepositoryAsync.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
             if (mappedEntity is null)
             {
                 throw new NotFoundException(typeof(TEntity).Name, id);
@@ -40,7 +40,7 @@ namespace Template.Application.Services.Base
             return new ApiResponse<TDestination>(mappedEntity);
         }
 
-        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters)
+        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken)
         where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger);
@@ -50,14 +50,14 @@ namespace Template.Application.Services.Base
                 throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
             }
 
-            var total = await _readRepositoryAsync.GetTotalCountAsync(spec.Criteria);
+            var total = await _readRepositoryAsync.GetTotalCountAsync(spec.Criteria, cancellationToken);
 
             if (total < spec.Skip)
             {
                 throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
             }
 
-            var items = await _readRepositoryAsync.GetProjectedPaginatedAsync<TDestination>(spec);
+            var items = await _readRepositoryAsync.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
             var href = _httpContext?.HttpContext?.Request.GetEncodedUrl()!;
             var next = UrlUtile.GetNextURL(href, spec.Take, spec.Skip, total);
             var prev = UrlUtile.GetPrevURL(href, spec.Take, spec.Skip);
@@ -76,22 +76,22 @@ namespace Template.Application.Services.Base
             return new ApiResponse<PagedCollection<TDestination>>(pagedCollection);
         }
 
-        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>()
+        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
             string cacheKey = $"{typeof(TEntity).FullName}Cache";
 
             if (!_cache.TryGetValue(cacheKey, out IReadOnlyList<TDestination> mappedEntities))
             {
-                mappedEntities = await _readRepositoryAsync.GetProjectedAsync<TDestination>();
+                mappedEntities = await _readRepositoryAsync.GetProjectedAsync<TDestination>(cancellationToken);
                 _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
             }
 
             return new ApiResponse<IReadOnlyList<TDestination>>(mappedEntities);
         }
 
-        public async Task<TEntity> GetByIdAsync<TKey>(TKey id)
+        public async Task<TEntity> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
-            var entity = await _readRepositoryAsync.GetByIdAsync(id);
+            var entity = await _readRepositoryAsync.GetByIdAsync(id, cancellationToken);
             if (entity is null)
             {
                 throw new NotFoundException(typeof(TEntity).Name, id);

@@ -5,8 +5,8 @@ namespace Template.Security.Contracts.Repositories.V1
     public interface IRolePermissionRepositoryAsync
     {
 
-        Task<RolePermission[]> GetAlls(string roleId, int[] permissionsId);
+        Task<RolePermission[]> GetAllAsync(string roleId, int[] permissionsId, CancellationToken cancellationToken);
 
-        Task UpdateAsync(string roleId, int[] newPermissionIds);
+        Task UpdateAsync(string roleId, int[] newPermissionIds, CancellationToken cancellationToken);
     }
 }

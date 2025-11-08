@@ -17,10 +17,10 @@ namespace Template.Security.Services.V1
             _readRepository = readRepository;
         }
 
-        public async Task<IReadOnlyList<Dropdown>> GetProjectedAsync()
+        public async Task<IReadOnlyList<Dropdown>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-     
-            return await _readRepository.GetProjectedAsync<Dropdown>();
+
+            return await _readRepository.GetProjectedAsync<Dropdown>(cancellationToken);
         }
     }
 }

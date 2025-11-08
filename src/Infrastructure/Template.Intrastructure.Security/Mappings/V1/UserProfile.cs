@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Security.Entities;
 
@@ -12,6 +13,7 @@ namespace Template.Security.Mappings.V1
             CreateMap<UserUpdateDto, User>();
             CreateMap<User, UserListDto>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
+
 
         }
     }

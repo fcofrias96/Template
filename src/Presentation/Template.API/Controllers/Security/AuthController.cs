@@ -8,7 +8,7 @@ using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Settings;
 
-namespace Template.Api.Controllers
+namespace Template.Api.Controllers.Admin
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -25,69 +25,69 @@ namespace Template.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse<AuthenticationResponseDto>>> LoginAsync(LoginDto loginDTO)
+        public async Task<ActionResult<ApiResponse<AuthenticationResponseDto>>> LoginAsync(LoginDto loginDTO, CancellationToken cancellationToken)
         {
-            var response = await _authService.LoginAsync(loginDTO);
+            var response = await _authService.LoginAsync(loginDTO, cancellationToken);
             var cookieOptions = GetCookieOptions();
             Response.Cookies.Append("refreshToken", response!.Data!.RefreshToken, cookieOptions);
             return Ok(response);
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponse>> RegisterAsync([FromBody] UserCreateDto userCreateDTO)
+        public async Task<ActionResult<ApiResponse>> RegisterAsync([FromBody] UserCreateDto userCreateDTO, CancellationToken cancellationToken)
         {
-            var user = await _authService.CreateAsync(userCreateDTO);
+            var user = await _authService.CreateAsync(userCreateDTO, cancellationToken);
             return Ok(user);
         }
 
         [HttpGet("confirm-email")]
-        public async Task<ActionResult<ApiResponse>> ConfirmEmailAsync([FromQuery] ConfirmEmailDto confirmEmailDTO)
+        public async Task<ActionResult<ApiResponse>> ConfirmEmailAsync([FromQuery] ConfirmEmailDto confirmEmailDTO, CancellationToken cancellationToken )
         {
-            var confirmaEmail = await _authService.ConfirmEmailAsync(confirmEmailDTO);
+            var confirmaEmail = await _authService.ConfirmEmailAsync(confirmEmailDTO, cancellationToken);
             return Ok(confirmaEmail);
         }
 
         [HttpPost("resend-confirmation-email")]
-        public async Task<ActionResult<ApiResponse>> ResendConfirmationEmailAsync([FromBody] ResendConfirmationEmailDto resendConfirmationEmail)
+        public async Task<ActionResult<ApiResponse>> ResendConfirmationEmailAsync([FromBody] ResendConfirmationEmailDto resendConfirmationEmail, CancellationToken cancellationToken)
         {
-            var confirmaEmail = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail);
+            var confirmaEmail = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail, cancellationToken);
             return Ok(confirmaEmail);
         }
 
         [HttpPost("forgot-password")]
-        public async Task<ActionResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDTO)
+        public async Task<ActionResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDTO, CancellationToken cancellationToken)
         {
-            var response = await _authService.ForgotPassword(forgotPasswordDTO);
+            var response = await _authService.ForgotPasswordAsync(forgotPasswordDTO, cancellationToken);
             return Ok(response);
         }
 
         [HttpPost("reset-password")]
-        public async Task<ActionResult<ApiResponse>> ResetPasswordAsync(ResetPasswordDto resetPasswordDTO)
+        public async Task<ActionResult<ApiResponse>> ResetPasswordAsync(ResetPasswordDto resetPasswordDTO, CancellationToken cancellationToken)
         {
-            var resetPassword = await _authService.ResetPassword(resetPasswordDTO);
+            var resetPassword = await _authService.ResetPasswordAsync(resetPasswordDTO, cancellationToken);
             return Ok(resetPassword);
         }
 
         [Authorize]
         [HttpPost("change-email")]
-        public async Task<ActionResult<ApiResponse>> ChangeEmailAsync([FromBody] ChangeEmailDto changeEmailDto)
+        public async Task<ActionResult<ApiResponse>> ChangeEmailAsync([FromBody] ChangeEmailDto changeEmailDto, CancellationToken cancellationToken)
         {
-            var response = await _authService.ChangeEmailAsync(changeEmailDto);
+            var response = await _authService.ChangeEmailAsync(changeEmailDto, cancellationToken);
             return Ok(response);
         }
 
         [HttpGet("confirm-change-email")]
-        public async Task<ActionResult<ApiResponse>> ConfirmChangeEmailAsync([FromQuery] ConfirmChangeEmailDto confirmChangeEmailDto)
+        public async Task<ActionResult<ApiResponse>> ConfirmChangeEmailAsync([FromQuery] ConfirmChangeEmailDto confirmChangeEmailDto, CancellationToken cancellationToken)
         {
-            var response = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto);
+            var response = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto, cancellationToken);
             return Ok(response);
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<ApiResponse<RefreshTokenResponseDto>>> RefreshTokenAsync()
+        public async Task<ActionResult<ApiResponse<RefreshTokenResponseDto>>> RefreshTokenAsync(CancellationToken cancellationToken)
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var response = await _authService.RefreshTokenAsync(refreshToken);
+            var response = await _authService.RefreshTokenAsync(refreshToken, cancellationToken);
             var cookieOptions = GetCookieOptions();
             Response.Cookies.Append("refreshToken", response!.Data!.RefreshToken, cookieOptions);
             return Ok(response);
@@ -95,10 +95,10 @@ namespace Template.Api.Controllers
 
         [Authorize]
         [HttpPost("logout")]
-        public async Task<ActionResult<ApiResponse>> LogoutAsync()
+        public async Task<ActionResult<ApiResponse>> LogoutAsync(CancellationToken cancellationToken)
         {
             Response.Cookies.Delete("refreshToken");
-            var responese = await _authService.LogoutAsync();
+            var responese = await _authService.LogoutAsync(cancellationToken);
             return Ok(responese);
         }
 

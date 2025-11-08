@@ -2,8 +2,8 @@
 {
     public interface IExportToPdfAsync<TEntity, TDbContext>
     {
-        Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters) where TSpecification : ISpecification<TEntity>;
+        Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken) where TSpecification : ISpecification<TEntity>;
 
-        Task<byte[]> ExportToPdfAsync<TDestination>(string title);
+        Task<byte[]> ExportToPdfAsync<TDestination>(string title, CancellationToken cancellationToken);
     }
 }

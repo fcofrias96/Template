@@ -33,7 +33,7 @@ namespace Template.Application.Services.Base
             _readService = readService;
         }
 
-        public virtual async Task UpdateAsync<TKey, TSource>(TKey id, TSource source)
+        public virtual async Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken)
         {
             var propertyInfo = typeof(TSource).GetProperty("Id", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             if (propertyInfo == null)
@@ -48,10 +48,10 @@ namespace Template.Application.Services.Base
                 throw new BadRequestException("Invalid Id used in request");
             }
 
-            var entity = await _readService.GetByIdAsync(id);
+            var entity = await _readService.GetByIdAsync(id, cancellationToken);
             _mapper.Map(source, entity);
             _cache.InvalidateCache<TEntity>();
-            await _updateRepositoryAsync.UpdateAsync(entity);
+            await _updateRepositoryAsync.UpdateAsync(entity, cancellationToken);
         }
     }
 }

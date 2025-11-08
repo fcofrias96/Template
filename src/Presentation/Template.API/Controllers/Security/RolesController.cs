@@ -29,50 +29,50 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Role, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery]RoleQueryParameters request )
+        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery]RoleQueryParameters request, CancellationToken cancellationToken )
         {
-            var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto, RoleSpecification>(request);
+            var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto, RoleSpecification>(request, cancellationToken);
             return Ok(roles);
         }
 
         [Permission(Resources.Role, ActionType.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<RoleDetailDto>>> GetRole(Guid id)
+        public async Task<ActionResult<ApiResponse<RoleDetailDto>>> GetRole(Guid id, CancellationToken cancellationToken)
         {
-            var role = await _roleService.GetByIdProjectedAsync<Guid, RoleDetailDto>(id);
+            var role = await _roleService.GetByIdProjectedAsync<Guid, RoleDetailDto>(id, cancellationToken);
             return Ok(role);
         }
 
         [Permission(Resources.Role, ActionType.Create)]
         [HttpPost]
-        public async Task<ActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)
+        public async Task<ActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto, CancellationToken cancellationToken)
         {
-            var role = await _roleService.CreateAsync(roleCreateDto);
+            var role = await _roleService.CreateAsync(roleCreateDto, cancellationToken);
 
             return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
         }
 
         [Permission(Resources.Role, ActionType.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateDto roleUpdateDTO)
+        public async Task<ActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateDto roleUpdateDTO, CancellationToken cancellationToken)
         {
-            await _roleService.UpdateAsync(id.ToString(), roleUpdateDTO);
+            await _roleService.UpdateAsync(id.ToString(), roleUpdateDTO, cancellationToken);
             return NoContent();
         }
 
         [Permission(Resources.Role, ActionType.Delete)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteRole(Guid id)
+        public async Task<ActionResult> DeleteRole(Guid id, CancellationToken cancellationToken)
         {
-            await _roleService.SoftDeleteAsync(id);
+            await _roleService.SoftDeleteAsync(id, cancellationToken);
             return NoContent();
         }
 
         [Permission(Resources.Role, ActionType.Read)]
         [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _roleService.GetProjectedAsync<Dropdown>();
+            var resources = await _roleService.GetProjectedAsync<Dropdown>(cancellationToken);
             return Ok(resources);
         }
 

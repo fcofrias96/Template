@@ -23,10 +23,10 @@ namespace Template.Application.Services.Base
             _cache = cache;
         }
 
-        public virtual async Task<TEntity> CreateAsync<TSource>(TSource source)
+        public virtual async Task<TEntity> CreateAsync<TSource>(TSource source, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<TEntity>(source);
-            await _createRepositoryAsync.CreateAsync(entity);
+            await _createRepositoryAsync.CreateAsync(entity, cancellationToken);
             _cache.InvalidateCache<TEntity>();
             return entity;
         }

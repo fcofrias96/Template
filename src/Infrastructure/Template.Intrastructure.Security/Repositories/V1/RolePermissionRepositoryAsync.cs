@@ -16,24 +16,24 @@ namespace Template.Security.Repositories.V1
 
 
 
-        public async Task<RolePermission[]> GetAlls(string roleId, int[] permissionsId)
+        public async Task<RolePermission[]> GetAllAsync(string roleId, int[] permissionsId, CancellationToken cancellationToken)
         {
             return await _dbContext.RolePermissions.Where(x => x.RoleId == roleId && permissionsId.Contains(x.PermissionId)).ToArrayAsync();
         }
 
 
 
-        public async Task UpdateAsync(string roleId, int[] newPermissionIds)
+        public async Task UpdateAsync(string roleId, int[] newPermissionIds, CancellationToken cancellationToken)
         {
             var newPermissionSet = new HashSet<int>(newPermissionIds);
             await _dbContext.RolePermissions
                 .Where(rp => rp.RoleId == roleId && !newPermissionSet.Contains(rp.PermissionId))
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(cancellationToken);
 
             var currentPermissionIds = await _dbContext.RolePermissions
                 .Where(pr => pr.RoleId == roleId)
                 .Select(rp => rp.PermissionId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             var currentPermissionSet = currentPermissionIds.ToHashSet();
 
@@ -48,8 +48,8 @@ namespace Template.Security.Repositories.V1
 
             if (toAdd.Count > 0)
             {
-                await _dbContext.RolePermissions.AddRangeAsync(toAdd);
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.RolePermissions.AddRangeAsync(toAdd, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
     }

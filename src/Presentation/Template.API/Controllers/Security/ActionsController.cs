@@ -25,9 +25,9 @@ namespace Template.Api.Controllers.Admin
 
         [Permission(Resources.Action, ActionType.Read)]
         [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetActions()
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetActions(CancellationToken cancellationToken)
         {
-            var actions = await _actionService.GetProjectedAsync();
+            var actions = await _actionService.GetProjectedAsync(cancellationToken);
             return Ok(actions);
         }
     }

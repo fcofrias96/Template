@@ -2,6 +2,6 @@
 {
     public interface IUpdateServiceAsync<TEntity, TDbContext>
     {
-        Task UpdateAsync<TKey, TSource>(TKey id, TSource source);
+        Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken);
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface ICreateServiceAsync<TEntity, TDbContext>
     {
-        Task<TEntity> CreateAsync<TSource>(TSource source);
+        Task<TEntity> CreateAsync<TSource>(TSource source, CancellationToken cancellationToken);
     }
 }

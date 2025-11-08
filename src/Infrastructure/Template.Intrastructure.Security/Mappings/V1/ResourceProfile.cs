@@ -15,7 +15,7 @@ namespace Template.Security.Mappings.V1
             CreateMap<ResourceUpdateDto, Resource>();
             CreateMap<Resource, ResourceDetailDto>()
                 .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.Permissions
-                                                                .Select(p => $"{p.ActionType.Name} {p.Resource.Name}")));
+                                                                .Select(p => p.Name)));
         }
     }
 }

@@ -20,9 +20,9 @@ namespace Template.Security.Services.V1
             _context = context;
         }
 
-        public async Task<ApiResponse<MenuItemResponse>> GetMenuForUser(ClaimsPrincipal user)
+        public async Task<ApiResponse<MenuItemResponse>> GetMenuForUserAsync(ClaimsPrincipal user, CancellationToken cancellationToken)
         {
-            var userPermissionIds = _permissionService.GetUserPermissionIds(user);
+            var userPermissionIds = _permissionService.GetUserPermissionIds(user, cancellationToken);
 
             var menuItems = await _context.MenuItems
                                     .Select(m => new MenuItem
@@ -38,7 +38,7 @@ namespace Template.Security.Services.V1
                                     })
                                     .OrderBy(m => m.ParentId)
                                     .ThenBy(m=> m.Order)
-                                    .ToListAsync();
+                                    .ToListAsync(cancellationToken);
 
             var accessibleMenuItems = FilterMenuItemsByPermissions(menuItems, userPermissionIds);
 
@@ -56,7 +56,7 @@ namespace Template.Security.Services.V1
 
 
 
-        private List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userPermissionIds)
+        static private List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userPermissionIds)
         {
             var accessibleMenuItems = menuItems
                 .Where(item => HasAccessToMenuItem(userPermissionIds, item))

@@ -31,74 +31,74 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, ActionType.Create)]
         [HttpPost]
-        public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDTO)
+        public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDTO, CancellationToken cancellationToken)
         {
-            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDto>(categoryCreateDTO);
+            var category = await _categoryServiceAsync.CreateAsync<CategoryCreateDto>(categoryCreateDTO, cancellationToken);
             return CreatedAtAction(nameof(GetCategoryAsync), new { id = category.Id }, category);
         }
 
         [Permission(Resources.Category, ActionType.Delete)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCategoryAsync(int id)
+        public async Task<ActionResult> DeleteCategoryAsync(int id, CancellationToken cancellationToken)
         {
-            await _categoryServiceAsync.SoftDeleteAsync(id);
+            await _categoryServiceAsync.SoftDeleteAsync(id, cancellationToken);
             return NoContent();
         }
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request)
+        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
         {
-            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request);
+            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request, cancellationToken);
             return Ok(response);
         }
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id)
+        public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _categoryServiceAsync.GetByIdProjectedAsync<int, CategoryDetailDto>(id);
+            var response = await _categoryServiceAsync.GetByIdProjectedAsync<int, CategoryDetailDto>(id, cancellationToken);
             return Ok(response);
         }
 
         [Permission(Resources.Category, ActionType.Update)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO)
+        public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO, CancellationToken cancellationToken)
         {
-            await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO);
+            await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);
             return NoContent();
         }
 
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync()
+        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _categoryServiceAsync.GetProjectedAsync<Dropdown>();
+            var resources = await _categoryServiceAsync.GetProjectedAsync<Dropdown>(cancellationToken);
             return Ok(resources);
         }
 
         [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/docx")]
-        public async Task<FileResult> ExportToWordAsync()
+        public async Task<FileResult> ExportToWordAsync(CancellationToken cancellationToken)
         {
-            var file = await _categoryServiceAsync.ExportToDocxAsync<CategoryExportDto>("Lista de Categorias");
+            var file = await _categoryServiceAsync.ExportToDocxAsync<CategoryExportDto>("Lista de Categorias", cancellationToken);
             return File(file, FileContentType.DOC, "Categories.docx");
         }
 
         [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/pdf")]
-        public async Task<FileResult> ExportToPdfAsync()
+        public async Task<FileResult> ExportToPdfAsync(CancellationToken cancellationToken)
         {
-            var file = await _categoryServiceAsync.ExportToPdfAsync<CategoryExportDto>("Lista de Categorias");
+            var file = await _categoryServiceAsync.ExportToPdfAsync<CategoryExportDto>("Lista de Categorias", cancellationToken);
             return File(file, FileContentType.PDF, "Categories.pdf");
         }
 
         [Permission(Resources.Category, ActionType.Export)]
         [HttpGet("export/csv")]
-        public async Task<FileResult> ExportToCSVAsync()
+        public async Task<FileResult> ExportToCSVAsync(CancellationToken cancellationToken)
         {
-            var file = await _categoryServiceAsync.ExportToCSVAsync<CategoryExportDto>("Categorias");
+            var file = await _categoryServiceAsync.ExportToCSVAsync<CategoryExportDto>("Categorias", cancellationToken);
             return File(file, FileContentType.CSV, "Categories.csv");
         }
 

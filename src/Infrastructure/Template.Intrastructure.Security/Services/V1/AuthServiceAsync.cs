@@ -50,7 +50,7 @@ namespace Template.Security.Services.V1
             _userServiceAsync = userServiceAsync;
         }
 
-        public async Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto)
+        public async Task<ApiResponse> ChangeEmailAsync(ChangeEmailDto changeEmailDto, CancellationToken cancellationToken)
         {
             var currentUserId = GetCurrentUserId();
 
@@ -59,7 +59,7 @@ namespace Template.Security.Services.V1
                 throw new ForbiddenException();
             }
 
-            var user = await FindUserByIdAsync(changeEmailDto.UserId.ToString());
+            var user = await FindUserByIdAsync(changeEmailDto.UserId.ToString(), cancellationToken);
             var passwordValid = await _userManager.CheckPasswordAsync(user, changeEmailDto.CurrentPassword);
             if (!passwordValid)
             {
@@ -70,16 +70,16 @@ namespace Template.Security.Services.V1
                 throw new BadRequestException("New email address is the same as the current email address.");
             }
 
-            var changeEmailLink = await GenerateChangeEmailLinkAsync(user, changeEmailDto.NewEmail);
+            var changeEmailLink = await GenerateChangeEmailLinkAsync(user, changeEmailDto.NewEmail, cancellationToken);
             var emailDto = CreateChangeEmailNotification(user, changeEmailDto.NewEmail, changeEmailLink);
-            await _emailServiceAsync.SendEmailAsync(emailDto);
+            await _emailServiceAsync.SendEmailAsync(emailDto, cancellationToken);
 
             return new ApiResponse("A confirmation email has been sent to your new email address. Please check your email to confirm the change.");
         }
 
-        public async Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto)
+        public async Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(confirmChangeEmailDto.UserId.ToString());
+            var user = await FindUserByIdAsync(confirmChangeEmailDto.UserId.ToString(), cancellationToken);
 
             if (user.Email == confirmChangeEmailDto.NewEmail)
             {
@@ -87,6 +87,7 @@ namespace Template.Security.Services.V1
             }
 
             var token = Encoding.UTF8.GetString(Convert.FromBase64String(confirmChangeEmailDto.Token));
+            cancellationToken.ThrowIfCancellationRequested();
             var result = await _userManager.ChangeEmailAsync(user, confirmChangeEmailDto.NewEmail, token);
 
             if (!result.Succeeded)
@@ -94,13 +95,13 @@ namespace Template.Security.Services.V1
                 throw new InvalidOperationException("Error changing email.");
             }
 
-            await RevokeTokenAsync(user.Id);
+            await RevokeTokenAsync(user.Id, cancellationToken);
             return new ApiResponse("Your email address has been successfully changed.");
         }
 
-        public async Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto)
+        public async Task<ApiResponse> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(confirmEmailDto.UserId);
+            var user = await FindUserByIdAsync(confirmEmailDto.UserId, cancellationToken);
 
             if (user.EmailConfirmed)
             {
@@ -108,18 +109,20 @@ namespace Template.Security.Services.V1
             }
 
             var token = Encoding.UTF8.GetString(Convert.FromBase64String(confirmEmailDto.Token));
+            cancellationToken.ThrowIfCancellationRequested();
             await _userManager.ConfirmEmailAsync(user, token);
             return new ApiResponse($"Account Confirmed for {user.Email}.");
         }
 
-        public async Task<ApiResponse> CreateAsync(UserCreateDto userCreateDto)
+        public async Task<ApiResponse> CreateAsync(UserCreateDto userCreateDto, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var userWithSameUserName = await _userManager.FindByNameAsync(userCreateDto.UserName);
             if (userWithSameUserName != null)
             {
                 throw new BadRequestException($"The username '{userCreateDto.UserName}' is already taken. Please choose a different username.");
             }
-
+            cancellationToken.ThrowIfCancellationRequested();
             var userWithSameEmail = await _userManager.FindByEmailAsync(userCreateDto.Email);
             if (userWithSameEmail != null)
             {
@@ -134,6 +137,7 @@ namespace Template.Security.Services.V1
                 UserName = userCreateDto.UserName
             };
 
+            cancellationToken.ThrowIfCancellationRequested();
             var result = await _userManager.CreateAsync(user, userCreateDto.Password);
             if (!result.Succeeded)
             {
@@ -160,14 +164,15 @@ namespace Template.Security.Services.V1
             var emailVerificationLink = await GenerateEmailVerificationLinkAsync(user);
 
             var emailDto = CreateConfirmationEmail(user, emailVerificationLink);
-            await _emailServiceAsync.SendEmailAsync(emailDto);
+            await _emailServiceAsync.SendEmailAsync(emailDto, cancellationToken);
 
             var message = $"User registered successfully. A confirmation email has been sent to {user.Email}. Please confirm your account by visiting the URL provided in the email.";
             return new ApiResponse(message);
         }
 
-        public async Task<ApiResponse> ForgotPassword(ForgotPasswordDto model)
+        public async Task<ApiResponse> ForgotPasswordAsync(ForgotPasswordDto model, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user != null)
@@ -177,6 +182,7 @@ namespace Template.Security.Services.V1
                     throw new BadRequestException($"Email for user '{model.Email}' is not confirmed.");
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
                 var baseUrl = $"{_jwtSettings.Audience}/reset-password";
@@ -204,22 +210,23 @@ namespace Template.Security.Services.V1
                     To = model.Email,
                     Subject = "Reset Password",
                 };
-                await _emailServiceAsync.SendEmailAsync(emailRequest);
+                await _emailServiceAsync.SendEmailAsync(emailRequest,cancellationToken);
             }
 
             return new ApiResponse("If an account with that email exists, a password reset link has been sent. Please check your email.");
         }
 
-        public async Task<ApiResponse> LogoutAsync()
+        public async Task<ApiResponse> LogoutAsync(CancellationToken cancellationToken)
         {
             var userId = GetCurrentUserId();
-            await RevokeTokenAsync(userId);
+            await RevokeTokenAsync(userId, cancellationToken);
             return new ApiResponse("Logged out successfully");
         }
 
-        public async Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto)
+        public async Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto, CancellationToken cancellationToken)
         {
-            var user = await FindUserByEmailAsync(loginDto.Email);
+            cancellationToken.ThrowIfCancellationRequested();
+            var user = await FindUserByEmailAsync(loginDto.Email, cancellationToken);
 
             if (!user.EmailConfirmed)
             {
@@ -235,8 +242,8 @@ namespace Template.Security.Services.V1
             {
                 throw new BadRequestException($"User account '{loginDto.Email}' is inactivated.");
             }
-
-            var result = await _singInManager.PasswordSignInAsync(user, loginDto.Password, isPersistent: true, lockoutOnFailure: true); ;
+            cancellationToken.ThrowIfCancellationRequested();   
+            var result = await _singInManager.PasswordSignInAsync(user, loginDto.Password, isPersistent: true, lockoutOnFailure: true);
 
             if (result.Succeeded)
             {
@@ -245,15 +252,17 @@ namespace Template.Security.Services.V1
                 var refreshToken = GenerateRefreshToken();
                 response.Id = user.Id;
                 response.AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-                response.Email = user.Email;
+                response.Email = user.Email ;
                 response.UserName = user.UserName;
                 response.Roles = _userRoles;
                 response.RefreshToken = refreshToken;
+                response.Resources = await _userServiceAsync.GetResourcesAsync(user.Id, cancellationToken);
 
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
                 user.IsTokenRevoked = false;
                 user.TokenRevokedTime = null;
+                cancellationToken.ThrowIfCancellationRequested();
                 await _userManager.UpdateAsync(user);
 
                 return new ApiResponse<AuthenticationResponseDto>(response);
@@ -272,14 +281,14 @@ namespace Template.Security.Services.V1
             }
         }
 
-        public async Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken)
+        public async Task<ApiResponse<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
             {
                 throw new ForbiddenException("No refresh token provided");
             }
 
-            var user = await _userServiceAsync.GetUserByRefreshToken(refreshToken);
+            var user = await _userServiceAsync.GetUserByRefreshToken(refreshToken, cancellationToken);
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow || user.IsTokenRevoked)
             {
@@ -297,6 +306,7 @@ namespace Template.Security.Services.V1
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
             await _userManager.UpdateAsync(user);
 
             var response = new RefreshTokenResponseDto
@@ -308,8 +318,9 @@ namespace Template.Security.Services.V1
             return new ApiResponse<RefreshTokenResponseDto>(response);
         }
 
-        public async Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto)
+        public async Task<ApiResponse> ResendConfirmationEmailAsync(ResendConfirmationEmailDto resendConfirmationEmailDto, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var user = await _userManager.FindByEmailAsync(resendConfirmationEmailDto.Email);
             if (user != null)
             {
@@ -321,26 +332,28 @@ namespace Template.Security.Services.V1
                 var emailVerificationLink = await GenerateEmailVerificationLinkAsync(user);
                 var emailDto = CreateConfirmationEmail(user, emailVerificationLink);
 
-                await _emailServiceAsync.SendEmailAsync(emailDto);
+                await _emailServiceAsync.SendEmailAsync(emailDto, cancellationToken);
             }
             return new ApiResponse("If an account with that email exists, a confirmation email has been resent. Please check your email.");
         }
 
-        public async Task<ApiResponse> ResetPassword(ResetPasswordDto model)
+        public async Task<ApiResponse> ResetPasswordAsync(ResetPasswordDto model, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(model.UserId.ToString());
+            var user = await FindUserByIdAsync(model.UserId.ToString(), cancellationToken);
             var token = Encoding.UTF8.GetString(Convert.FromBase64String(model.Token));
+            cancellationToken.ThrowIfCancellationRequested();
             await _userManager.ResetPasswordAsync(user, token, model.Password);
-            await RevokeTokenAsync(user.Id);
+            await RevokeTokenAsync(user.Id, cancellationToken);
             return new ApiResponse($"Password Reset Successful for {user.UserName}.");
         }
 
-        public async Task RevokeTokenAsync(string userId)
+        public async Task RevokeTokenAsync(string userId, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(userId);
+            var user = await FindUserByIdAsync(userId, cancellationToken);
 
             user.IsTokenRevoked = true;
             user.TokenRevokedTime = DateTime.UtcNow;
+            cancellationToken.ThrowIfCancellationRequested();
             await _userManager.UpdateAsync(user);
         }
 
@@ -393,8 +406,9 @@ namespace Template.Security.Services.V1
             };
         }
 
-        private async Task<User> FindUserByEmailAsync(string email)
+        private async Task<User> FindUserByEmailAsync(string email, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
             {
@@ -404,8 +418,9 @@ namespace Template.Security.Services.V1
             return user;
         }
 
-        private async Task<User> FindUserByIdAsync(string userId)
+        private async Task<User> FindUserByIdAsync(string userId, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
             {
@@ -415,8 +430,9 @@ namespace Template.Security.Services.V1
             return user;
         }
 
-        private async Task<string> GenerateChangeEmailLinkAsync(User user, string newEmail)
+        private async Task<string> GenerateChangeEmailLinkAsync(User user, string newEmail, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
             var encodedChangeEmailToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(changeEmailToken));
             var httpRequest = _httpContext?.HttpContext?.Request;

@@ -2,6 +2,6 @@
 {
     public interface IDeleteRepositoryAsync<TEntity, TDbContext>
     {
-        Task DeleteAsync(TEntity entity);
+        Task DeleteAsync(TEntity entity, CancellationToken cancellationToken);
     }
 }

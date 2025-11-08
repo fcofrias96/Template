@@ -19,9 +19,9 @@ namespace Template.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<MenuItemResponse>>> GetMenusAsync()
+        public async Task<ActionResult<ApiResponse<MenuItemResponse>>> GetMenusAsync(CancellationToken cancellationToken)
         {
-            var response = await  _menuService.GetMenuForUser(User);
+            var response = await  _menuService.GetMenuForUserAsync(User, cancellationToken);
             return Ok(response);
         }
 
