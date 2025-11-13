@@ -66,9 +66,9 @@ namespace Template.Application.Repository
             return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria, CancellationToken cancellationToken)
+        public async Task<int> GetTotalCountAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetTotalCountAsync(criteria, cancellationToken);
+            return await _readRepository.GetTotalCountAsync(spec, cancellationToken);
         }
 
         public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)

@@ -27,7 +27,12 @@ using Template.Persistence;
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Template API V1");
+            c.RoutePrefix = "swagger";
+            c.IndexStream = () => File.OpenRead("wwwroot/swagger/custom.html");
+        });
         app.UseDeveloperExceptionPage();
     }
     else
@@ -36,6 +41,7 @@ using Template.Persistence;
         app.UseHsts();
     }
 
+    app.UseStaticFiles();
     app.UseMiddleware<ExceptionMiddleware>();
     app.UseMiddleware<ETagMiddleware>();
     app.UseSerilogRequestLogging();
@@ -56,6 +62,6 @@ using Template.Persistence;
     }
     finally
     {
-        Log.CloseAndFlush();
+        await Log.CloseAndFlushAsync();
     }
 }

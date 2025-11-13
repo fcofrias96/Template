@@ -10,7 +10,8 @@ namespace Template.Security.Mappings.V1
     public class RoleProfile : Profile
     {
         public RoleProfile()
-        {            CreateMap<Role, RoleListDto>();
+        {
+            CreateMap<Role, RoleListDto>();
             CreateMap<Role, Dropdown>();
             ;
             CreateMap<Role, RoleDetailDto>()

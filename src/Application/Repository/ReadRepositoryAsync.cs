@@ -30,19 +30,19 @@ namespace Template.Application.Repository
 
         public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec);
-            return await query.AsNoTracking()
-                              .ProjectTo<TDestination>(_configurationProvider)
+            
+            return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec, applyPagination: false);
-            return await query.AsNoTracking()
-                              .ProjectTo<TDestination>(_configurationProvider)
+            
+            return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync(cancellationToken);
         }
 
@@ -53,45 +53,43 @@ namespace Template.Application.Repository
 
         public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
-            var query = _dbSet.AsQueryable();
-            return await query.AsNoTracking()
-                              .Where(x => x.Id.Equals(id))
+            var query = _dbSet.AsQueryable().AsNoTracking();
+
+            return await query.Where(x => x.Id.Equals(id))
                               .ProjectTo<TDestination>(_configurationProvider)
                               .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria, CancellationToken cancellationToken)
+        public async Task<int> GetTotalCountAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
-            if (criteria == null)
+            var query = _dbSet.AsQueryable();
+
+            if (spec.Criteria != null)
             {
-                return await _dbSet.CountAsync(cancellationToken);
+                query = query.Where(spec.Criteria);
             }
-            else
-            {
-                return await _dbSet.Where(criteria).CountAsync(cancellationToken);
-            }
+
+            return await query.CountAsync(cancellationToken);
         }
 
 
         #region Private Methods
 
-        private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true)
+        private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true, bool applySorting = true)
         {
             if (spec.Criteria != null)
             {
                 query = query.Where(spec.Criteria);
             }
 
-            if (spec.IsDescending)
+            if (applySorting)
             {
-                query = query.OrderByDescending(spec.SortBy);
-            }
-            else
-            {
-                query = query.OrderBy(spec.SortBy);
+                query = spec.IsDescending
+                    ? query.OrderByDescending(spec.SortBy)
+                    : query.OrderBy(spec.SortBy);
             }
 
-            if (applyPagination)
+            if (applyPagination && spec.Take > 0)
             {
                 query = query.Skip(spec.Skip).Take(spec.Take);
             }

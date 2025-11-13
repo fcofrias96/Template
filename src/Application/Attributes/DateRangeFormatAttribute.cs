@@ -12,13 +12,24 @@ namespace Template.Application.Attributes
                 return ValidationResult.Success;
 
             if (value is not string strValue)
-                return new ValidationResult("El valor debe ser una cadena de texto en formato 'yyyy-MM-dd'.");
+                return new ValidationResult("El valor debe ser una cadena de texto en formato 'yyyy-MM-dd' o 'yyyy-MM-dd..yyyy-MM-dd'.");
 
             strValue = strValue.TrimStart('!');
+
+            // Check if it's a single date (no range separator)
+            if (!strValue.Contains(".."))
+            {
+                if (DateTimeOffset.TryParseExact(strValue, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                    return ValidationResult.Success;
+                
+                return new ValidationResult("La fecha no es válida. El formato aceptado es 'yyyy-MM-dd'.");
+            }
+
+            // Handle date range
             string[] parts = strValue.Split(new[] { ".." }, StringSplitOptions.None);
 
             if (parts.Length != 2)
-                return new ValidationResult("Formato inválido. El formato aceptado es 'fecha..fecha', 'fecha..' o '..fecha' en formato 'yyyy-MM-dd'.");
+                return new ValidationResult("Formato inválido. El formato aceptado es 'fecha', 'fecha..fecha', 'fecha..' o '..fecha' en formato 'yyyy-MM-dd'.");
 
             bool hasStartDate = !string.IsNullOrWhiteSpace(parts[0]);
             bool hasEndDate = !string.IsNullOrWhiteSpace(parts[1]);

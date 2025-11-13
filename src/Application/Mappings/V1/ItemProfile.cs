@@ -7,7 +7,8 @@ namespace Template.Application.Mappings.V1
     public class ItemProfile : Profile
     {
         public ItemProfile()
-        {            CreateMap<Item, ItemDetailDto>()
+        {
+            CreateMap<Item, ItemDetailDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<Item, ItemExportDto>()
                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));

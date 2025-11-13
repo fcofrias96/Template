@@ -13,10 +13,11 @@ using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Utilities;
 using Template.Domain.Contracts;
 using Xceed.Words.NET;
+using System.Linq;
 
 namespace Template.Application.Services.Base
 {
-    public class ExportServiceAsync<TEntity, TDbContext> : IExportServiceAsync<TEntity, TDbContext>
+    public partial class ExportServiceAsync<TEntity, TDbContext> : IExportServiceAsync<TEntity, TDbContext>
         where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
@@ -30,7 +31,7 @@ namespace Template.Application.Services.Base
         }
 
         public async Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-                                        where TSpecification : ISpecification<TEntity>
+            where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger, false);
             var data = await _readDepositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
@@ -45,7 +46,7 @@ namespace Template.Application.Services.Base
         }
 
         public async Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-                                        where TSpecification : ISpecification<TEntity>
+            where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger, false);
             var data = await _readDepositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
@@ -59,7 +60,7 @@ namespace Template.Application.Services.Base
         }
 
         public async Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-                                        where TSpecification : ISpecification<TEntity>
+            where TSpecification : ISpecification<TEntity>
         {
             var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, _logger, false);
             var data = await _readDepositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
@@ -68,7 +69,7 @@ namespace Template.Application.Services.Base
 
         public async Task<byte[]> ExportToDocxAsync<TDestination>(string title, CancellationToken cancellationToken)
         {
-            var data = await _readDepositoryAsync.GetProjectedAsync<TDestination>(cancellationToken );
+            var data = await _readDepositoryAsync.GetProjectedAsync<TDestination>(cancellationToken);
             return GenerateDoc(title, data);
         }
 
@@ -76,32 +77,36 @@ namespace Template.Application.Services.Base
 
         private static byte[] GenerateCSV<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
-            var properties = typeof(TDestination).GetProperties();
+            var properties = ExportCache<TDestination>.Properties;
+            var headers = ExportCache<TDestination>.Headers;
+
             var sb = new StringBuilder();
 
-            sb.AppendLine($"\"{title}\"");
+            sb.Append('"').Append(title).Append('"').AppendLine();
 
-            for (int i = 0; i < properties.Length; i++)
+            // Encabezados
+            for (int i = 0; i < headers.Length; i++)
             {
-                var propertyName = GetDisplayName(properties[i]);
-                sb.Append(propertyName);
-
-                if (i < properties.Length - 1)
-                    sb.Append(",");
+                sb.Append(headers[i]);
+                if (i < headers.Length - 1)
+                    sb.Append(',');
             }
 
             sb.AppendLine();
 
+            // Datos
             for (int i = 0; i < data.Count; i++)
             {
+                var item = data[i];
+
                 for (int j = 0; j < properties.Length; j++)
                 {
-                    var value = properties[j].GetValue(data[i]);
+                    var value = properties[j].GetValue(item);
                     var friendlyValue = ConvertToFriendlyValue(value);
                     sb.Append(friendlyValue);
 
                     if (j < properties.Length - 1)
-                        sb.Append(",");
+                        sb.Append(',');
                 }
 
                 sb.AppendLine();
@@ -109,8 +114,6 @@ namespace Template.Application.Services.Base
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
-
-
 
         private static byte[] GeneratePdf<TDestination>(string title, IReadOnlyList<TDestination> data)
         {
@@ -121,24 +124,23 @@ namespace Template.Application.Services.Base
                     var pdf = new PdfDocument(writer);
                     var document = new iText.Layout.Document(pdf);
 
-                    // Add title
                     var titleParagraph = new Paragraph(title)
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFontSize(18)
                         .SetBold();
                     document.Add(titleParagraph);
 
-                    // Add some space between title and table
                     document.Add(new Paragraph("\n"));
 
-                    var properties = typeof(TDestination).GetProperties();
+                    var properties = ExportCache<TDestination>.Properties;
+                    var headers = ExportCache<TDestination>.Headers;
+
                     var table = new Table(UnitValue.CreatePercentArray(properties.Length)).UseAllAvailableWidth();
 
                     // Header
-                    foreach (var property in properties)
+                    foreach (var header in headers)
                     {
-                        var propertyName = GetDisplayName(property);
-                        table.AddHeaderCell(new Cell().Add(new Paragraph(propertyName)));
+                        table.AddHeaderCell(new Cell().Add(new Paragraph(header)));
                     }
 
                     // Data
@@ -151,8 +153,11 @@ namespace Template.Application.Services.Base
                         }
                     }
 
-                    // Add total count row
-                    table.AddCell(new Cell(1, properties.Length).Add(new Paragraph($"Total: {data.Count}")).SetTextAlignment(TextAlignment.RIGHT));
+                    // Total
+                    table.AddCell(
+                        new Cell(1, properties.Length)
+                            .Add(new Paragraph($"Total: {data.Count}"))
+                            .SetTextAlignment(TextAlignment.RIGHT));
 
                     document.Add(table);
                     document.Close();
@@ -168,27 +173,29 @@ namespace Template.Application.Services.Base
             {
                 using (var document = DocX.Create(stream))
                 {
-                    // Add title as header
-                    document.InsertParagraph(title).FontSize(18)
-                                                   .Bold()
-                                                   .Alignment = Xceed.Document.NET.Alignment.center;
+                    document.InsertParagraph(title)
+                            .FontSize(18)
+                            .Bold()
+                            .Alignment = Xceed.Document.NET.Alignment.center;
 
                     document.InsertParagraph("\n");
 
-                    var properties = typeof(TDestination).GetProperties();
+                    var properties = ExportCache<TDestination>.Properties;
+                    var headers = ExportCache<TDestination>.Headers;
+
                     var table = document.AddTable(data.Count + 1, properties.Length);
 
                     // Header
-                    for (int i = 0; i < properties.Length; i++)
+                    for (int i = 0; i < headers.Length; i++)
                     {
-                        var propertyName = GetDisplayName(properties[i]);
-                        table.Rows[0].Cells[i].Paragraphs[0].Append(propertyName).Bold();
+                        table.Rows[0].Cells[i].Paragraphs[0].Append(headers[i]).Bold();
                     }
 
                     // Data
                     for (int i = 0; i < data.Count; i++)
                     {
                         var item = data[i];
+
                         for (int j = 0; j < properties.Length; j++)
                         {
                             var value = ConvertToFriendlyValue(properties[j].GetValue(item));
@@ -196,11 +203,11 @@ namespace Template.Application.Services.Base
                         }
                     }
 
-                    // Add total count row
-                    var totalCell = table.InsertRow(data.Count + 1);
-                    totalCell.Cells[0].Paragraphs[0].Append($"Total: {data.Count}");
-                    totalCell.MergeCells(0, properties.Length - 1);
-                    totalCell.Cells[0].Paragraphs[0].Alignment = Xceed.Document.NET.Alignment.right;
+                    // Total
+                    var totalRow = table.InsertRow(data.Count + 1);
+                    totalRow.Cells[0].Paragraphs[0].Append($"Total: {data.Count}");
+                    totalRow.MergeCells(0, properties.Length - 1);
+                    totalRow.Cells[0].Paragraphs[0].Alignment = Xceed.Document.NET.Alignment.right;
 
                     document.InsertTable(table);
                     document.Save();
@@ -221,13 +228,12 @@ namespace Template.Application.Services.Base
             if (value is null)
                 return string.Empty;
 
-            if (value is DateTimeOffset time)
-                return time.ToString("yyyy-MM-dd");
-
-            if (value is bool v)
-                return v ? "Si" : "No";
-
-            return value.ToString() ?? string.Empty;
+            return value switch
+            {
+                DateTimeOffset time => time.ToString("yyyy-MM-dd"),
+                bool v => v ? "Si" : "No",
+                _ => value.ToString() ?? string.Empty
+            };
         }
 
         #endregion Private Methods

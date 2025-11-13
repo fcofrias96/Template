@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 using Template.Application.Attributes;
 using Template.Application.Contracts;
 
@@ -11,7 +12,9 @@ namespace Template.Application.Utilities
         public int Offset { get; set; }
         public int Limit { get; set; } = 30;
 
-        private readonly (Type AttributeType, string Separator, bool IsRange)[] AttributeFormats =
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> QueryPropertiesCache = new();
+
+        private static readonly (Type AttributeType, string Separator, bool IsRange)[] AttributeFormats =
         {
             (typeof(NumberListFormatAttribute), ",", false),
             (typeof(GuidListFormatAttribute), ",", false),
@@ -19,7 +22,7 @@ namespace Template.Application.Utilities
             (typeof(NumberRangeFormatAttribute), "..", true)
         };
 
-        private readonly string[] DefaultProperties =
+        private static readonly HashSet<string> DefaultProperties = new()
         {
             nameof(SortBy),
             nameof(IsDescending),
@@ -27,17 +30,24 @@ namespace Template.Application.Utilities
             nameof(Limit)
         };
 
+
+
+
         public List<Field> BuildFields()
         {
             var fields = new List<Field>();
-            var derivedType = this.GetType();
+            var derivedType = GetType();
 
-            var properties = derivedType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                        .Where(p => !DefaultProperties.Contains(p.Name));
+            // Cache de propiedades del tipo derivado
+            var properties = QueryPropertiesCache.GetOrAdd(derivedType, t =>
+                t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                 .Where(p => !DefaultProperties.Contains(p.Name))
+                 .ToArray()
+            );
 
             foreach (var property in properties)
             {
-                var propertyValue = GetPropertyValue(property);
+                var propertyValue = GetPropertyValue(property, this);
                 if (string.IsNullOrEmpty(propertyValue)) continue;
 
                 bool isExclusion = IsExclusion(ref propertyValue);
@@ -45,6 +55,7 @@ namespace Template.Application.Utilities
                 object value = ProcessValue(property, propertyValue, ref isRange);
 
                 var entityProperty = GetEntityProperty(property.Name);
+
                 var field = new Field
                 {
                     PropertyInfo = entityProperty,
@@ -59,9 +70,9 @@ namespace Template.Application.Utilities
             return fields;
         }
 
-        private string? GetPropertyValue(PropertyInfo property)
+        private static string? GetPropertyValue(PropertyInfo property, object instance)
         {
-            return property.GetValue(this)?.ToString();
+            return property.GetValue(instance) as string;
         }
 
         private static bool IsExclusion(ref string propertyValue)
@@ -80,21 +91,36 @@ namespace Template.Application.Utilities
             {
                 if (property.IsDefined(attributeType))
                 {
-                    isRange = isRangeFlag;
-                    return propertyValue.Split(separator);
+                    if (propertyValue.Contains(".."))
+                    {
+                        isRange = isRangeFlag;
+                        return propertyValue.Split(separator);
+                    }
+
+                    return propertyValue;
+
                 }
             }
             return propertyValue;
         }
 
+        private static readonly Lazy<Dictionary<string, PropertyInfo>> EntityPropertiesCache =
+     new(() => typeof(TEntity)
+         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+         .ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase));
+
         private static PropertyInfo GetEntityProperty(string propertyName)
         {
-            var entityProperty = typeof(TEntity).GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            if (entityProperty == null)
+            var map = EntityPropertiesCache.Value;
+
+            if (!map.TryGetValue(propertyName, out var entityProperty))
             {
-                throw new InvalidOperationException($"The class '{typeof(TEntity).Name}' does not contain a property named '{propertyName}'.");
+                throw new InvalidOperationException(
+                    $"The class '{typeof(TEntity).Name}' does not contain a property named '{propertyName}'.");
             }
+
             return entityProperty;
         }
+
     }
 }

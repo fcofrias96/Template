@@ -50,7 +50,7 @@ namespace Template.Application.Services.Base
                 throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
             }
 
-            var total = await _readRepositoryAsync.GetTotalCountAsync(spec.Criteria, cancellationToken);
+            var total = await _readRepositoryAsync.GetTotalCountAsync(spec, cancellationToken);
 
             if (total < spec.Skip)
             {

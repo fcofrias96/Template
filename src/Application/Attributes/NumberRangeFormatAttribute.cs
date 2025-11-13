@@ -19,11 +19,22 @@ namespace Template.Application.Attributes
             }
 
             strValue = strValue.TrimStart('!');
+
+            // Check if it's a single number (no range separator)
+            if (!strValue.Contains(".."))
+            {
+                if (double.TryParse(strValue, NumberStyles.Number, CultureInfo.InvariantCulture, out _))
+                    return ValidationResult.Success;
+
+                return new ValidationResult($"El número '{strValue}' no es válido.");
+            }
+
+            // Handle number range
             string[] parts = strValue.Split(new string[] { ".." }, StringSplitOptions.None);
 
             if (parts.Length != 2)
             {
-                return new ValidationResult("El formato debe ser 'número..número', 'número..' o '..número'.");
+                return new ValidationResult("El formato debe ser 'número', 'número..número', 'número..' o '..número'.");
             }
 
             double num1 = 0, num2 = 0;

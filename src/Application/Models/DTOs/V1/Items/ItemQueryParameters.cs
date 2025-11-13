@@ -18,7 +18,7 @@ namespace Template.Application.Models.DTOs.V1.Items
         public string? Category { get; set; }
 
         [DateRangeFormat]
-        public string? Created { get; set; } //delete
+        public string? CreatedAt { get; set; } //delete
 
     }
 }

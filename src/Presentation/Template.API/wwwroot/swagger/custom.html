@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <style>
+        .quick-login-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .quick-login-btn {
+            padding: 8px 16px;
+            background-color: #4990e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+            .quick-login-btn:hover {
+                background-color: #357abd;
+            }
+
+            .quick-login-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .quick-login-btn.success {
+                background-color: #49cc90;
+            }
+
+            .quick-login-btn.error {
+                background-color: #f93e3e;
+            }
+
+        .logout-btn {
+            padding: 6px 12px;
+            background-color: #f93e3e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+            .logout-btn:hover {
+                background-color: #d32f2f;
+            }
+
+        .user-info {
+            background-color: #49cc90;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .user-info.visible {
+                display: flex;
+            }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <div class="quick-login-container">
+        <div id="userInfo" class="user-info">
+            <span id="userText">👤 <span id="userName"></span></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div class="login-buttons" id="loginButtons">
+            <button class="quick-login-btn" onclick="quickLogin('johnDoe@gmail.com', '123Pa$$word', 'John Doe', this)">
+                🔐 Login as John Doe
+            </button>
+            <button class="quick-login-btn" onclick="quickLogin('johnJames@gmail.com', '123Pa$$word', 'John James', this)">
+                🔐 Login as John James
+            </button>
+        </div>
+    </div>
+
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script>
+        let currentUser = null;
+        let currentToken = null;
+
+        window.onload = function () {
+            const ui = SwaggerUIBundle({
+                url: window.location.origin + '/swagger/v1/swagger.json',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                requestInterceptor: (request) => {
+                    if (currentToken) {
+                        request.headers['Authorization'] = 'Bearer ' + currentToken;
+                    }
+                    return request;
+                }
+            });
+
+            window.ui = ui;
+        };
+
+        async function quickLogin(email, password, displayName, button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Logging in...';
+            button.disabled = true;
+
+            try {
+                const apiUrl = window.location.origin + '/api/v1/auth/login';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Login failed: ' + response.statusText);
+                }
+
+                // Verificar que existan los datos necesarios
+                if (!data.data || !data.data.accessToken) {
+                    throw new Error('Invalid response: missing token');
+                }
+
+                const token = data.data.accessToken;
+                const userName = data.data.userName || displayName;
+
+                currentToken = token;
+                currentUser = userName;
+
+                // Autorizar Swagger UI - usar solo el token sin 'Bearer' prefix
+                window.ui.preauthorizeApiKey('Bearer', token);
+
+                // Mostrar información del usuario
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('userInfo').classList.add('visible');
+                document.getElementById('loginButtons').style.display = 'none';
+
+                button.innerHTML = '✓ Logged in!';
+                button.classList.add('success');
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('success');
+                    button.disabled = false;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Login error:', error);
+                button.innerHTML = '✗ Failed';
+                button.classList.add('error');
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('error');
+                    button.disabled = false;
+                }, 3000);
+            }
+        }
+
+        function logout() {
+            currentToken = null;
+            currentUser = null;
+
+            // Remover autorización de Swagger UI
+            window.ui.preauthorizeApiKey('Bearer', null);
+
+            // Ocultar información del usuario
+            document.getElementById('userInfo').classList.remove('visible');
+            document.getElementById('loginButtons').style.display = 'flex';
+
+            // Llamar al endpoint de logout
+            fetch(window.location.origin + '/api/v1/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + (currentToken || '')
+                },
+                credentials: 'include'
+            }).catch(err => console.log('Logout endpoint error:', err));
+        }
+    </script>
+</body>
+</html>

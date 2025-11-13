@@ -14,6 +14,6 @@ namespace Template.Application.Contracts.Repositories.Base
 
         Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken);
 
-        Task<int> GetTotalCountAsync(Expression<Func<TEntity, bool>>? criteria, CancellationToken cancellationToken);
+        Task<int> GetTotalCountAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken);
     }
 }

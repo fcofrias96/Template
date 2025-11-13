@@ -12,16 +12,21 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
+                var isDevelopment = configuration.GetValue<string>("Environment") == "Development" 
+                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
                 options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                             .EnableRetryOnFailure(
                                 maxRetryCount: 3,
                                 maxRetryDelay: TimeSpan.FromSeconds(30),
                                 errorNumbersToAdd: null)
+                             );
 
-                             )
-                .LogTo(Console.WriteLine, LogLevel.Information)
-                ;
+                if (isDevelopment)
+                {
+                    options.LogTo(Console.WriteLine, LogLevel.Information);
+                }
             };
 
             return Options;
@@ -31,6 +36,9 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
+                var isDevelopment = configuration.GetValue<string>("Environment") == "Development" 
+                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
                 options.UseSqlServer(configuration.GetConnectionString("TemplateAuditConnection"),
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(AuditDbContext).Assembly.FullName)
                 .EnableRetryOnFailure(
@@ -38,7 +46,10 @@ namespace Template.Persistence.OptionActions
                                 maxRetryDelay: TimeSpan.FromSeconds(30),
                                 errorNumbersToAdd: null));
 
-                options.EnableSensitiveDataLogging();
+                if (isDevelopment)
+                {
+                    options.EnableSensitiveDataLogging();
+                }
             };
 
             return Options;

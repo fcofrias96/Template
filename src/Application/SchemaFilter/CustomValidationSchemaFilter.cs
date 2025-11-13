@@ -17,7 +17,7 @@ namespace Template.Application.SchemaFilter
                 // DateRangeFormatAttribute
                 if (attributes.Any(a => a is DateRangeFormatAttribute))
                 {
-                    var dateRangeDescription = "El formato aceptado es 'fecha..fecha', 'fecha..' o '..fecha' en formato 'yyyy-MM-dd'. Puede anteponer '!' para excluir los registros que coincidan.";
+                    var dateRangeDescription = "El formato aceptado es 'fecha', 'fecha..fecha', 'fecha..' o '..fecha' en formato 'yyyy-MM-dd'. Puede anteponer '!' para excluir los registros que coincidan.";
                     AppendDescription(schema, dateRangeDescription);
                 }
 
@@ -40,7 +40,7 @@ namespace Template.Application.SchemaFilter
                 // NumberRangeFormatAttribute
                 if (attributes.Any(a => a is NumberRangeFormatAttribute))
                 {
-                    var numberRangeDescription = "El formato aceptado es 'número..número', 'número..' o '..número'. Puede anteponer '!' para excluir los registros que coincidan.";
+                    var numberRangeDescription = "El formato aceptado es 'número', 'número..número', 'número..' o '..número'. Puede anteponer '!' para excluir los registros que coincidan.";
                     AppendDescription(schema, numberRangeDescription);
                 }
 

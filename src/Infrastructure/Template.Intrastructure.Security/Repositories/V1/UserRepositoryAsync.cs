@@ -141,9 +141,9 @@ namespace Template.Security.Repositories.V1
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(Expression<Func<User, bool>>? criteria, CancellationToken cancellationToken)
+        public async Task<int> GetTotalCountAsync(ISpecification<User> spec, CancellationToken cancellationToken)
         {
-            return await _readRepository.GetTotalCountAsync(criteria, cancellationToken);
+            return await _readRepository.GetTotalCountAsync(spec, cancellationToken);
         }
 
         public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)

@@ -144,34 +144,34 @@ namespace Template.Security
                     ValidAudience = jwtSettings.Audience,
                     ValidIssuer = jwtSettings.Issuer,
                 };
-                //options.Events = new JwtBearerEvents()
-                //{
-                //    OnChallenge = async (context) =>
-                //    {
-                //        var statusCode = StatusCodes.Status401Unauthorized;
-                //        context.Response.StatusCode = statusCode;
-                //        context.HandleResponse();
+                options.Events = new JwtBearerEvents()
+                {
+                    OnChallenge = async (context) =>
+                    {
+                        var statusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.StatusCode = statusCode;
+                        context.HandleResponse();
 
-                //        var response = new ApiResponse(statusCode, "You are not authenticated");
+                        var response = new ApiResponse(statusCode, "You are not authenticated");
 
-                //        await context.Response.WriteAsJsonAsync(response);
-                //        Log.Warning(response.Message);
-                //    },
-                //    OnForbidden = async (context) =>
-                //    {
-                //        var statusCode = StatusCodes.Status403Forbidden;
-                //        context.Response.StatusCode = statusCode;
-                //        context.Response.ContentType = "application/json";
+                        await context.Response.WriteAsJsonAsync(response);
+                        Log.Warning(response.Message);
+                    },
+                    OnForbidden = async (context) =>
+                    {
+                        var statusCode = StatusCodes.Status403Forbidden;
+                        context.Response.StatusCode = statusCode;
+                        context.Response.ContentType = "application/json";
 
-                //        var response = new ApiResponse(statusCode, "You are not authorized to access this resource");
+                        var response = new ApiResponse(statusCode, "You are not authorized to access this resource");
 
-                //        await context.Response.WriteAsJsonAsync(response);
-                //        string pathRequest = context.HttpContext.Request.Path;
-                //        string userName = context.HttpContext.GetUserName();
+                        await context.Response.WriteAsJsonAsync(response);
+                        string pathRequest = context.HttpContext.Request.Path;
+                        string userName = context.HttpContext.GetUserName();
 
-                //        Log.Warning($"User {userName} is not authorized to access {pathRequest}");
-                //    }
-                //};
+                        Log.Warning($"User {userName} is not authorized to access {pathRequest}");
+                    }
+                };
             });
 
             #endregion Authentication
