@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Template.Application.Contracts;
-using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Services.V1;
+
 using Template.Application.Repository;
 using Template.Persistence.Contracts;
 using Template.Persistence.Contracts.Repositories.V1;
+using Template.Persistence.Contracts.Services;
 using Template.Persistence.DbContexts;
 using Template.Persistence.DbContexts.V1;
 using Template.Persistence.OptionActions;
@@ -36,7 +36,7 @@ namespace Template.Persistence
 
             #region Dependency Injection
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
             //Repositories
             services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();

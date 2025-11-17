@@ -1,7 +1,4 @@
 ﻿
-
-using DocumentFormat.OpenXml.Wordprocessing;
-
 namespace Template.Application.Models.DTOs.V1.Items
 {
     public class ItemListDto

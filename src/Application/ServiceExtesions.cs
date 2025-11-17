@@ -40,19 +40,13 @@ namespace Template.Application
             #region Dependency Injection
 
             // services
-            services.AddScoped(typeof(IAsyncServiceAsync<,>), typeof(ServiceBaseAsync<,>));
-            services.AddScoped(typeof(ICreateServiceAsync<,>), typeof(CreateServiceAsync<,>));
-            services.AddScoped(typeof(IDeleteServiceAsync<,>), typeof(DeleteServiceAsync<,>));
-            services.AddScoped(typeof(IExportServiceAsync<,>), typeof(ExportServiceAsync<,>));
-            services.AddScoped(typeof(IReadServiceAsync<,>), typeof(ReadServiceAsync<,>));
-            services.AddScoped(typeof(IUpdateServiceAsync<,>), typeof(UpdateServiceAsync<,>));
+            services.AddScoped(typeof(IBaseServiceAsync<,>), typeof(BaseServiceAsync<,>));
+            services.AddScoped(typeof(IExportServiceAsync<>), typeof(ExportServiceAsync<>));
+
 
             // repositories
-            services.AddScoped(typeof(IAsyncRepository<,>), typeof(RepositoryBaseAsync<,>));
-            services.AddScoped(typeof(ICreateRepositoryAsync<,>), typeof(CreateRepositoryAsync<,>));
-            services.AddScoped(typeof(IDeleteRepositoryAsync<,>), typeof(DeleteRepositoryAsync<,>));
-            services.AddScoped(typeof(IReadRepositoryAsync<,>), typeof(ReadRepositoryAsync<,>));
-            services.AddScoped(typeof(IUpdateRepositoryAsync<,>), typeof(UpdateRepositoryAsync<,>));
+            services.AddScoped(typeof(IBaseRepositoryAsync<,>), typeof(BaseRepositoryAsync<,>));
+
 
             #endregion Dependency Injection
         }

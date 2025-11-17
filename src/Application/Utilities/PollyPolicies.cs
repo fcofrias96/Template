@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
-namespace Template.Infrastructure.Http;
+namespace Template.Application.Utilities;
 
 public static class PollyPolicies
 {

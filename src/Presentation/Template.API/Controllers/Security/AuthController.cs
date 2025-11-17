@@ -7,7 +7,7 @@ using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Settings;
 
-namespace Template.Api.Controllers.Auth
+namespace Template.Api.Controllers.Security
 {
     /// <summary>
     /// Handles user authentication operations such as login, token refresh, and logout.

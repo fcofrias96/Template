@@ -48,7 +48,7 @@ namespace Template.Application.SchemaFilter
                 var allowedValuesAttribute = attributes.OfType<AllowedValuesAttribute>().FirstOrDefault();
                 if (allowedValuesAttribute != null)
                 {
-                    // Set the enum values in the schema to show a dropdown in Swagger UI
+                    // Set the enum values in the schema to show a catalog in Swagger UI
                     schema.Enum = allowedValuesAttribute.AllowedValues
                         .Where(v => v is not null)
                         .Select(value => new OpenApiString((string)value))

@@ -8,7 +8,7 @@ namespace Template.Security.Mappings.V1
     public class ResourceProfile : Profile
     {
         public ResourceProfile()
-        {            CreateMap<Resource, Dropdown>()
+        {            CreateMap<Resource, Catalog>()
                 .ForMember(dest=> dest.Id, opt=> opt.MapFrom(src=> src.Id.ToString()));
             CreateMap<Resource, ResourceListDto>();
             CreateMap<ResourceCreateDto, Resource>();

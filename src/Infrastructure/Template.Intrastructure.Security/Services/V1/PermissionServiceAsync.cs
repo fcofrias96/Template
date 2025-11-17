@@ -1,4 +1,8 @@
-﻿using Template.Application.Contracts.Services.Base;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
+using Template.Application.Contracts.Repositories.Base;
+using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Services.Base;
 using Template.Security.Contracts.Repositories.V1;
@@ -8,21 +12,18 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class PermissionServiceAsync : ServiceBaseAsync<Permission, SecurityDbContext>, IPermissionServiceAsync
+    public class PermissionServiceAsync : BaseServiceAsync<Permission, SecurityDbContext>, IPermissionServiceAsync
     {
         private readonly IPermissionRepositoryAsync _permissionRepository;
 
         public PermissionServiceAsync(
-                ICreateServiceAsync<Permission, SecurityDbContext> createService,
-                IDeleteServiceAsync<Permission, SecurityDbContext> deleteService,
-                IExportServiceAsync<Permission, SecurityDbContext> exportService,
-                IReadServiceAsync<Permission, SecurityDbContext> readService,
-                IUpdateServiceAsync<Permission, SecurityDbContext> updateService,
-                IPermissionRepositoryAsync permissionRepository
-
-                ) : base(createService, deleteService, exportService, readService, updateService)
+            IMemoryCache cache,
+            IMapper mapper,
+            IBaseRepositoryAsync<Permission, SecurityDbContext> repositoryAsync,
+            IHttpContextAccessor httpContext, IPermissionRepositoryAsync permissionRepositoryAsync) 
+            : base(cache, mapper, repositoryAsync, httpContext)
         {
-            _permissionRepository = permissionRepository;
+            _permissionRepository = permissionRepositoryAsync;
         }
 
         public async Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId)

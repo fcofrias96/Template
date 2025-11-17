@@ -11,7 +11,7 @@ using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Resources;
 using Template.Security.Specification.V1;
 
-namespace Template.Api.Controllers.Admin
+namespace Template.Api.Controllers.Security
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -35,10 +35,10 @@ namespace Template.Api.Controllers.Admin
         }
 
         [Permission(Resources.Resource, ActionType.Read)]
-        [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync(CancellationToken cancellationToken)
+        [HttpGet("catalog")]
+        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _resourceService.GetProjectedAsync<Dropdown>(cancellationToken);
+            var resources = await _resourceService.GetProjectedAsync<Catalog>(cancellationToken);
             return Ok(resources);
         }
 

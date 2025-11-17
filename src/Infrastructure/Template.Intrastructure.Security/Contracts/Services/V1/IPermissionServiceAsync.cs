@@ -4,7 +4,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IPermissionServiceAsync : IAsyncServiceAsync<Permission, SecurityDbContext>
+    public interface IPermissionServiceAsync : IBaseServiceAsync<Permission, SecurityDbContext>
     {
         Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId);
 

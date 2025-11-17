@@ -1,39 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
-using Template.Persistence.Contracts;
-using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence
 {
-    public sealed class UnitOfWork : IUnitOfWork
+    public class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>
+        where TDbContext : DbContext
     {
-        private readonly ApplicationDbContext _context;
+        private readonly TDbContext _context;
 
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(TDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<bool> ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken)
+        public async Task ExecuteInTransactionAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken)
         {
-            var strategy = _context.Database.CreateExecutionStrategy();
+            // Opcional: si ya hay una transacción, puedes reusar o anidar.
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-            return await strategy.ExecuteAsync(async () =>
+            try
             {
-                using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-                try
-                {
-                    await action();
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await transaction.CommitAsync(cancellationToken);
-                    return true;
-                }
-                catch
-                {
-                    await transaction.RollbackAsync(cancellationToken);
-                    throw;
-                }
-            });
+                await operation(cancellationToken);
+
+                // Guardar cambios de todas las entidades trackeadas
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }

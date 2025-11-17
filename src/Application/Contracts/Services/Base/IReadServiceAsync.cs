@@ -2,7 +2,7 @@
 
 namespace Template.Application.Contracts.Services.Base
 {
-    public interface IReadServiceAsync<TEntity, TDbContext>
+    public interface IReadServiceAsync<TEntity>
     {
         Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken);
 

@@ -1,24 +1,38 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class ReadRepositoryAsync<TEntity, TDbContext> : IReadRepositoryAsync<TEntity, TDbContext> 
+    public class BaseRepositoryAsync<TEntity, TDbContext> : IBaseRepositoryAsync<TEntity, TDbContext> 
         where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
+        private readonly TDbContext _dbContext;
+
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        public ReadRepositoryAsync(TDbContext dbContext, IConfigurationProvider configurationProvider)
+        public BaseRepositoryAsync(TDbContext dbContext, IConfigurationProvider configurationProvider)
         {
+            _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
             _configurationProvider = configurationProvider;
+        }
+
+        public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            _dbSet.Remove(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
@@ -32,7 +46,7 @@ namespace Template.Application.Repository
         {
             var query = _dbSet.AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec);
-            
+
             return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync(cancellationToken);
         }
@@ -41,7 +55,7 @@ namespace Template.Application.Repository
         {
             var query = _dbSet.AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec, applyPagination: false);
-            
+
             return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync(cancellationToken);
         }
@@ -73,7 +87,12 @@ namespace Template.Application.Repository
         }
 
 
-        #region Private Methods
+        public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            _dbSet.Update(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
 
         private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true, bool applySorting = true)
         {
@@ -97,7 +116,6 @@ namespace Template.Application.Repository
             return query;
         }
 
-        #endregion Private Methods
 
     }
 }

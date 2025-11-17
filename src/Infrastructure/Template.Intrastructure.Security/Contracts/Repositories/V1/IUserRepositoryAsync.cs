@@ -2,12 +2,11 @@
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
-using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IUserRepositoryAsync : IReadRepositoryAsync<User, SecurityDbContext>
+    public interface IUserRepositoryAsync : IReadRepositoryAsync<User>
     {
 
         Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);

@@ -3,7 +3,7 @@ using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 
-namespace Template.Api.Controllers.Account
+namespace Template.Api.Controllers.Security
 {
     [Route("api/v{version:apiVersion}/accounts")]
     [ApiController]

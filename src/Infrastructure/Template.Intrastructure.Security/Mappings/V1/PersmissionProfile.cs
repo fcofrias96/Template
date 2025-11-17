@@ -8,8 +8,9 @@ namespace Template.Security.Mappings.V1
     public class PermissionProfile : Profile
     {
         public PermissionProfile()
-        {            CreateMap<Permission, PermissionListDto>();
-            CreateMap<Permission, Dropdown>();
+        {
+            CreateMap<Permission, PermissionListDto>();
+            CreateMap<Permission, Catalog>();
             CreateMap<PermissionCreateDto, Permission>();
             CreateMap<PermissionUpdateDto, Permission>();
             CreateMap<Permission, PermissionDetailDto>()

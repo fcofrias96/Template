@@ -1,9 +1,10 @@
-﻿using Template.Domain.Entities.V1;
+﻿using Template.Application.Contracts.Repositories.Base;
+using Template.Domain.Entities.V1;
 using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Contracts.Repositories.V1
 {
-    public interface IItemRepositoryAsync : IAsyncRepository<Item, ApplicationDbContext>
+    public interface IItemRepositoryAsync : IBaseRepositoryAsync<Item, ApplicationDbContext>
     {
     }
 }

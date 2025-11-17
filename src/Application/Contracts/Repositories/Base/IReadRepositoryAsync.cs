@@ -2,7 +2,7 @@
 
 namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IReadRepositoryAsync<TEntity, TDbContext>
+    public interface IReadRepositoryAsync<TEntity>
     {
         Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken);
 

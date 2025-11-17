@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Application\Template.Application.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\Template.Infrastructure.Monitoring\Template.Monitoring.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Email\Template.Email.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Security\Template.Security.csproj" />

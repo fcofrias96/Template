@@ -1,16 +1,11 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using DocumentFormat.OpenXml.InkML;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
-using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
@@ -22,12 +17,12 @@ namespace Template.Security.Repositories.V1
     {
         private readonly SecurityDbContext _dbContext;
         private readonly UserManager<User> _userManager;
-        private readonly IReadRepositoryAsync<User, SecurityDbContext> _readRepository;
+        private readonly IBaseRepositoryAsync<User, SecurityDbContext> _readRepository;
 
         public UserRepositoryAsync(
             UserManager<User> userManager,
             SecurityDbContext dbContext,
-            IReadRepositoryAsync<User, SecurityDbContext> readRepository
+            IBaseRepositoryAsync<User, SecurityDbContext> readRepository
             )
         {
             _userManager = userManager;

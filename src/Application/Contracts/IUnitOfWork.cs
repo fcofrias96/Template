@@ -1,7 +1,7 @@
 ﻿namespace Template.Application.Contracts
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork<TDbContext>
     {
-        Task<bool> ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken);
+        Task ExecuteInTransactionAsync( Func<CancellationToken, Task> operation,CancellationToken cancellationToken);
     }
 }

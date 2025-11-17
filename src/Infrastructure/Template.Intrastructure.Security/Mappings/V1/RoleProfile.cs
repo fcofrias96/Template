@@ -12,7 +12,7 @@ namespace Template.Security.Mappings.V1
         public RoleProfile()
         {
             CreateMap<Role, RoleListDto>();
-            CreateMap<Role, Dropdown>();
+            CreateMap<Role, Catalog>();
             ;
             CreateMap<Role, RoleDetailDto>()
             .ForMember(dest => dest.Resources, opt =>

@@ -4,7 +4,7 @@ using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 
-namespace Template.Api.Controllers.Account
+namespace Template.Api.Controllers.Security
 {
     [Route("api/v{version:apiVersion}/email")]
     [ApiController]

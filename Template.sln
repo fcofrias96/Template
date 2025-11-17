@@ -27,6 +27,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Template.Web", "src\Present
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Security", "src\Infrastructure\Template.Intrastructure.Security\Template.Security.csproj", "{9B839A61-43C6-4414-A23B-8B210755EC09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template.Monitoring", "src\Infrastructure\Template.Infrastructure.Monitoring\Template.Monitoring.csproj", "{4473AAF6-E99E-3C38-F248-DD3003D752D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{9B839A61-43C6-4414-A23B-8B210755EC09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B839A61-43C6-4414-A23B-8B210755EC09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B839A61-43C6-4414-A23B-8B210755EC09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4473AAF6-E99E-3C38-F248-DD3003D752D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4473AAF6-E99E-3C38-F248-DD3003D752D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4473AAF6-E99E-3C38-F248-DD3003D752D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4473AAF6-E99E-3C38-F248-DD3003D752D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{E15B464E-34D1-418D-B6B6-ABCDD82A56C6} = {69A88FBB-C00F-48D8-973A-EFE3EF191456}
 		{A049C54C-3AAF-48A9-ABDB-AE129D1D3B13} = {E15B464E-34D1-418D-B6B6-ABCDD82A56C6}
 		{9B839A61-43C6-4414-A23B-8B210755EC09} = {38C1BF94-518B-49E6-AD52-9489967B7738}
+		{4473AAF6-E99E-3C38-F248-DD3003D752D2} = {38C1BF94-518B-49E6-AD52-9489967B7738}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F7C4828-DCA5-4747-98E6-EBC0C1D2AB62}

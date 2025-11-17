@@ -1,22 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Serilog.Context;
-using System.Diagnostics;
 using Template.Application.Enums;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
-using Template.Application.Models.Wrappers;
-using ILogger = Serilog.ILogger;
+
 
 namespace Template.Api.Middlewares
 {
     public class ExceptionMiddleware
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly RequestDelegate _next;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger logger)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -24,157 +21,150 @@ namespace Template.Api.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var request = context.Request;
-            var clientIP = context.Connection.RemoteIpAddress;
-            var traceId = context.TraceIdentifier;
-            var stopwatch = Stopwatch.StartNew();
-
-            using (LogContext.PushProperty("ClientIP", clientIP))
-            using (LogContext.PushProperty("Referer", request.Headers["Referer"]))
-            using (LogContext.PushProperty("RequestMethod", request.Method))
-            using (LogContext.PushProperty("RequestPath", request.Path))
-            using (LogContext.PushProperty("RequestProtocol", request.Protocol))
-            using (LogContext.PushProperty("RequestQueryString", request.QueryString))
-            using (LogContext.PushProperty("UserAgent", request.Headers["User-Agent"]))
-            using (LogContext.PushProperty("UserName", context.GetUserName()))
-            using (LogContext.PushProperty("TraceId", traceId))
+            try
             {
-                try
+                await _next(context);
+            }
+            catch (OperationCanceledException ex)
+            {
+                // Petición cancelada por el cliente (ej: abortar en el browser)
+                using (_logger.BeginScope(new Dictionary<string, object>
                 {
-                    await _next(context);
-                    stopwatch.Stop();
-                    var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-                    using (LogContext.PushProperty("Elapsed", elapsed))
-                    {
-                        _logger.Information("Request processed");
-                    }
+                    ["TraceId"] = context.TraceIdentifier,
+                    ["UserName"] = context.GetUserName()
+                }))
+                {
+                    _logger.LogWarning(ex, "Request cancelled by the client.");
                 }
-                catch (OperationCanceledException ex)
-                {
-                    stopwatch.Stop();
-                    var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-                    using (LogContext.PushProperty("Elapsed", elapsed))
-                    {
-                        _logger.Warning(ex, "Request cancelled by the client.");
-                    }
 
-                    if (!context.Response.HasStarted)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
-                        await context.Response.WriteAsync("Request was cancelled.");
-                    }
-                    return;
+                if (!context.Response.HasStarted)
+                {
+                    // 499 no está “oficial” en ASP.NET, pero es común para client closed request
+                    context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
+                    await context.Response.WriteAsync("Request was cancelled.");
                 }
-                catch (Exception ex)
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                var exception = ex.InnerException ?? ex;
+
+                int statusCode;
+                string message;
+                string title;
+                string errorCode;
+
+                #region StatusCode & Titles
+
+                switch (exception)
                 {
-                    stopwatch.Stop();
-                    var elapsed = stopwatch.Elapsed.TotalMilliseconds;
-                    var exception = ex.InnerException ?? ex;
+                    case BadRequestException:
+                        statusCode = StatusCodes.Status400BadRequest;
+                        title = "Bad Request";
+                        message = exception.Message;
+                        errorCode = "BAD_REQUEST";
+                        break;
 
-                    int statusCode;
-                    string message;
-                    string title;
-                    string errorCode;
+                    case SecurityTokenException:
+                        statusCode = StatusCodes.Status401Unauthorized;
+                        title = "Unauthorized";
+                        message = "El token de autenticación no es válido o ha expirado.";
+                        errorCode = "UNAUTHORIZED";
+                        break;
 
-                    #region StatusCode & Titles
+                    case ForbiddenException:
+                        statusCode = StatusCodes.Status403Forbidden;
+                        title = "Forbidden";
+                        message = "No tiene permiso para realizar esta acción.";
+                        errorCode = "FORBIDDEN";
+                        break;
 
-                    switch (exception)
-                    {
-                        case BadRequestException:
-                            statusCode = StatusCodes.Status400BadRequest;
-                            title = "Bad Request";
-                            message = exception.Message;
-                            errorCode = "BAD_REQUEST";
-                            break;
+                    case NotFoundException:
+                        statusCode = StatusCodes.Status404NotFound;
+                        title = "Not Found";
+                        message = exception.Message;
+                        errorCode = "NOT_FOUND";
+                        break;
 
-                        case SecurityTokenException:
-                            statusCode = StatusCodes.Status401Unauthorized;
-                            title = "Unauthorized";
-                            message = "El token de autenticación no es válido o ha expirado.";
-                            errorCode = "UNAUTHORIZED";
-                            break;
-
-                        case ForbiddenException:
-                            statusCode = StatusCodes.Status403Forbidden;
-                            title = "Forbidden";
-                            message = "No tiene permiso para realizar esta acción.";
-                            errorCode = "FORBIDDEN";
-                            break;
-
-                        case NotFoundException:
-                            statusCode = StatusCodes.Status404NotFound;
-                            title = "Not Found";
-                            message = exception.Message;
-                            errorCode = "NOT_FOUND";
-                            break;
-
-                        case SqlException sqlEx:
-                            switch ((SqlErrorCodes)sqlEx.Number)
-                            {
-                                case SqlErrorCodes.UniqueConstraintViolation:
-                                case SqlErrorCodes.UniqueIndexViolation:
-                                    statusCode = StatusCodes.Status409Conflict;
-                                    title = "Conflict";
-                                    message = "Ya existe un registro con los mismos datos.";
-                                    errorCode = "DUPLICATE_ENTRY";
-                                    break;
-
-                                case SqlErrorCodes.ForeignKeyViolation:
-                                    statusCode = StatusCodes.Status400BadRequest;
-                                    title = "Foreign Key Violation";
-                                    message = "No se puede agregar, actualizar o eliminar el registro debido a restricciones de integridad referencial.";
-                                    errorCode = "FOREIGN_KEY_VIOLATION";
-                                    break;
-
-                                default:
-                                    statusCode = StatusCodes.Status500InternalServerError;
-                                    title = "Database Error";
-                                    message = "Ocurrió un error en la base de datos.";
-                                    errorCode = "DATABASE_ERROR";
-                                    break;
-                            }
-                            break;
-
-                        default:
-                            statusCode = StatusCodes.Status500InternalServerError;
-                            title = "Internal Server Error";
-                            message = "Ocurrió un problema en el servidor, por favor contacte al administrador.";
-                            errorCode = "INTERNAL_SERVER_ERROR";
-                            break;
-                    }
-
-                    #endregion
-
-                    using (LogContext.PushProperty("StatusCode", statusCode))
-                    using (LogContext.PushProperty("Elapsed", elapsed))
-                    {
-                        _logger.Error(ex, message);
-                    }
-
-                    if (!context.Response.HasStarted)
-                    {
-                        var problem = new ProblemDetails
+                    case SqlException sqlEx:
+                        switch ((SqlErrorCodes)sqlEx.Number)
                         {
-                            Status = statusCode,
-                            Title = title,
-                            Detail = message,
-                            Instance = context.Request.Path
-                        };
+                            case SqlErrorCodes.UniqueConstraintViolation:
+                            case SqlErrorCodes.UniqueIndexViolation:
+                                statusCode = StatusCodes.Status409Conflict;
+                                title = "Conflict";
+                                message = "Ya existe un registro con los mismos datos.";
+                                errorCode = "DUPLICATE_ENTRY";
+                                break;
 
+                            case SqlErrorCodes.ForeignKeyViolation:
+                                statusCode = StatusCodes.Status400BadRequest;
+                                title = "Foreign Key Violation";
+                                message = "No se puede agregar, actualizar o eliminar el registro debido a restricciones de integridad referencial.";
+                                errorCode = "FOREIGN_KEY_VIOLATION";
+                                break;
 
-                        problem.Extensions["traceId"] = context.TraceIdentifier;
-                        problem.Extensions["errorCode"] = errorCode;
+                            default:
+                                statusCode = StatusCodes.Status500InternalServerError;
+                                title = "Database Error";
+                                message = "Ocurrió un error en la base de datos.";
+                                errorCode = "DATABASE_ERROR";
+                                break;
+                        }
+                        break;
 
-                        context.Response.Clear();
-                        context.Response.StatusCode = statusCode;
-                        context.Response.ContentType = "application/problem+json";
+                    default:
+                        statusCode = StatusCodes.Status500InternalServerError;
+                        title = "Internal Server Error";
+                        message = "Ocurrió un problema en el servidor, por favor contacte al administrador.";
+                        errorCode = "INTERNAL_SERVER_ERROR";
+                        break;
+                }
 
-                        await context.Response.WriteAsJsonAsync(problem);
-                    }
-                    else
+                #endregion
+
+                var request = context.Request;
+                var clientIP = context.Connection.RemoteIpAddress ;
+
+                using (_logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["TraceId"] = context.TraceIdentifier,
+                    ["UserName"] = context.GetUserName(),
+                    ["ClientIP"] = clientIP,
+                    ["RequestMethod"] = request.Method,
+                    ["RequestPath"] = request.Path,
+                    ["RequestQueryString"] = request.QueryString.ToString(),
+                    ["StatusCode"] = statusCode,
+                    ["ErrorCode"] = errorCode
+                }))
+
+                {
+                    _logger.LogError(ex, "Unhandled exception: {ErrorCode} - {Message}", errorCode, message);
+                }
+
+                if (!context.Response.HasStarted)
+                {
+                    var problem = new ProblemDetails
                     {
-                        _logger.Warning("Response has already started, cannot write error response.");
-                    }
+                        Status = statusCode,
+                        Title = title,
+                        Detail = message,
+                        Instance = context.Request.Path
+                    };
+
+                    problem.Extensions["traceId"] = context.TraceIdentifier;
+                    problem.Extensions["errorCode"] = errorCode;
+
+                    context.Response.Clear();
+                    context.Response.StatusCode = statusCode;
+                    context.Response.ContentType = "application/problem+json";
+
+                    await context.Response.WriteAsJsonAsync(problem);
+                }
+                else
+                {
+                    _logger.LogWarning("Response has already started, cannot write error response.");
                 }
             }
         }

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Template.Application.Contracts.Repositories.Base;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
@@ -7,20 +7,13 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class PermissionRepositoryAsync : RepositoryBaseAsync<Permission, SecurityDbContext>, IPermissionRepositoryAsync
+    public class PermissionRepositoryAsync : BaseRepositoryAsync<Permission, SecurityDbContext>, IPermissionRepositoryAsync
     {
         private readonly SecurityDbContext _dbContext;
 
-        public PermissionRepositoryAsync(
-                    ICreateRepositoryAsync<Permission, SecurityDbContext> createRepository,
-                    IUpdateRepositoryAsync<Permission, SecurityDbContext> updateRepository,
-                    IDeleteRepositoryAsync<Permission, SecurityDbContext> deleteRepository,
-                    IReadRepositoryAsync<Permission, SecurityDbContext> readRepository,
-                    SecurityDbContext dbContext
-
-                    ) : base(createRepository, updateRepository, deleteRepository, readRepository)
+        public PermissionRepositoryAsync(SecurityDbContext securityDb, IConfigurationProvider configurationProvider) : base(securityDb, configurationProvider)
         {
-            _dbContext = dbContext;
+            _dbContext = securityDb;
         }
 
         public async Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId)

@@ -6,14 +6,6 @@ namespace Template.Security.Services.V1
 {
     public class RolePermissionServiceAsync : IRolePermissionServiceAsync
     {
-        private readonly IRolePermissionRepositoryAsync _rolePermissionRepositoryAsync;
-
-        public RolePermissionServiceAsync(IRolePermissionRepositoryAsync rolePermissionRepositoryAsync)
-        {
-            _rolePermissionRepositoryAsync = rolePermissionRepositoryAsync;
-        }
-
-
 
     }
 }

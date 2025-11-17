@@ -1,0 +1,2 @@
+namespace Template.Security.Constants
+{

@@ -1,5 +1,4 @@
-﻿using Serilog;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -18,12 +17,8 @@ namespace Template.Application.Models.Specification
     /// <typeparam name="TEntity">The type of entity for which the specification is defined.</typeparam>
     public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
     {
-        private readonly ILogger _logger;
-
-        protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination, ILogger logger)
+        protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination)
         {
-            _logger = logger;
-
             if (applyPagination)
             {
                 Skip = queryParametersBase.Offset;
@@ -33,20 +28,20 @@ namespace Template.Application.Models.Specification
             IsDescending = queryParametersBase.IsDescending;
             BuildCriteria(queryParametersBase.BuildFields());
             ApplySortBy(queryParametersBase.SortBy ?? "CreatedAt");
-            
         }
 
         public Expression<Func<TEntity, bool>>? Criteria { get; protected set; }
+
         public bool IsDescending { get; private set; }
 
-        public Expression<Func<TEntity, object>> SortBy { get; set; }
+        public Expression<Func<TEntity, object>> SortBy { get; set; } = default!;
 
         public int Skip { get; private set; }
+
         public int Take { get; private set; }
 
-        // Cache estático por TEntity: propertyPath -> expresión de ordenamiento
-        private static readonly ConcurrentDictionary<string, Expression<Func<TEntity, object>>> SortExpressionCache
-            = new();
+        // Cache por TEntity: propertyPath -> expresión de ordenamiento
+        private static readonly ConcurrentDictionary<string, Expression<Func<TEntity, object>>> SortExpressionCache = new();
 
         private static readonly ConcurrentDictionary<Type, TypeConverter?> _typeConverterCache = new();
 
@@ -74,7 +69,6 @@ namespace Template.Application.Models.Specification
                 var conversion = Expression.Convert(propertyExpression, typeof(object));
                 return Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
             });
-
         }
 
         /// <summary>
@@ -137,7 +131,6 @@ namespace Template.Application.Models.Specification
             return expression;
         }
 
-
         /// <summary>
         /// Updates the current filtering criteria by combining it with a new expression.
         /// If the <paramref name="exclude"/> parameter is set to true, the expression is combined using an AND NOT operation,
@@ -145,7 +138,6 @@ namespace Template.Application.Models.Specification
         /// </summary>
         /// <param name="expression">The filtering expression to be combined with the existing criteria.</param>
         /// <param name="exclude">If true, applies an AND NOT logic to exclude matching items; otherwise, applies an AND logic.</param>
-
         private void CombineCriteria(Expression<Func<TEntity, bool>> expression, bool exclude = false)
         {
             if (exclude)
@@ -171,15 +163,15 @@ namespace Template.Application.Models.Specification
                     var min = array.GetValue(0);
                     var max = array.GetValue(1);
 
-                    var convetedMin = string.IsNullOrEmpty((string?)min) ? null : ConvertToType(type, min);
-                    var convetedMax = string.IsNullOrEmpty((string?)max) ? null : ConvertToType(type, max);
+                    var convertedMin = string.IsNullOrEmpty((string?)min) ? null : ConvertToType(type, min);
+                    var convertedMax = string.IsNullOrEmpty((string?)max) ? null : ConvertToType(type, max);
 
-                    if (convetedMax is DateTimeOffset dateTime)
+                    if (convertedMax is DateTimeOffset dateTime)
                     {
-                        convetedMax = dateTime.AddDays(1).AddTicks(-1);
+                        convertedMax = dateTime.AddDays(1).AddTicks(-1);
                     }
 
-                    expression = ExpressionBuilder.BuildRangeExpression<TEntity>(convetedMin, convetedMax, field.PropertyInfo);
+                    expression = ExpressionBuilder.BuildRangeExpression<TEntity>(convertedMin, convertedMax, field.PropertyInfo);
                 }
                 else
                 {
@@ -190,7 +182,6 @@ namespace Template.Application.Models.Specification
                 CombineCriteria(expression, field.Exclude);
             });
         }
-
 
         public object? ConvertToType(Type type, object value)
         {
@@ -276,7 +267,9 @@ namespace Template.Application.Models.Specification
 
             if (targetType == typeof(DateTimeOffset))
             {
-                if (DateTimeOffset.TryParse(stringValue, CultureInfo.InvariantCulture,
+                if (DateTimeOffset.TryParse(
+                        stringValue,
+                        CultureInfo.InvariantCulture,
                         DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
                         out var dto))
                 {
@@ -288,8 +281,11 @@ namespace Template.Application.Models.Specification
 
             if (targetType == typeof(DateTime))
             {
-                if (DateTime.TryParse(stringValue, CultureInfo.InvariantCulture,
-                        DateTimeStyles.AssumeLocal, out var dt))
+                if (DateTime.TryParse(
+                        stringValue,
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.AssumeLocal,
+                        out var dt))
                 {
                     return dt;
                 }
@@ -303,10 +299,9 @@ namespace Template.Application.Models.Specification
                 {
                     return Enum.Parse(targetType, stringValue, ignoreCase: true);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    _logger.Error(ex, "Error al convertir '{Value}' al enum {TypeName}", stringValue, targetType.Name);
-                    throw;
+                    return ThrowConversionError(targetType, stringValue);
                 }
             }
 
@@ -324,20 +319,18 @@ namespace Template.Application.Models.Specification
                 {
                     return converter.ConvertFrom(null, CultureInfo.InvariantCulture, stringValue);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    _logger.Error(ex, "Error al convertir '{Value}' usando TypeConverter para {TypeName}",
-                        stringValue, targetType.Name);
-                    throw;
+                    return ThrowConversionError(targetType, stringValue);
                 }
             }
 
             // Tipos complejos con propiedad "Name"
             if (targetType.IsClass && targetType != typeof(string))
             {
-                var nameProperty = _namePropertyCache.GetOrAdd(targetType, t =>
-                    t.GetProperty("Name", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance)
-                );
+                var nameProperty = _namePropertyCache.GetOrAdd(
+                    targetType,
+                    t => t.GetProperty("Name", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance));
 
                 if (nameProperty != null)
                 {
@@ -348,32 +341,26 @@ namespace Template.Application.Models.Specification
                         nameProperty.SetValue(instance, convertedName);
                         return instance;
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        _logger.Error(ex,
-                            "Error al asignar la propiedad 'Name' con valor '{Value}' para el tipo {TypeName}",
-                            stringValue, targetType.Name);
-                        throw;
+                        return ThrowConversionError(targetType, stringValue);
                     }
                 }
             }
 
-            // Último fallback: Convert.ChangeType (con log si falla)
+            // Último fallback: Convert.ChangeType
             try
             {
                 return Convert.ChangeType(stringValue, targetType, CultureInfo.InvariantCulture);
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.Error(ex, "Error al convertir el valor '{Value}' al tipo {TypeName}", stringValue, targetType.Name);
-                throw;
+                return ThrowConversionError(targetType, stringValue);
             }
         }
 
-        private object ThrowConversionError(Type targetType, string value)
+        private static object ThrowConversionError(Type targetType, string value)
         {
-            _logger.Error("Error al convertir el valor '{Value}' al tipo {TypeName}", value, targetType.Name);
-            // Puedes lanzar tu BadRequestException si quieres algo más de dominio
             throw new BadRequestException($"Value '{value}' is not valid for type '{targetType.Name}'.");
         }
     }

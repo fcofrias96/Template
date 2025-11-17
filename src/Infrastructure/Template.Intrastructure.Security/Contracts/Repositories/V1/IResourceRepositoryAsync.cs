@@ -4,7 +4,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IResourceRepositoryAsync : IAsyncRepository<Resource, SecurityDbContext>
+    public interface IResourceRepositoryAsync : IBaseRepositoryAsync<Resource, SecurityDbContext>
     {
     }
 }

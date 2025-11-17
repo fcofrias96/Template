@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
-using Template.Application.Contracts.Services.V1;
+using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Categories;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
+using Template.Persistence.Contracts.Services;
+using Template.Persistence.DbContexts.V1;
 
 namespace Template.Api.Controllers
 {
@@ -71,10 +74,10 @@ namespace Template.Api.Controllers
 
 
         [Permission(Resources.Resource, ActionType.Read)]
-        [HttpGet("dropdown")]
-        public async Task<ActionResult<ApiResponse<List<Dropdown>>>> GetProjectedAsync(CancellationToken cancellationToken)
+        [HttpGet("catalog")]
+        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _categoryServiceAsync.GetProjectedAsync<Dropdown>(cancellationToken);
+            var resources = await _categoryServiceAsync.GetProjectedAsync<Catalog>(cancellationToken);
             return Ok(resources);
         }
 

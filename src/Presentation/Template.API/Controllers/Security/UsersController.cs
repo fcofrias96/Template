@@ -8,7 +8,7 @@ using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Users;
 using Template.Security.Specification.V1;
 
-namespace Template.Api.Controllers.Admin
+namespace Template.Api.Controllers.Security
 {
     [Authorize(Roles = Roles.Admin)]
     [Route("api/v{version:apiVersion}/[controller]")]

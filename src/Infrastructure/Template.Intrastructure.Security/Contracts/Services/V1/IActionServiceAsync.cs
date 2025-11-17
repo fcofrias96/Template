@@ -5,6 +5,6 @@ namespace Template.Security.Contracts.Services.V1
 {
     public interface IActionServiceAsync
     {
-        Task<IReadOnlyList<Dropdown>> GetProjectedAsync(CancellationToken cancellationToken);
+        Task<IReadOnlyList<Catalog>> GetProjectedAsync(CancellationToken cancellationToken);
     }
 }

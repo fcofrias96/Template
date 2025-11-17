@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.Data;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.V1;
@@ -23,7 +21,7 @@ namespace Template.Security.Services.V1
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IReadServiceAsync<User, SecurityDbContext> _readService;
+        private readonly IBaseServiceAsync<User, SecurityDbContext> _service;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepositoryAsync _userRepository;
         public UserServiceAsync(
@@ -33,14 +31,14 @@ namespace Template.Security.Services.V1
             IHttpContextAccessor httpContext,
             IResourceServiceAsync moduleService,
             UserManager<User> userManager,
-            IReadServiceAsync<User, SecurityDbContext> readService
+            IBaseServiceAsync<User, SecurityDbContext> service
             )
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContext = httpContext;
             _userManager = userManager;
-            _readService = readService;
+            _service = service;
         }
 
 
@@ -57,22 +55,22 @@ namespace Template.Security.Services.V1
         public async Task<User> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(id);
-            return await _readService.GetByIdAsync(parsedId, cancellationToken);
+            return await _service.GetByIdAsync(parsedId, cancellationToken);
         }
         public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(id);
-            return await _readService.GetByIdProjectedAsync<string, TDestination>(parsedId, cancellationToken);
+            return await _service.GetByIdProjectedAsync<string, TDestination>(parsedId, cancellationToken);
         }
 
         public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-            return await _readService.GetProjectedAsync<TDestination>(cancellationToken);
+            return await _service.GetProjectedAsync<TDestination>(cancellationToken);
         }
 
         public async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken) where TSpecification : ISpecification<User>
         {
-            return await _readService.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters, cancellationToken);
+            return await _service.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters, cancellationToken);
         }
 
         public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId, CancellationToken cancellationToken)
@@ -147,6 +145,7 @@ namespace Template.Security.Services.V1
         {
             return id?.ToString() ?? string.Empty;
         }
+
         #endregion Private Methods
     }
 }

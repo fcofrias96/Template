@@ -4,8 +4,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public partial class ExportServiceAsync<TEntity, TDbContext> where TEntity : class, IEntityBase
-        where TDbContext : DbContext
+    public partial class ExportServiceAsync<TEntity> where TEntity : class, IEntityBase
     {
         #region Private Methods
 
@@ -14,18 +13,12 @@ namespace Template.Application.Services.Base
         /// </summary>
         private static class ExportCache<T>
         {
-            public static readonly PropertyInfo[] Properties;
-            public static readonly string[] Headers;
+            public static readonly PropertyInfo[] Properties = typeof(T)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            static ExportCache()
-            {
-                Properties = typeof(T)
-                    .GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                Headers = Properties
-                    .Select(GetDisplayName)
-                    .ToArray();
-            }
+            public static readonly string[] Headers = Properties
+                .Select(GetDisplayName)
+                .ToArray();
         }
 
         #endregion Private Methods

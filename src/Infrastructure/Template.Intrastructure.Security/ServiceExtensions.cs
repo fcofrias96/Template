@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 using System.Text;
+using Template.Application.Constants;
 using Template.Application.Extensions;
-using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
@@ -152,24 +153,40 @@ namespace Template.Security
                         context.Response.StatusCode = statusCode;
                         context.HandleResponse();
 
-                        var response = new ApiResponse(statusCode, "You are not authenticated");
+                        var problemDetails = new ProblemDetails
+                        {
+                            Type = ProblemType.Unauthorized,
+                            Title = "Unauthorized",
+                            Status = statusCode,
+                            Detail = "You are not authenticated"
+                        };
 
-                        await context.Response.WriteAsJsonAsync(response);
-                        Log.Warning(response.Message);
-                    },
+                        await context.Response.WriteAsJsonAsync(problemDetails);
+                        
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<SecurityDbContext>>();
+                        logger.LogWarning(problemDetails.Detail);
+                    },  
                     OnForbidden = async (context) =>
                     {
                         var statusCode = StatusCodes.Status403Forbidden;
                         context.Response.StatusCode = statusCode;
                         context.Response.ContentType = "application/json";
 
-                        var response = new ApiResponse(statusCode, "You are not authorized to access this resource");
-
-                        await context.Response.WriteAsJsonAsync(response);
                         string pathRequest = context.HttpContext.Request.Path;
                         string userName = context.HttpContext.GetUserName();
 
-                        Log.Warning($"User {userName} is not authorized to access {pathRequest}");
+                        var problemDetails = new ProblemDetails
+                        {
+                            Type = ProblemType.Forbidden,
+                            Title = "Forbidden",
+                            Status = statusCode,
+                            Detail = "You are not authorized to access this resource"
+                        };
+
+                        await context.Response.WriteAsJsonAsync(problemDetails);
+
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<SecurityDbContext>>();
+                        logger.LogWarning("User {UserName} is not authorized to access {PathRequest}", userName, pathRequest);
                     }
                 };
             });
