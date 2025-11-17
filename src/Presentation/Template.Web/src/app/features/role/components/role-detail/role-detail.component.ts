@@ -12,12 +12,11 @@ import { Observable, Subject } from 'rxjs';
   templateUrl: './role-detail.component.html',
   styleUrl: './role-detail.component.scss'
 })
-export class RoleDetailComponent  implements OnChanges, DynamicModalComponent
-{
+export class RoleDetailComponent implements OnChanges, DynamicModalComponent {
   role$!: Observable<RoleDetail>;
   @Input() roleId!: string;
 
-  constructor(private roleService: RoleService) {}
+  constructor(private roleService: RoleService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['roleId'] && this.roleId) {

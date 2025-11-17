@@ -19,7 +19,7 @@ namespace Template.Application.Utilities
 
             // Intentamos obtener el factory ya compilado
 
-            var factoryDelegate =  _factoryCache.GetOrAdd(specType, value => CreateFactory<TSpecification>(value));
+            var factoryDelegate = _factoryCache.GetOrAdd(specType, value => CreateFactory<TSpecification>(value));
 
             var factory = (Func<IQueryParametersBase, bool, TSpecification>)factoryDelegate;
 

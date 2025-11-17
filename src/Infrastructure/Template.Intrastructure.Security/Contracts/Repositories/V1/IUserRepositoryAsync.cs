@@ -8,7 +8,6 @@ namespace Template.Security.Contracts.Repositories.V1
 {
     public interface IUserRepositoryAsync : IReadRepositoryAsync<User>
     {
-
         Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 
         Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken);

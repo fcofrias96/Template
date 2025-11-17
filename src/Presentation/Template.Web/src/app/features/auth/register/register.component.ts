@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,7 +15,7 @@ import { CustomValidators } from 'app/core/utils/custom-validator';
 export class RegisterComponent implements OnInit {
   public registerForm: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -27,10 +26,8 @@ export class RegisterComponent implements OnInit {
     }, { validator: CustomValidators.passwordMatchValidator });
   }
 
-
   onRegister(): void {
     if (this.registerForm.valid) {
-
       console.log('Registration successful', this.registerForm.value);
     }
   }

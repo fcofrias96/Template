@@ -41,7 +41,7 @@ namespace Template.Api.Controllers.Security
         /// <param name="loginDTO">User credentials (username and password).</param>
         /// <param name="cancellationToken">Token used to cancel the request.</param>
         /// <returns>
-        /// Returns an <see cref="ApiResponse{T}"/> containing an <see cref="AuthenticationResponseDto"/> 
+        /// Returns an <see cref="ApiResponse{T}"/> containing an <see cref="AuthenticationResponseDto"/>
         /// with access and refresh tokens if the authentication is successful.
         /// </returns>
         /// <response code="200">Returns a valid authentication response.</response>
@@ -70,7 +70,7 @@ namespace Template.Api.Controllers.Security
         /// </summary>
         /// <param name="cancellationToken">Token used to cancel the request.</param>
         /// <returns>
-        /// Returns an <see cref="ApiResponse{T}"/> containing a new 
+        /// Returns an <see cref="ApiResponse{T}"/> containing a new
         /// <see cref="RefreshTokenResponseDto"/> with refreshed tokens.
         /// </returns>
         /// <response code="200">Returns a new access and refresh token.</response>
@@ -116,7 +116,7 @@ namespace Template.Api.Controllers.Security
         /// Returns default cookie options for storing secure refresh tokens.
         /// </summary>
         /// <remarks>
-        /// Cookies are configured as <c>HttpOnly</c> and <c>Secure</c> for safety, 
+        /// Cookies are configured as <c>HttpOnly</c> and <c>Secure</c> for safety,
         /// with a lifetime equal to the refresh token duration defined in <see cref="JwtSettings"/>.
         /// </remarks>
         private CookieOptions GetCookieOptions()

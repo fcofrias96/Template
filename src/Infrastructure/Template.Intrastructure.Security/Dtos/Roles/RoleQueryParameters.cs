@@ -10,6 +10,5 @@ namespace Template.Security.Dtos.Roles
         public override string? SortBy { get; set; }
 
         public string? Name { get; set; }
-
     }
 }

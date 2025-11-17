@@ -25,10 +25,10 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@environment": ["environments/environment"],
-      "@models/*": ["app/core/models/*"],
-      "@shared/*": ["app/shared/*"],
-      "@features/*": ["app/features/*"]
+      "@environment": [ "environments/environment" ],
+      "@models/*": [ "app/core/models/*" ],
+      "@shared/*": [ "app/shared/*" ],
+      "@features/*": [ "app/features/*" ]
     }
   },
   "angularCompilerOptions": {

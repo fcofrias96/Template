@@ -34,8 +34,6 @@ export class CategoryFormComponent implements OnInit, DynamicModalComponent {
     this.categoryForm = this.initForm();
   }
 
-
-
   ngOnInit(): void {
     this.getCategoryData();
   }

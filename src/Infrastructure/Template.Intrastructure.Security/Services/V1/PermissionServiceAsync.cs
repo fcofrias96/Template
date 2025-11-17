@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Services.Base;
-using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Services.Base;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
@@ -20,7 +18,7 @@ namespace Template.Security.Services.V1
             IMemoryCache cache,
             IMapper mapper,
             IBaseRepositoryAsync<Permission, SecurityDbContext> repositoryAsync,
-            IHttpContextAccessor httpContext, IPermissionRepositoryAsync permissionRepositoryAsync) 
+            IHttpContextAccessor httpContext, IPermissionRepositoryAsync permissionRepositoryAsync)
             : base(cache, mapper, repositoryAsync, httpContext)
         {
             _permissionRepository = permissionRepositoryAsync;
@@ -30,6 +28,5 @@ namespace Template.Security.Services.V1
         {
             return await _permissionRepository.HasPermissionAsync(userId, resourceId, actionId);
         }
-
     }
 }

@@ -11,7 +11,7 @@ import { ModalService } from '@shared/services/modal.service';
   styleUrl: './user.component.scss',
 })
 export class UserComponent {
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   addUser() {
     this.modalService.openModal(UserFormComponent, 'Add User', null, {

@@ -12,7 +12,7 @@ const { apiUrl } = environment;
   providedIn: 'root',
 })
 export class ExportService {
-  constructor(protected apiRepository: ApiRepository) {}
+  constructor(protected apiRepository: ApiRepository) { }
 
   public handleExporting({
     searchParams,
@@ -50,8 +50,7 @@ export class ExportService {
     searchParams: string | null
   ): Observable<Blob> {
     return this.apiRepository.get(
-      `${apiUrl}/${entityName}/export/csv${
-        searchParams ? '?' + searchParams : ''
+      `${apiUrl}/${entityName}/export/csv${searchParams ? '?' + searchParams : ''
       }`,
       { responseType: 'blob' }
     );
@@ -62,8 +61,7 @@ export class ExportService {
     searchParams: string | null
   ): Observable<Blob> {
     return this.apiRepository.get<Blob>(
-      `${apiUrl}/${entityName}/export/pdf/${
-        searchParams ? '?' + searchParams : ''
+      `${apiUrl}/${entityName}/export/pdf/${searchParams ? '?' + searchParams : ''
       }`,
       { responseType: 'blob' }
     );
@@ -74,8 +72,7 @@ export class ExportService {
     searchParams: string | null
   ): Observable<Blob> {
     return this.apiRepository.get(
-      `${apiUrl}/${entityName}/export/docx/${
-        searchParams ? '?' + searchParams : ''
+      `${apiUrl}/${entityName}/export/docx/${searchParams ? '?' + searchParams : ''
       }`,
       { responseType: 'blob' }
     );

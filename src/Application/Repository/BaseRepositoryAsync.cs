@@ -7,7 +7,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class BaseRepositoryAsync<TEntity, TDbContext> : IBaseRepositoryAsync<TEntity, TDbContext> 
+    public class BaseRepositoryAsync<TEntity, TDbContext> : IBaseRepositoryAsync<TEntity, TDbContext>
         where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
@@ -86,13 +86,11 @@ namespace Template.Application.Repository
             return await query.CountAsync(cancellationToken);
         }
 
-
         public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
             _dbSet.Update(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
-
 
         private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true, bool applySorting = true)
         {
@@ -115,7 +113,5 @@ namespace Template.Application.Repository
 
             return query;
         }
-
-
     }
 }

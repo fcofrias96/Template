@@ -10,7 +10,7 @@ describe('PermissionFormComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PermissionFormComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PermissionFormComponent);
     component = fixture.componentInstance;

@@ -17,7 +17,6 @@ namespace Template.Security.Services.V1
 
         public async Task<IReadOnlyList<Catalog>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-
             return await _readRepository.GetProjectedAsync<Catalog>(cancellationToken);
         }
     }

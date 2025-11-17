@@ -1,16 +1,12 @@
-
-
 <label [attr.for]="formControlName"> {{ label }}</label>
 <div *ngFor="let item of items" class="checkbox-item">
   <label>
 
-    <input
-      #checkboxInput
-      type="checkbox"
-      [checked]="isSelected(item)"
-      (change)="onCheckboxChange(item, checkboxInput.checked)"
-      [disabled]="isDisabled"
-    />
+    <input #checkboxInput
+           type="checkbox"
+           [checked]="isSelected(item)"
+           (change)="onCheckboxChange(item, checkboxInput.checked)"
+           [disabled]="isDisabled" />
     {{ item[labelKey] }}
   </label>
 </div>

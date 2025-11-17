@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="name">The name of the entity that was not found.</param>
         /// <param name="key">The key/identifier of the entity that was not found.</param>
-        public NotFoundException(string name, object? key) 
+        public NotFoundException(string name, object? key)
             : base($"{name} with id ({key}) was not found")
         {
         }
@@ -19,7 +19,7 @@
         /// Initializes a new instance of the <see cref="NotFoundException"/> class with the specified entity name.
         /// </summary>
         /// <param name="name">The name of the entity that was not found.</param>
-        public NotFoundException(string name) 
+        public NotFoundException(string name)
             : base($"{name} was not found")
         {
         }
@@ -29,7 +29,7 @@
         /// </summary>
         /// <param name="message">The error message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public NotFoundException(string message, Exception innerException) 
+        public NotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

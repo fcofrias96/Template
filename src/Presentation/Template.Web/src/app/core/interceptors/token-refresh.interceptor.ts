@@ -55,7 +55,6 @@ export const tokenRefreshInterceptor: HttpInterceptorFn =
             }))
           ),
           catchError(err => {
-
             return throwError(() => err);
           })
         );

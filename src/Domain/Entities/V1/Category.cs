@@ -6,6 +6,6 @@ namespace Template.Domain.Entities.V1
     {
         public override int Id { get; set; }
         public string Name { get; set; }
-        public virtual IReadOnlyCollection<Item> Items { get; set; } 
+        public virtual IReadOnlyCollection<Item> Items { get; set; }
     }
 }

@@ -18,12 +18,11 @@ import { DynamicModalComponent } from '@models/dynamic-modal.interface';
   styleUrl: './product-detail.component.scss',
 })
 export class ProductDetailComponent
-  implements OnChanges, DynamicModalComponent
-{
+  implements OnChanges, DynamicModalComponent {
   product$!: Observable<ProductDetail>;
   @Input() productId!: string;
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productId'] && this.productId) {

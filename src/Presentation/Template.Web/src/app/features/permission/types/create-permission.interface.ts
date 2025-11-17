@@ -5,5 +5,3 @@ export interface CreatePermission {
   resourceId: number;
   actionTypeId: number;
 }
-
-

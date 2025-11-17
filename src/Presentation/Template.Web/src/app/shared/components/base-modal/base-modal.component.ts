@@ -28,7 +28,7 @@ export class BaseModalComponent implements OnInit, OnDestroy {
   private componentRef!: ComponentRef<DynamicModalComponent>;
   private unsubscribe$ = new Subject<void>();
 
-  constructor(public bsModalRef: BsModalRef) {}
+  constructor(public bsModalRef: BsModalRef) { }
 
   ngOnInit(): void {
     this.loadComponent();

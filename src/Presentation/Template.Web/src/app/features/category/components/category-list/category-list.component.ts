@@ -59,7 +59,7 @@ export class CategoryListComponent implements OnInit, OnDestroy {
   private getCategories(
     searchParams: URLSearchParams | null = null
   ): Observable<PagedCollection<Category>> {
-    if(!searchParams) {
+    if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
     return this.categoryService.getPagedList<Category>(searchParams);

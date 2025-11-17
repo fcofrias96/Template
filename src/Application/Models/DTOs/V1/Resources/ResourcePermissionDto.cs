@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Template.Application.Models.DTOs.V1.Permissions;
+﻿using Template.Application.Models.DTOs.V1.Permissions;
 
 namespace Template.Application.Models.DTOs.V1.Resources
 {

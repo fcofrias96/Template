@@ -11,7 +11,7 @@ import { ModalService } from '@shared/services/modal.service';
   styleUrl: './permission.component.scss',
 })
 export class PermissionComponent {
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   addPermission() {
     this.modalService.openModal(PermissionFormComponent, 'Add Permission', null, {

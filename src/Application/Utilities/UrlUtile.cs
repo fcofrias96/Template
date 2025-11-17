@@ -43,5 +43,4 @@ namespace Template.Application.Utilities
             return uriBuilder.ToString();
         }
     }
-
 }

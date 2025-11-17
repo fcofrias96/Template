@@ -1,39 +1,29 @@
 <form [formGroup]="permissionForm" (ngSubmit)="onSubmit()" novalidate>
-  <app-form-field
-    formControlName="name"
-    label="Nombre del Permiso"
-    id="name"
-  ></app-form-field>
-  <app-form-field
-    formControlName="description"
-    label="Descripción del Permiso"
-    id="description"
-  ></app-form-field>
+  <app-form-field formControlName="name"
+                  label="Nombre del Permiso"
+                  id="name"></app-form-field>
+  <app-form-field formControlName="description"
+                  label="Descripción del Permiso"
+                  id="description"></app-form-field>
 
-  <app-select
-    formControlName="actionId"
-    [options]="(actions$ | async) || []"
-    [placeholder]="'Seleccione una opción'"
-    [required]="true"
-    [label]="'Acción'"
-  >
+  <app-select formControlName="actionId"
+              [options]="(actions$ | async) || []"
+              [placeholder]="'Seleccione una opción'"
+              [required]="true"
+              [label]="'Acción'">
   </app-select>
 
-  <app-filter-select
-    formControlName="resourceId"
-    [options]="(resources$ | async) || []"
-    [placeholder]="'Seleccione una opción'"
-    [required]="true"
-    [label]="'Recursos'"
-    [bind]="{ key: 'id', value: 'name' }"
-  >
+  <app-filter-select formControlName="resourceId"
+                     [options]="(resources$ | async) || []"
+                     [placeholder]="'Seleccione una opción'"
+                     [required]="true"
+                     [label]="'Recursos'"
+                     [bind]="{ key: 'id', value: 'name' }">
   </app-filter-select>
 
-  <button
-    class="btn btn-primary mt-4"
-    type="submit"
-    [disabled]="permissionForm.invalid"
-  >
+  <button class="btn btn-primary mt-4"
+          type="submit"
+          [disabled]="permissionForm.invalid">
     {{ edit ? "Actualizar" : "Agregar" }}
   </button>
 </form>

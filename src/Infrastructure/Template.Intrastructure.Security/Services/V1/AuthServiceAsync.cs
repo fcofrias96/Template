@@ -210,7 +210,7 @@ namespace Template.Security.Services.V1
                     To = model.Email,
                     Subject = "Reset Password",
                 };
-                await _emailServiceAsync.SendEmailAsync(emailRequest,cancellationToken);
+                await _emailServiceAsync.SendEmailAsync(emailRequest, cancellationToken);
             }
 
             return new ApiResponse("If an account with that email exists, a password reset link has been sent. Please check your email.");
@@ -242,7 +242,7 @@ namespace Template.Security.Services.V1
             {
                 throw new BadRequestException($"User account '{loginDto.Email}' is inactivated.");
             }
-            cancellationToken.ThrowIfCancellationRequested();   
+            cancellationToken.ThrowIfCancellationRequested();
             var result = await _singInManager.PasswordSignInAsync(user, loginDto.Password, isPersistent: true, lockoutOnFailure: true);
 
             if (result.Succeeded)
@@ -252,7 +252,7 @@ namespace Template.Security.Services.V1
                 var refreshToken = GenerateRefreshToken();
                 response.Id = user.Id;
                 response.AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-                response.Email = user.Email ;
+                response.Email = user.Email;
                 response.UserName = user.UserName;
                 response.Roles = _userRoles;
                 response.RefreshToken = refreshToken;

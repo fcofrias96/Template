@@ -11,7 +11,7 @@ import { ModalService } from '@shared/services/modal.service';
   styleUrl: './resource.component.scss',
 })
 export class ResourceComponent {
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   addResource() {
     this.modalService.openModal(ResourceFormComponent, 'Add Resource', null, {

@@ -30,9 +30,6 @@ namespace Template.Application.Utilities
             nameof(Limit)
         };
 
-
-
-
         public List<Field> BuildFields()
         {
             var fields = new List<Field>();
@@ -98,7 +95,6 @@ namespace Template.Application.Utilities
                     }
 
                     return propertyValue;
-
                 }
             }
             return propertyValue;
@@ -121,6 +117,5 @@ namespace Template.Application.Utilities
 
             return entityProperty;
         }
-
     }
 }

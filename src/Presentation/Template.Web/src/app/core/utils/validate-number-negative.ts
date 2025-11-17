@@ -8,7 +8,6 @@ export function validateNumberOrNegative(): ValidatorFn {
       return null;
     }
 
-
     const isValid = /^-?\d+(\.\d+)?$/.test(value);
 
     return isValid ? null : { invalidNumber: true };

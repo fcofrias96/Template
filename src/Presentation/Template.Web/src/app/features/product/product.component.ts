@@ -11,7 +11,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
   styleUrl: './product.component.scss',
 })
 export class ProductComponent {
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   addProduct() {
     this.modalService.openModal(

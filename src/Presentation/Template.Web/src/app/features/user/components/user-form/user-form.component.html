@@ -2,26 +2,20 @@
   <app-form-field formControlName="firstName" label="Nombre"></app-form-field>
   <app-form-field formControlName="lastName" label="Apellido"></app-form-field>
 
-  <app-form-field
-    formControlName="userName"
-    label="Nombre de usuario"
-  ></app-form-field>
+  <app-form-field formControlName="userName"
+                  label="Nombre de usuario"></app-form-field>
 
   <app-form-field formControlName="email" label="email"></app-form-field>
 
-  <app-checkbox-list
-    [items]="(roles$ | async) ?? []"
-    labelKey="name"
-    valueKey="id"
-    formControlName="roles"
-    label="Roles"
-  />
+  <app-checkbox-list [items]="(roles$ | async) ?? []"
+                     labelKey="name"
+                     valueKey="id"
+                     formControlName="roles"
+                     label="Roles" />
 
-  <button
-    class="btn btn-primary mt-4"
-    type="submit"
-    [disabled]="userForm.invalid"
-  >
+  <button class="btn btn-primary mt-4"
+          type="submit"
+          [disabled]="userForm.invalid">
     {{ edit ? "Actualizar" : "Agregar" }}
   </button>
 </form>

@@ -57,9 +57,9 @@ export class RoleListComponent implements OnInit, OnDestroy {
   }
 
   private getRoles(
-    searchParams:URLSearchParams | null = null
+    searchParams: URLSearchParams | null = null
   ): Observable<PagedCollection<Role>> {
-    if(!searchParams) {
+    if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
     return this.roleService.getPagedList<Role>(searchParams);

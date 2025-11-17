@@ -10,7 +10,7 @@ describe('CategoryFormComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CategoryFormComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(CategoryFormComponent);
     component = fixture.componentInstance;

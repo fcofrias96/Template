@@ -5,7 +5,6 @@ using Template.Application.Enums;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
 
-
 namespace Template.Api.Middlewares
 {
     public class ExceptionMiddleware
@@ -122,10 +121,10 @@ namespace Template.Api.Middlewares
                         break;
                 }
 
-                #endregion
+                #endregion StatusCode & Titles
 
                 var request = context.Request;
-                var clientIP = context.Connection.RemoteIpAddress ;
+                var clientIP = context.Connection.RemoteIpAddress;
 
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {

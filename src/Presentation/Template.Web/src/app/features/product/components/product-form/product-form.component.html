@@ -1,39 +1,29 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" novalidate>
-  <app-form-field
-    formControlName="name"
-    label="Nombre del Producto"
-    id="name"
-  ></app-form-field>
+  <app-form-field formControlName="name"
+                  label="Nombre del Producto"
+                  id="name"></app-form-field>
 
-  <app-filter-select
-    formControlName="categoryId"
-    [options]="(categories$ | async) || []"
-    [placeholder]="'Seleccione una opción'"
-    [required]="true"
-    [label]="'Categoría'"
-    [bind]="{ key: 'id', value: 'name' }"
-  >
+  <app-filter-select formControlName="categoryId"
+                     [options]="(categories$ | async) || []"
+                     [placeholder]="'Seleccione una opción'"
+                     [required]="true"
+                     [label]="'Categoría'"
+                     [bind]="{ key: 'id', value: 'name' }">
   </app-filter-select>
 
-  <app-form-field
-    formControlName="price"
-    label="Precio"
-    id="price"
-    type="number"
-  ></app-form-field>
+  <app-form-field formControlName="price"
+                  label="Precio"
+                  id="price"
+                  type="number"></app-form-field>
 
-  <app-form-field
-    formControlName="description"
-    label="Descripción"
-    id="description"
-    type="textarea"
-  ></app-form-field>
+  <app-form-field formControlName="description"
+                  label="Descripción"
+                  id="description"
+                  type="textarea"></app-form-field>
 
-  <button
-    class="btn btn-primary mt-4"
-    type="submit"
-    [disabled]="productForm.invalid"
-  >
+  <button class="btn btn-primary mt-4"
+          type="submit"
+          [disabled]="productForm.invalid">
     {{ edit ? "Actualizar" : "Agregar" }}
   </button>
 </form>

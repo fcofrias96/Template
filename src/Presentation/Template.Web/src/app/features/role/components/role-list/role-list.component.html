@@ -1,10 +1,7 @@
-<app-generic-table
-  [columns]="columns"
-  [data]="(roles$ | async) ?? undefined"
-  [itemsPerPage]="itemsPerPage"
-
-  [actions]="actions()"
-  (filterChanged)="handleFilter($event)"
-  (exportTo)="handleExporting($event)"
-  [itemsPerPage]= "itemsPerPage"
-  ></app-generic-table>
+<app-generic-table [columns]="columns"
+                   [data]="(roles$ | async) ?? undefined"
+                   [itemsPerPage]="itemsPerPage"
+                   [actions]="actions()"
+                   (filterChanged)="handleFilter($event)"
+                   (exportTo)="handleExporting($event)"
+                   [itemsPerPage]="itemsPerPage"></app-generic-table>

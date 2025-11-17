@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Template.Application.Attributes;
+﻿using Template.Application.Attributes;
 using Template.Application.Utilities;
 using Template.Domain.Entities.V1;
 
@@ -19,6 +18,5 @@ namespace Template.Application.Models.DTOs.V1.Items
 
         [DateRangeFormat]
         public string? CreatedAt { get; set; } //delete
-
     }
 }

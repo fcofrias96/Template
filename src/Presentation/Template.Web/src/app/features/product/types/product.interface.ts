@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -8,5 +7,3 @@ export interface Product {
   created: Date
   isDeleted: boolean;
 }
-
-

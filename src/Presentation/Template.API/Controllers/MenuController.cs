@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Menu;
@@ -21,10 +20,8 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<MenuItemResponse>>> GetMenusAsync(CancellationToken cancellationToken)
         {
-            var response = await  _menuService.GetMenuForUserAsync(User, cancellationToken);
+            var response = await _menuService.GetMenuForUserAsync(User, cancellationToken);
             return Ok(response);
         }
-
-
     }
 }

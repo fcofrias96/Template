@@ -1,69 +1,55 @@
 <div class="filter-select form-group">
   <label *ngIf="label">{{ label }}</label>
   <div class="input-group">
-    <input
-      type="text"
-      class="form-control input-filter"
-      [placeholder]="placeholder"
-      [value]="selectedFilterText"
-      (click)="toggleDropdown()"
-      readonly
-      [ngClass]="{
+    <input type="text"
+           class="form-control input-filter"
+           [placeholder]="placeholder"
+           [value]="selectedFilterText"
+           (click)="toggleDropdown()"
+           readonly
+           [ngClass]="{
         'is-valid':
           internalControl.valid &&
           (internalControl.dirty || internalControl.touched),
         'is-invalid':
           internalControl.invalid &&
           (internalControl.dirty || internalControl.touched)
-      }"
-    />
+      }" />
 
     <div class="input-group-append">
-      <button
-        *ngIf="selectedKey && !required"
-        class="btn btn-outline-secondary"
-        type="button"
-        (click)="clearSelection()"
-      >
+      <button *ngIf="selectedKey && !required"
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="clearSelection()">
         <span class="bi bi-x-circle"></span>
       </button>
-      <button
-        class="btn btn-outline-secondary"
-        type="button"
-        (click)="toggleDropdown()"
-      >
-        <span
-          [class]="isOpen ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"
-        ></span>
+      <button class="btn btn-outline-secondary"
+              type="button"
+              (click)="toggleDropdown()">
+        <span [class]="isOpen ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></span>
       </button>
     </div>
-    <div
-      class="invalid-feedback"
-      *ngIf="
+    <div class="invalid-feedback"
+         *ngIf="
         internalControl.invalid &&
         (internalControl.dirty || internalControl.touched) && !isOpen
-      "
-    >
+      ">
       {{ label }} is required.
     </div>
   </div>
   <div *ngIf="isOpen" class="dropdown-menu show">
-    <input
-      type="text"
-      class="form-control filter"
-      placeholder="Filter options"
-      [value]="filterText"
-      (input)="onFilterChange($event)"
-      (click)="$event.stopPropagation()"
-    />
+    <input type="text"
+           class="form-control filter"
+           placeholder="Filter options"
+           [value]="filterText"
+           (input)="onFilterChange($event)"
+           (click)="$event.stopPropagation()" />
     <div class="list-group">
-      <button
-        type="button"
-        class="list-group-item list-group-item-action"
-        [ngClass]="{ 'selected': option[bind.key] === selectedKey }"
-        *ngFor="let option of filteredOptions"
-        (click)="selectOption(option)"
-      >
+      <button type="button"
+              class="list-group-item list-group-item-action"
+              [ngClass]="{ 'selected': option[bind.key] === selectedKey }"
+              *ngFor="let option of filteredOptions"
+              (click)="selectOption(option)">
         {{ option[bind.value] }}
       </button>
       <div *ngIf="filteredOptions.length === 0" class="list-group-item">

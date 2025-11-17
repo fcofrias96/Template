@@ -4,7 +4,7 @@ import { PagedCollection } from '@models/paged-collection.interface';
 import { Dropdown } from '@models/dropdown';
 
 export abstract class ApiService {
-  constructor(protected apiRepository: ApiRepository, protected url: string) {}
+  constructor(protected apiRepository: ApiRepository, protected url: string) { }
 
   getById<T>(id: string | number, showLoading = true): Observable<T> {
     return this.apiRepository.get<T>(`${this.url}/${id}`, { showLoading });

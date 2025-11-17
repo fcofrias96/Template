@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace Template.Monitoring.Utilities
+﻿namespace Template.Monitoring.Utilities
 {
     /// <summary>
     /// Mantiene el CorrelationId accesible en todo el flujo async del request.

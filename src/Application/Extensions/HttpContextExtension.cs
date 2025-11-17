@@ -14,7 +14,7 @@ namespace Template.Application.Extensions
         public static Guid GetUserId(this HttpContext httpContext)
         {
             var userId = httpContext?.User.FindFirstValue("userId") ?? string.Empty;
-            
+
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
             {
                 throw new SecurityTokenException("You are unauthenticated.");

@@ -20,13 +20,13 @@ namespace Template.Monitoring
         private const string ServiceVersion = "1.0.0";
         private const string ApplicationName = "Template";
         private const string AppInsightsConnectionStringKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
-        
+
         public static void AddMonitoringInfrastructure(
             this WebApplicationBuilder builder,
             IConfiguration configuration)
         {
             var connectionString = configuration[AppInsightsConnectionStringKey];
-            
+
             ConfigureSerilog(builder, configuration);
             ConfigureOpenTelemetry(builder, connectionString);
         }
@@ -71,8 +71,8 @@ namespace Template.Monitoring
         }
 
         private static void ConfigureFileLogging(
-            LoggerConfiguration loggerConfiguration, 
-            LogEventLevel level, 
+            LoggerConfiguration loggerConfiguration,
+            LogEventLevel level,
             string path)
         {
             loggerConfiguration.WriteTo.Logger(options =>
@@ -89,7 +89,7 @@ namespace Template.Monitoring
         }
 
         private static void ConfigureProductionLogging(
-            LoggerConfiguration loggerConfiguration, 
+            LoggerConfiguration loggerConfiguration,
             IConfiguration configuration)
         {
             var aiConnectionString = configuration[AppInsightsConnectionStringKey];
@@ -120,8 +120,8 @@ namespace Template.Monitoring
         }
 
         private static void ConfigureMetrics(
-            MeterProviderBuilder metrics, 
-            IHostEnvironment env, 
+            MeterProviderBuilder metrics,
+            IHostEnvironment env,
             string? connectionString)
         {
             metrics
@@ -132,7 +132,7 @@ namespace Template.Monitoring
             if (env.IsProduction())
             {
                 ValidateConnectionString(connectionString, "metrics");
-                
+
                 metrics.AddAzureMonitorMetricExporter(options =>
                 {
                     options.ConnectionString = connectionString;
@@ -145,8 +145,8 @@ namespace Template.Monitoring
         }
 
         private static void ConfigureTracing(
-            TracerProviderBuilder tracing, 
-            IHostEnvironment env, 
+            TracerProviderBuilder tracing,
+            IHostEnvironment env,
             string? connectionString)
         {
             tracing
@@ -156,7 +156,7 @@ namespace Template.Monitoring
             if (env.IsProduction())
             {
                 ValidateConnectionString(connectionString, "traces");
-                
+
                 tracing.AddAzureMonitorTraceExporter(options =>
                 {
                     options.ConnectionString = connectionString;

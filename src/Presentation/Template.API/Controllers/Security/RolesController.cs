@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
-using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Roles;
@@ -15,7 +13,6 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    //[Authorize(Roles = Roles.Admin)]
     public class RolesController : ControllerBase
     {
         private readonly IRoleServiceAsync _roleService;
@@ -29,7 +26,7 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Role, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery]RoleQueryParameters request, CancellationToken cancellationToken )
+        public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery] RoleQueryParameters request, CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto, RoleSpecification>(request, cancellationToken);
             return Ok(roles);
@@ -75,6 +72,5 @@ namespace Template.Api.Controllers.Security
             var resources = await _roleService.GetProjectedAsync<Catalog>(cancellationToken);
             return Ok(resources);
         }
-
     }
 }

@@ -24,16 +24,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   constructor(
     private menuService: MenuService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-
     this.menuService.getList$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         this.getMenu();
       });
-
 
     if (this.subMenu.length) {
       this.menu = this.subMenu;
@@ -50,7 +48,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();

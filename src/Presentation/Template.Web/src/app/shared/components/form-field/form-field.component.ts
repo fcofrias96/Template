@@ -48,11 +48,11 @@ export class FormFieldComponent implements ControlValueAccessor {
     'Delete',
   ];
 
-  constructor(private controlContainer: ControlContainer) {}
+  constructor(private controlContainer: ControlContainer) { }
   value: any;
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: any = () => { };
+  onTouched: any = () => { };
 
   writeValue(value: any): void {
     this.value = value;
@@ -66,7 +66,7 @@ export class FormFieldComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {}
+  setDisabledState?(isDisabled: boolean): void { }
 
   /** Returns the corresponding FormControl */
   get control(): FormControl {
@@ -115,8 +115,6 @@ export class FormFieldComponent implements ControlValueAccessor {
       ? errorMessages[errorKey](control.errors[errorKey])
       : null;
   }
-
-
 
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;

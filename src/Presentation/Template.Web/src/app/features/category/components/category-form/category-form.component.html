@@ -1,16 +1,11 @@
 <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" novalidate>
-  <app-form-field
-    formControlName="name"
-    label="Nombre del Producto"
-    id="name"
-  ></app-form-field>
+  <app-form-field formControlName="name"
+                  label="Nombre del Producto"
+                  id="name"></app-form-field>
 
-
-  <button
-    class="btn btn-primary mt-4"
-    type="submit"
-    [disabled]="categoryForm.invalid"
-  >
+  <button class="btn btn-primary mt-4"
+          type="submit"
+          [disabled]="categoryForm.invalid">
     {{ edit ? "Actualizar" : "Agregar" }}
   </button>
 </form>

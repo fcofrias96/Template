@@ -9,10 +9,10 @@ import { NotificationService } from 'app/core/services/notification.service';
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss'
 })
-export class  NotificationComponent implements OnInit {
+export class NotificationComponent implements OnInit {
   message: { type: 'success' | 'error' | 'warning'; text: string } | null = null;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService) { }
 
   ngOnInit(): void {
     this.notificationService.message$.subscribe((msg) => {

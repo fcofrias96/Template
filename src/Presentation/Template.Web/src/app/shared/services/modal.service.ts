@@ -9,7 +9,7 @@ import { DynamicModalComponent } from '@models/dynamic-modal.interface';
   providedIn: 'root',
 })
 export class ModalService {
-  constructor(private modalService: BsModalService) {}
+  constructor(private modalService: BsModalService) { }
 
   openModal(
     component: Type<DynamicModalComponent>,

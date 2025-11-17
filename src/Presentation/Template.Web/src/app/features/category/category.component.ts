@@ -12,10 +12,7 @@ import { CategoryFormComponent } from './components/category-form/category-form.
   styleUrl: './category.component.scss',
 })
 export class CategoryComponent {
-
-  constructor(private modalService: ModalService) {}
-
-
+  constructor(private modalService: ModalService) { }
 
   addCategory() {
     const modal = this.modalService.openModal(

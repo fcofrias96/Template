@@ -6,5 +6,4 @@ namespace Template.Security.Contracts.Services.V1
     {
         HashSet<int> GetUserPermissionIds(ClaimsPrincipal user, CancellationToken cancellationToken);
     }
-
 }

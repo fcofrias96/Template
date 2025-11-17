@@ -8,14 +8,14 @@ import { CustomValidators } from 'app/core/utils/custom-validator';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterModule, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormFieldComponent],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.scss'
 })
 export class ForgotPasswordComponent implements OnInit {
   public forgotPasswordForm: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.forgotPasswordForm = this.fb.group({

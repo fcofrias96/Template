@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Template.Application.Contracts.Repositories.Base
+﻿namespace Template.Application.Contracts.Repositories.Base
 {
     public interface IReadRepositoryAsync<TEntity>
     {

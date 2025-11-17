@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Template.Monitoring.Utilities;
 
 namespace Template.Monitoring.Middlewares
@@ -76,8 +74,6 @@ namespace Template.Monitoring.Middlewares
                             method, path, statusCode, elapsedMs);
                     }
                 }
-
-                
             }
         }
     }

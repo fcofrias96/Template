@@ -34,7 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private titleService: Title
-  ) {}
+  ) { }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
@@ -62,5 +62,4 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     return current;
   }
-
 }

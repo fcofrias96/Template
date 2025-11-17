@@ -7,7 +7,6 @@ using System.Reflection;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
-using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
 using Template.Application.Models.Wrappers;
@@ -16,7 +15,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class BaseServiceAsync<TEntity,TDbContext> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity, TDbContext>
+    public class BaseServiceAsync<TEntity, TDbContext> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity, TDbContext>
         where TEntity : class, IEntityBase
         where TDbContext : DbContext
     {
@@ -25,7 +24,7 @@ namespace Template.Application.Services.Base
         private readonly IBaseRepositoryAsync<TEntity, TDbContext> _repositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
 
-        public BaseServiceAsync(IMemoryCache cache, IMapper mapper, IBaseRepositoryAsync<TEntity, TDbContext> repositoryAsync, IHttpContextAccessor httpContext): base(repositoryAsync)
+        public BaseServiceAsync(IMemoryCache cache, IMapper mapper, IBaseRepositoryAsync<TEntity, TDbContext> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
         {
             _cache = cache;
             _mapper = mapper;
@@ -40,7 +39,6 @@ namespace Template.Application.Services.Base
             _cache.InvalidateCache<TEntity>();
             return entity;
         }
-
 
         public async Task SoftDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
@@ -127,7 +125,6 @@ namespace Template.Application.Services.Base
 
             return entity;
         }
-
 
         public virtual async Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken)
         {

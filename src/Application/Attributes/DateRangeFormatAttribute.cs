@@ -21,7 +21,7 @@ namespace Template.Application.Attributes
             {
                 if (DateTimeOffset.TryParseExact(strValue, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
                     return ValidationResult.Success;
-                
+
                 return new ValidationResult("La fecha no es válida. El formato aceptado es 'yyyy-MM-dd'.");
             }
 

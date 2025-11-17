@@ -1,5 +1,4 @@
-﻿using Template.Application.Enums;
-using Template.Application.Extensions;
+﻿using Template.Application.Extensions;
 using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Seeds

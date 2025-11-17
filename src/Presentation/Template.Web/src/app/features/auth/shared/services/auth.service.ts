@@ -23,7 +23,7 @@ export class AuthService {
     private apiRepository: ApiRepository,
     private router: Router,
     private readonly menuService: MenuService
-  ) {}
+  ) { }
 
   public login(data: LoginRequest): void {
     this.apiRepository

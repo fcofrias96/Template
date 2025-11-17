@@ -1,6 +1,4 @@
-﻿
-
-namespace Template.Application.Models.DTOs
+﻿namespace Template.Application.Models.DTOs
 {
     public class Catalog
     {

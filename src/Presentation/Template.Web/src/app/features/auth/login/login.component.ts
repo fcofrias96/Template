@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {  RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
 import { FormFieldComponent } from '@shared/components/form-field/form-field.component';
 import { CustomValidators } from 'app/core/utils/custom-validator';

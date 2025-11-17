@@ -11,7 +11,7 @@ import { ModalService } from '@shared/services/modal.service';
   styleUrl: './role.component.scss',
 })
 export class RoleComponent {
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
   addRole() {
     this.modalService.openModal(RoleFormComponent, 'Add Role', null, {

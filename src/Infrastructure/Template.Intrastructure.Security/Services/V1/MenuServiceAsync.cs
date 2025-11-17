@@ -33,10 +33,9 @@ namespace Template.Security.Services.V1
                                         ParentId = m.ParentId,
                                         PermissionId = m.PermissionId,
                                         Order = m.Order
-
                                     })
                                     .OrderBy(m => m.ParentId)
-                                    .ThenBy(m=> m.Order)
+                                    .ThenBy(m => m.Order)
                                     .ToListAsync(cancellationToken);
 
             var accessibleMenuItems = FilterMenuItemsByPermissions(menuItems, userPermissionIds);
@@ -53,9 +52,7 @@ namespace Template.Security.Services.V1
             return new ApiResponse<MenuItemResponse>(menuResponse);
         }
 
-
-
-        static private List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userPermissionIds)
+        private static List<MenuItem> FilterMenuItemsByPermissions(List<MenuItem> menuItems, HashSet<int> userPermissionIds)
         {
             var accessibleMenuItems = menuItems
                 .Where(item => HasAccessToMenuItem(userPermissionIds, item))
@@ -63,7 +60,6 @@ namespace Template.Security.Services.V1
 
             return accessibleMenuItems;
         }
-
 
         private static bool HasAccessToMenuItem(HashSet<int> userPermissionIds, MenuItem item)
         {
@@ -74,7 +70,6 @@ namespace Template.Security.Services.V1
 
             return userPermissionIds.Contains(item.PermissionId.Value);
         }
-
 
         private static List<MenuItem> BuildMenuHierarchy(List<MenuItem> menuItems)
         {
@@ -109,7 +104,5 @@ namespace Template.Security.Services.V1
                 Order = item.Order
             }).ToList();
         }
-
     }
-
 }

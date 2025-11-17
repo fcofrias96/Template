@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiRepository {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   get<T>(
     url: string,

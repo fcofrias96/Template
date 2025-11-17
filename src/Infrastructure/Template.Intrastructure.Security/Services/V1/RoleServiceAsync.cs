@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Services.Base;
-using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
@@ -17,11 +14,11 @@ namespace Template.Security.Services.V1
 {
     public class RoleServiceAsync : BaseServiceAsync<Role, SecurityDbContext>, IRoleServiceAsync
     {
-            private readonly IRolePermissionRepositoryAsync _rolePermissionRepository;
+        private readonly IRolePermissionRepositoryAsync _rolePermissionRepository;
 
         public RoleServiceAsync(
-            IMemoryCache cache, 
-            IMapper mapper, 
+            IMemoryCache cache,
+            IMapper mapper,
             IBaseRepositoryAsync<Role, SecurityDbContext> repositoryAsync,
             IHttpContextAccessor httpContext, IRolePermissionRepositoryAsync rolePermissionRepository) : base(cache, mapper, repositoryAsync, httpContext)
         {
@@ -31,11 +28,10 @@ namespace Template.Security.Services.V1
         public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             string idString = id?.ToString() ?? string.Empty;
-            return base.GetByIdProjectedAsync<string, TDestination>(idString, cancellationToken );
+            return base.GetByIdProjectedAsync<string, TDestination>(idString, cancellationToken);
         }
 
-
-        public override  async Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken)
+        public override async Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken)
         {
             if (source is RoleUpdateDto roleUpdateDTO && id is string _id)
             {
@@ -44,5 +40,4 @@ namespace Template.Security.Services.V1
             await base.UpdateAsync(id, source, cancellationToken);
         }
     }
-
 }

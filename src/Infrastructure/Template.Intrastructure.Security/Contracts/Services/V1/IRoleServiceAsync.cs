@@ -7,5 +7,4 @@ namespace Template.Security.Contracts.Services.V1
     public interface IRoleServiceAsync : IBaseServiceAsync<Role, SecurityDbContext>
     {
     }
-
 }

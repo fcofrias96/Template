@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Application.Constants;
-using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Categories;
 using Template.Application.Models.Specification.V1;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Persistence.Contracts.Services;
-using Template.Persistence.DbContexts.V1;
 
 namespace Template.Api.Controllers
 {
@@ -21,6 +18,7 @@ namespace Template.Api.Controllers
     public class CategoriesController : ControllerBase
     {
         #region Private Variable
+
         private readonly ICategoryService _categoryServiceAsync;
 
         #endregion Private Variable
@@ -71,7 +69,6 @@ namespace Template.Api.Controllers
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);
             return NoContent();
         }
-
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet("catalog")]

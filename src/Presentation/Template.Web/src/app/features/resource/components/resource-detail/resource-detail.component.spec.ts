@@ -10,7 +10,7 @@ describe('ResourceDetailComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ResourceDetailComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ResourceDetailComponent);
     component = fixture.componentInstance;

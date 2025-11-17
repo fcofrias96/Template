@@ -1,8 +1,6 @@
-<app-generic-table
-  [columns]="columns"
-  [data]="(permissions$ | async) ?? undefined"
-  [itemsPerPage]="itemsPerPage"
-  [actions]="actions()"
-  (filterChanged)="handleFilter($event)"
-  (exportTo)="handleExporting($event)"
-></app-generic-table>
+<app-generic-table [columns]="columns"
+                   [data]="(permissions$ | async) ?? undefined"
+                   [itemsPerPage]="itemsPerPage"
+                   [actions]="actions()"
+                   (filterChanged)="handleFilter($event)"
+                   (exportTo)="handleExporting($event)"></app-generic-table>

@@ -10,7 +10,7 @@ describe('PermissionDetailComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PermissionDetailComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(PermissionDetailComponent);
     component = fixture.componentInstance;

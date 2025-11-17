@@ -31,7 +31,7 @@ namespace Template.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            await _itemServiceAsync.PermanentDeleteAsync (id, cancellationToken);
+            await _itemServiceAsync.PermanentDeleteAsync(id, cancellationToken);
             return NoContent();
         }
 

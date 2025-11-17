@@ -8,7 +8,6 @@
 
         public BadRequestException(string message, Exception innerException) : base(message, innerException)
         {
-            
         }
     }
 }

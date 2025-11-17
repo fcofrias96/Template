@@ -26,8 +26,8 @@ export class CheckboxListComponent implements ControlValueAccessor {
 
   // Ahora siempre strings
   selectedItems: string[] = [];
-  private onChange: (value: any[]) => void = () => {};
-  private onTouched = () => {};
+  private onChange: (value: any[]) => void = () => { };
+  private onTouched = () => { };
   isDisabled = false;
 
   writeValue(value: any[] | null): void {

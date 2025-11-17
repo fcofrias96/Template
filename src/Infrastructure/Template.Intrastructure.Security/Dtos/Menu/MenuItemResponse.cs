@@ -6,5 +6,4 @@
 
         public bool IsAuthenticated { get; set; }
     }
-
 }

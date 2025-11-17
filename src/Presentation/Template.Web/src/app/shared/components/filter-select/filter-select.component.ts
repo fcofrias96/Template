@@ -38,8 +38,7 @@ import {
   ],
 })
 export class FilterSelectComponent
-  implements ControlValueAccessor, Validator, OnInit, OnChanges
-{
+  implements ControlValueAccessor, Validator, OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['options'] && changes['options'].currentValue) {
       this.setFilterText();
@@ -58,8 +57,8 @@ export class FilterSelectComponent
   isOpen = false;
   isTouched = false;
 
-  onChange = (value: any) => {};
-  onTouched = () => {};
+  onChange = (value: any) => { };
+  onTouched = () => { };
 
   internalControl: FormControl = new FormControl();
 

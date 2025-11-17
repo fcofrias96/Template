@@ -77,7 +77,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   private getUsers(
     searchParams: URLSearchParams | null = null
   ): Observable<PagedCollection<User>> {
-    if(!searchParams) {
+    if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
     return this.userService.getPagedList<User>(searchParams);

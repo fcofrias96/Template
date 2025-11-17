@@ -15,7 +15,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   private readonly unsubscribe$ = new Subject<void>();
   isAuthenticated = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.authService.isAuthenticated$

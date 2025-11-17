@@ -1,4 +1,4 @@
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { Dropdown } from '@models/dropdown';
@@ -29,8 +29,8 @@ export class SelectComponent implements ControlValueAccessor {
   value: any;
 
   // Callbacks que se asignarán desde el formulario reactivo
-  onChange: any = (_: any) => {};
-  onTouched: any = () => {};
+  onChange: any = (_: any) => { };
+  onTouched: any = () => { };
 
   // Método que se llama cuando el formulario escribe un valor en el componente
   writeValue(value: any): void {

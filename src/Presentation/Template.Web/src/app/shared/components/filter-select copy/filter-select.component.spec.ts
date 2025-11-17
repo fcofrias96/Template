@@ -10,7 +10,7 @@ describe('FilterSelectComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FilterSelectComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(FilterSelectComponent);
     component = fixture.componentInstance;

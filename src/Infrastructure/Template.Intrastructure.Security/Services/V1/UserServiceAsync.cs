@@ -24,6 +24,7 @@ namespace Template.Security.Services.V1
         private readonly IBaseServiceAsync<User, SecurityDbContext> _service;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepositoryAsync _userRepository;
+
         public UserServiceAsync(
             IUserRepositoryAsync userRepository,
             IMapper mapper,
@@ -41,9 +42,6 @@ namespace Template.Security.Services.V1
             _service = service;
         }
 
-
-
-
         public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -57,6 +55,7 @@ namespace Template.Security.Services.V1
             var parsedId = ParseToString(id);
             return await _service.GetByIdAsync(parsedId, cancellationToken);
         }
+
         public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             var parsedId = ParseToString(id);
@@ -86,8 +85,6 @@ namespace Template.Security.Services.V1
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken, cancellationToken);
         }
 
-
-
         public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContext?.HttpContext?.GetUserId();
@@ -108,7 +105,6 @@ namespace Template.Security.Services.V1
             await _userRepository.UpdateUserRolesAsync(userId.ToString(), userUpdateDTO.Roles, cancellationToken);
         }
 
-
         public async Task<UserDetailDto> GetUserDetailAsync(Guid userId, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUserDetailAsync(userId.ToString(), cancellationToken);
@@ -119,13 +115,10 @@ namespace Template.Security.Services.V1
             return user;
         }
 
-
         public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
         {
             return await _userRepository.GetResourcesAsync(userId, cancellationToken);
-
         }
-
 
         #region Private Methods
 
@@ -139,7 +132,6 @@ namespace Template.Security.Services.V1
 
             return user;
         }
-
 
         private static string ParseToString<TKey>(TKey id)
         {

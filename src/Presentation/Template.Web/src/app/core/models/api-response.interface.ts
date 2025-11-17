@@ -5,6 +5,3 @@ export interface ApiResponse<T> {
   errors?: Record<string, string[]>;
   success: boolean;
 }
-
-
-

@@ -10,7 +10,6 @@ namespace Template.Persistence.Configuration.V1
     {
         public override void Configure(EntityTypeBuilder<Category> builder)
         {
-
             #region Properties
 
             builder.Property(x => x.Name)

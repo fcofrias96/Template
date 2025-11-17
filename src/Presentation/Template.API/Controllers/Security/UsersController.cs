@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Constants;
-using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
@@ -56,9 +55,6 @@ namespace Template.Api.Controllers.Security
             var response = await _userServiceAsync.GetRolesAsync(id, cancellationToken);
             return Ok(response);
         }
-
-
-
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)

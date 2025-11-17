@@ -57,9 +57,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   private getResources(
-    searchParams:URLSearchParams | null = null
+    searchParams: URLSearchParams | null = null
   ): Observable<PagedCollection<Resource>> {
-    if(!searchParams) {
+    if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
     return this.resourceService.getPagedList<Resource>(searchParams);

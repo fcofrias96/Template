@@ -86,8 +86,6 @@ namespace Template.Security.Seeds
                 PermissionId = 7,
                 Order = 4,
             }
-
         };
     }
 }
-

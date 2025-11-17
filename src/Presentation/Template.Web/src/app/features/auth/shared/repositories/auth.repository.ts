@@ -8,8 +8,5 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthRepository {
-
   constructor(private httpClient: HttpClient) { }
-
-
 }

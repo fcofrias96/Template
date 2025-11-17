@@ -1,7 +1,7 @@
-﻿using System.Net;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
+using System.Net;
 
 namespace Template.Application.Utilities;
 

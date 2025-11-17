@@ -51,6 +51,7 @@ namespace Template.Security.Seeds
                 Name          = "Export User",
                 Description   = "Allows exporting user data"
             },
+
             #endregion User
 
             #region Resource
@@ -95,6 +96,7 @@ namespace Template.Security.Seeds
                 Name          = "Export Resource",
                 Description   = "Allows exporting resource data"
             },
+
             #endregion Resource
 
             #region Role
@@ -139,6 +141,7 @@ namespace Template.Security.Seeds
                 Name          = "Export Role",
                 Description   = "Allows exporting role data"
             },
+
             #endregion Role
 
             #region Permission
@@ -183,6 +186,7 @@ namespace Template.Security.Seeds
                 Name          = "Export Permission",
                 Description   = "Allows exporting permission data"
             },
+
             #endregion Permission
 
             #region Action
@@ -195,6 +199,7 @@ namespace Template.Security.Seeds
                 Name          = "Read Action",
                 Description   = "Allows reading actions"
             },
+
             #endregion Action
 
             #region Category
@@ -239,6 +244,7 @@ namespace Template.Security.Seeds
                 Name          = "Export Category",
                 Description   = "Allows exporting category data"
             },
+
             #endregion Category
 
             #region Item
@@ -283,6 +289,7 @@ namespace Template.Security.Seeds
                 Name          = "Export Item",
                 Description   = "Allows exporting item data"
             },
+
             #endregion Item
 
             #region Configuration
@@ -295,6 +302,7 @@ namespace Template.Security.Seeds
                 Name          = "Read Configuration",
                 Description   = "Allows reading configuration settings"
             }
+
             #endregion Configuration
         };
     }

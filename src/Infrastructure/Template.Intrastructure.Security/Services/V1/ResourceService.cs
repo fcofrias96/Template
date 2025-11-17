@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Services.Base;
-using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Services.Base;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;

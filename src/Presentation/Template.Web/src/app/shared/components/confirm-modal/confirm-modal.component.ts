@@ -10,7 +10,7 @@ export class ConfirmModalComponent {
   @Input() title!: string;
   public result = false;
 
-  constructor(public bsModalRef: BsModalRef) {}
+  constructor(public bsModalRef: BsModalRef) { }
 
   public onYesButton() {
     this.result = true;

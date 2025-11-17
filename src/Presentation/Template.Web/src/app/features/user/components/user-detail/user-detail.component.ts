@@ -12,12 +12,11 @@ import { Observable, Subject } from 'rxjs';
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })
-export class UserDetailComponent  implements OnChanges, DynamicModalComponent
-{
+export class UserDetailComponent implements OnChanges, DynamicModalComponent {
   user$!: Observable<UserDetail>;
   @Input() userId!: string;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['userId'] && this.userId) {

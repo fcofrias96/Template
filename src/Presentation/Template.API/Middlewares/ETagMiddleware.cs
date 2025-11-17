@@ -58,7 +58,7 @@ namespace Template.Api.Middlewares
             }
         }
 
-        static private string GenerateETag(Stream memStream)
+        private static string GenerateETag(Stream memStream)
         {
             memStream.Seek(0, SeekOrigin.Begin);
             using (var sha256 = SHA256.Create())

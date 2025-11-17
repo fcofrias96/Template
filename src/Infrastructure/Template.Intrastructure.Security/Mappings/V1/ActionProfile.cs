@@ -9,7 +9,6 @@ namespace Template.Security.Mappings.V1
         public ActionProfile()
         {
             CreateMap<ActionType, Catalog>();
-
         }
     }
 }

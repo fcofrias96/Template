@@ -10,7 +10,7 @@ describe('RoleFormComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RoleFormComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(RoleFormComponent);
     component = fixture.componentInstance;

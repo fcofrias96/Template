@@ -3,8 +3,6 @@ using Microsoft.Extensions.Logging;
 using System.Data.Common;
 using System.Diagnostics;
 
-
-
 namespace Template.Monitoring.Utilities
 {
     public class DbTimingInterceptor : DbCommandInterceptor

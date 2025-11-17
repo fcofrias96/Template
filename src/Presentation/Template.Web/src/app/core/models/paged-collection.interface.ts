@@ -1,5 +1,3 @@
-
-
 export interface PagedCollection<T> {
   href: string;
   next?: string;

@@ -12,12 +12,11 @@ import { Observable, Subject } from 'rxjs';
   templateUrl: './permission-detail.component.html',
   styleUrl: './permission-detail.component.scss'
 })
-export class PermissionDetailComponent  implements OnChanges, DynamicModalComponent
-{
+export class PermissionDetailComponent implements OnChanges, DynamicModalComponent {
   permission$!: Observable<PermissionDetail>;
   @Input() permissionId!: string;
 
-  constructor(private permissionService: PermissionService) {}
+  constructor(private permissionService: PermissionService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['permissionId'] && this.permissionId) {

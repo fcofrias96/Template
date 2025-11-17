@@ -14,14 +14,10 @@ namespace Template.Security.Repositories.V1
             _dbContext = dbContext;
         }
 
-
-
         public async Task<RolePermission[]> GetAllAsync(string roleId, int[] permissionsId, CancellationToken cancellationToken)
         {
             return await _dbContext.RolePermissions.Where(x => x.RoleId == roleId && permissionsId.Contains(x.PermissionId)).ToArrayAsync();
         }
-
-
 
         public async Task UpdateAsync(string roleId, int[] newPermissionIds, CancellationToken cancellationToken)
         {

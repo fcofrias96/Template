@@ -12,12 +12,11 @@ import { Observable, Subject } from 'rxjs';
   templateUrl: './resource-detail.component.html',
   styleUrl: './resource-detail.component.scss'
 })
-export class ResourceDetailComponent  implements OnChanges, DynamicModalComponent
-{
+export class ResourceDetailComponent implements OnChanges, DynamicModalComponent {
   resource$!: Observable<ResourceDetail>;
   @Input() resourceId!: string;
 
-  constructor(private resourceService: ResourceService) {}
+  constructor(private resourceService: ResourceService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['resourceId'] && this.resourceId) {

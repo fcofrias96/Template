@@ -12,9 +12,8 @@
         {
         }
 
-        public ForbiddenException(string message, Exception innerException):base(message , innerException)
+        public ForbiddenException(string message, Exception innerException) : base(message, innerException)
         {
-            
         }
     }
 }

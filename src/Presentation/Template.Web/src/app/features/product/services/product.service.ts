@@ -1,4 +1,4 @@
-import {  Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ApiService } from 'app/core/services/api.service';
 import { environment } from '@environment';
@@ -16,5 +16,4 @@ export class ProductService extends ApiService {
   }
 
   public refreshProducts$ = new Subject<void>();
-
 }

@@ -1,4 +1,3 @@
-
 export interface UpdateProduct {
   id: number;
   name: string;

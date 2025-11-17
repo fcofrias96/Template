@@ -11,6 +11,5 @@ namespace Template.Security.Repositories.V1
         public RoleRepositoryAsync(SecurityDbContext securityDb, IConfigurationProvider configurationProvider) : base(securityDb, configurationProvider)
         {
         }
-
     }
 }

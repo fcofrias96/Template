@@ -1,5 +1,4 @@
-﻿
-using Template.Application.Models.Specification;
+﻿using Template.Application.Models.Specification;
 using Template.Security.Dtos.Permissions;
 using Template.Security.Entities;
 

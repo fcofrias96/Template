@@ -162,10 +162,10 @@ namespace Template.Security
                         };
 
                         await context.Response.WriteAsJsonAsync(problemDetails);
-                        
+
                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<SecurityDbContext>>();
                         logger.LogWarning(problemDetails.Detail);
-                    },  
+                    },
                     OnForbidden = async (context) =>
                     {
                         var statusCode = StatusCodes.Status403Forbidden;

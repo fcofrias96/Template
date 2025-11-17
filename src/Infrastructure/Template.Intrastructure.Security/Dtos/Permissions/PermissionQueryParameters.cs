@@ -11,6 +11,5 @@ namespace Template.Security.Dtos.Permissions
 
         public string? Name { get; set; }
         public string? Description { get; set; }
-
     }
 }

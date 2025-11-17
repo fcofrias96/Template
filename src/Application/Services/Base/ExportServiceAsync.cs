@@ -5,11 +5,11 @@ using System.Reflection;
 using System.Text;
 using Template.Application.Attributes;
 using Template.Application.Contracts;
+using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Utilities;
 using Template.Domain.Contracts;
 using Xceed.Words.NET;
-using Template.Application.Contracts.Repositories.Base;
 
 namespace Template.Application.Services.Base
 {

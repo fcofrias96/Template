@@ -3,12 +3,10 @@ export interface TableColumn {
   title: string;
   sortable?: boolean;
   filterable?: boolean;
-  type?: 'text' | 'date' | 'number' | 'boolean' ;
+  type?: 'text' | 'date' | 'number' | 'boolean';
   currency?: 'USD' | 'EUR' | 'DOP';
   dateFormat?: 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy/MM/dd';
 }
-
-
 
 export interface TableExporting {
   type: TableExportType;
@@ -21,6 +19,5 @@ export enum TableExportType {
   PDF = 'pdf',
   DOC = 'doc',
 }
-
 
 export type ActionType = 'view' | 'edit' | 'delete';

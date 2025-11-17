@@ -13,12 +13,11 @@ import { Observable, Subject } from 'rxjs';
   styleUrl: './category-detail.component.scss',
 })
 export class CategoryDetailComponent
-  implements OnChanges, DynamicModalComponent
-{
+  implements OnChanges, DynamicModalComponent {
   category$!: Observable<CategoryDetail>;
   @Input() categoryId!: string;
 
-  constructor(private categoryService: CategoryService) {}
+  constructor(private categoryService: CategoryService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['categoryId'] && this.categoryId) {

@@ -10,11 +10,10 @@ import { Observable } from 'rxjs/internal/Observable';
   templateUrl: './loading-spinner.component.html',
   styleUrl: './loading-spinner.component.scss',
 })
-export class LoadingSpinnerComponent  {
+export class LoadingSpinnerComponent {
   loading$: Observable<boolean>;
 
   constructor(private loadingService: LoadingService) {
     this.loading$ = this.loadingService.loading$;
   }
-
 }

@@ -5,12 +5,12 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class LoadingService {
-  public  loading$ = new BehaviorSubject<boolean>(false);
+  public loading$ = new BehaviorSubject<boolean>(false);
   private activeRequests = 0;
 
   show() {
     if (this.activeRequests === 0) {
-      this. loading$.next(true);
+      this.loading$.next(true);
     }
     this.activeRequests++;
   }
@@ -18,7 +18,7 @@ export class LoadingService {
   hide() {
     this.activeRequests--;
     if (this.activeRequests <= 0) {
-      this. loading$.next(false);
+      this.loading$.next(false);
       this.activeRequests = 0;
     }
   }

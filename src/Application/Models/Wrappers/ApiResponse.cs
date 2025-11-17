@@ -6,6 +6,7 @@ namespace Template.Application.Models.Wrappers
     {
         [JsonIgnore]
         public int StatusCode { get; set; } = 200;
+
         public string? Message { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -46,6 +47,5 @@ namespace Template.Application.Models.Wrappers
         {
             Message = message;
         }
-
     }
 }

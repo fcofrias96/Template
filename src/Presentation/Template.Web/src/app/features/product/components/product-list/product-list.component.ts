@@ -85,9 +85,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   private getProducts(
-    searchParams: URLSearchParams| null = null
+    searchParams: URLSearchParams | null = null
   ): Observable<PagedCollection<Product>> {
-    if(!searchParams) {
+    if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
     return this.productService.getPagedList<Product>(searchParams);

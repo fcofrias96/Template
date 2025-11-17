@@ -10,7 +10,6 @@ using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
 
-
 namespace Template.Security.Repositories.V1
 {
     public class UserRepositoryAsync : IUserRepositoryAsync
@@ -29,9 +28,6 @@ namespace Template.Security.Repositories.V1
             _dbContext = dbContext;
             _readRepository = readRepository;
         }
-
-
-
 
         public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken)
         {
@@ -64,13 +60,12 @@ namespace Template.Security.Repositories.V1
             }
         }
 
-
         public async Task<User?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
             return await _readRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken )
+        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
         {
             return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
         }
@@ -97,7 +92,6 @@ namespace Template.Security.Repositories.V1
                 .SelectMany(u => u.UserRoles.Select(ur => new RoleListDto { Id = ur.RoleId, Name = ur.Role.Name ?? String.Empty }))
                 .ToListAsync(cancellationToken);
         }
-
 
         public async Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken)
         {

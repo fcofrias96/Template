@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Template.Application.Contracts;
-
-using Template.Application.Repository;
-using Template.Persistence.Contracts;
 using Template.Persistence.Contracts.Repositories.V1;
 using Template.Persistence.Contracts.Services;
 using Template.Persistence.DbContexts;

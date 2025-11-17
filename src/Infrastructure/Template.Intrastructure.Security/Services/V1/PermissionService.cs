@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
 
@@ -16,8 +15,8 @@ namespace Template.Security.Services.V1
 
         public HashSet<int> GetUserPermissionIds(ClaimsPrincipal user, CancellationToken cancellationToken)
         {
-            if(user == null ||  !user!.Identity!.IsAuthenticated) { return new HashSet<int>(); }
-            
+            if (user == null || !user!.Identity!.IsAuthenticated) { return new HashSet<int>(); }
+
             var userId = GetUserIdFromClaims(user);
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -26,7 +25,6 @@ namespace Template.Security.Services.V1
                 .SelectMany(ur => ur.Role.RolePermissions)
                 .Select(rp => rp.PermissionId)
                 .ToHashSet();
-
         }
 
         private static string GetUserIdFromClaims(ClaimsPrincipal user)
@@ -34,5 +32,4 @@ namespace Template.Security.Services.V1
             return user.FindFirstValue("UserId") ?? string.Empty;
         }
     }
-
 }

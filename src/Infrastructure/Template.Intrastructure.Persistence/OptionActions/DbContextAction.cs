@@ -12,7 +12,7 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                var isDevelopment = configuration.GetValue<string>("Environment") == "Development" 
+                var isDevelopment = configuration.GetValue<string>("Environment") == "Development"
                     || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
                 options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
@@ -36,7 +36,7 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                var isDevelopment = configuration.GetValue<string>("Environment") == "Development" 
+                var isDevelopment = configuration.GetValue<string>("Environment") == "Development"
                     || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
                 options.UseSqlServer(configuration.GetConnectionString("TemplateAuditConnection"),

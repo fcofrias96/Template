@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Template.Application.Models.Wrappers;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Contracts.Services.Base
 {
-    public interface IBaseServiceAsync<TEntity, TDbContext>:
+    public interface IBaseServiceAsync<TEntity, TDbContext> :
         ICreateServiceAsync<TEntity>,
         IDeleteServiceAsync,
         IReadServiceAsync<TEntity>,
@@ -12,6 +11,5 @@ namespace Template.Application.Contracts.Services.Base
         where TEntity : class, IEntityBase where TDbContext : DbContext
 
     {
-    
     }
 }

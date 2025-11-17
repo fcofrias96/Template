@@ -9,8 +9,6 @@ const { apiUrl } = environment;
   providedIn: 'root',
 })
 export class ActionService extends ApiService {
-
-
   constructor(apiRepository: ApiRepository) {
     const baseUrl = `${apiUrl}/actions`;
     super(apiRepository, baseUrl);

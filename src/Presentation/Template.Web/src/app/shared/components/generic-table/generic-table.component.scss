@@ -11,12 +11,11 @@ thead {
   top: 47px;
 }
 
-tbody{
+tbody {
   .bi.boolean {
     font-size: 25px;
   }
 }
-
 
 thead, tbody, .header {
   button {
@@ -25,7 +24,6 @@ thead, tbody, .header {
   }
 }
 
-
 .filter-input {
   //display: none;
 
@@ -33,6 +31,7 @@ thead, tbody, .header {
     display: block;
   }
 }
+
 tfoot {
   td {
     border: none;
@@ -45,7 +44,6 @@ tfoot {
 }
 
 .date-input {
-
   display: flex;
 
   input {
@@ -57,8 +55,6 @@ tfoot {
   }
 }
 
-
-
 .number-input {
   display: flex;
 
@@ -69,7 +65,6 @@ tfoot {
       margin-left: 10px;
     }
   }
-
 }
 
 .header {
@@ -89,7 +84,6 @@ tfoot {
 
 .export {
   position: relative;
-
   margin-right: 8px;
 
   &:hover {
@@ -149,9 +143,6 @@ tfoot {
   border: 1px solid #e0e0e0;
   border-radius: 0.5rem;
 }
-
-
-
 
 ::ng-deep {
   app-select {

@@ -186,7 +186,6 @@ export class GenericTableComponent implements OnChanges, OnDestroy {
     this.actions['view']?.(item);
   }
 
-
   onItemsPerPageChange(event: Event) {
     const selectedValue = (event.target as HTMLSelectElement).value;
     this.itemsPerPage = Number(selectedValue);

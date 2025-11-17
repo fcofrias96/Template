@@ -10,7 +10,6 @@ namespace Template.Security.Configurations.V1
     {
         public override void Configure(EntityTypeBuilder<MenuItem> builder)
         {
-
             builder.HasIndex(x => new { x.ParentId, x.Order })
                 .IsUnique();
 

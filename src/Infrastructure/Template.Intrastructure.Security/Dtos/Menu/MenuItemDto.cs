@@ -9,5 +9,4 @@
         public int Order { get; set; }
         public List<MenuItemDto> Children { get; set; }
     }
-
 }
