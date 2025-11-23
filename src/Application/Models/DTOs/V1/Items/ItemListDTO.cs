@@ -1,5 +1,4 @@
-﻿
-namespace Template.Application.Models.DTOs.V1.Items
+﻿namespace Template.Application.Models.DTOs.V1.Items
 {
     public class ItemListDto
     {
@@ -10,7 +9,5 @@ namespace Template.Application.Models.DTOs.V1.Items
         public DateTimeOffset CreatedAt { get; set; } // delete
 
         public bool IsDeleted { get; set; } // delete
-
-
     }
 }

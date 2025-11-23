@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.V1;
@@ -10,6 +11,7 @@ using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
+using Template.Application.Services.Base;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
@@ -17,11 +19,10 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class UserServiceAsync : IUserServiceAsync
+    public class UserServiceAsync : BaseServiceAsync<User>,  IUserServiceAsync
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly IBaseServiceAsync<User, SecurityDbContext> _service;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepositoryAsync _userRepository;
 
@@ -32,14 +33,13 @@ namespace Template.Security.Services.V1
             IHttpContextAccessor httpContext,
             IResourceServiceAsync moduleService,
             UserManager<User> userManager,
-            IBaseServiceAsync<User, SecurityDbContext> service
-            )
+            IMemoryCache memoryCache
+            ) : base(memoryCache, mapper, userRepository, httpContext)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContext = httpContext;
             _userManager = userManager;
-            _service = service;
         }
 
         public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
@@ -48,28 +48,6 @@ namespace Template.Security.Services.V1
             var user = await GetUser(userId);
             user.IsDeleted = true;
             await _userManager.UpdateAsync(user);
-        }
-
-        public async Task<User> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
-        {
-            var parsedId = ParseToString(id);
-            return await _service.GetByIdAsync(parsedId, cancellationToken);
-        }
-
-        public async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
-        {
-            var parsedId = ParseToString(id);
-            return await _service.GetByIdProjectedAsync<string, TDestination>(parsedId, cancellationToken);
-        }
-
-        public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
-        {
-            return await _service.GetProjectedAsync<TDestination>(cancellationToken);
-        }
-
-        public async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken) where TSpecification : ISpecification<User>
-        {
-            return await _service.GetProjectedPaginatedAsync<TDestination, TSpecification>(queryParameters, cancellationToken);
         }
 
         public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId, CancellationToken cancellationToken)

@@ -6,7 +6,7 @@ using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Repositories.V1
 {
-    public class ActionRepositoryAsync : BaseRepositoryAsync<ActionType, SecurityDbContext>, IActionRepositoryAsync
+    public class ActionRepositoryAsync : BaseRepositoryAsync<ActionType>, IActionRepositoryAsync
     {
         public ActionRepositoryAsync(SecurityDbContext securityDb, IConfigurationProvider configurationProvider) : base(securityDb, configurationProvider)
         {

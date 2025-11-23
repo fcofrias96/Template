@@ -36,7 +36,7 @@ namespace Template.Persistence
 
             //Repositories
             services.AddScoped<IItemRepositoryAsync, ItemRepositoryAsync>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryRepositoryAsync, CategoryRepository>();
 
             //Services
             services.AddScoped<IItemService, ItemService>();

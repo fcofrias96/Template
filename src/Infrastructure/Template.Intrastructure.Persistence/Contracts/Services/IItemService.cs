@@ -5,7 +5,7 @@ using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Contracts.Services
 {
-    public interface IItemService : IBaseServiceAsync<Item, ApplicationDbContext>, IExportServiceAsync<Item>
+    public interface IItemService : IBaseServiceAsync<Item>, IExportServiceAsync<Item>
     {
     }
 }

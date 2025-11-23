@@ -40,11 +40,7 @@ namespace Template.Application
             #region Dependency Injection
 
             // services
-            services.AddScoped(typeof(IBaseServiceAsync<,>), typeof(BaseServiceAsync<,>));
             services.AddScoped(typeof(IExportServiceAsync<>), typeof(ExportServiceAsync<>));
-
-            // repositories
-            services.AddScoped(typeof(IBaseRepositoryAsync<,>), typeof(BaseRepositoryAsync<,>));
 
             #endregion Dependency Injection
         }

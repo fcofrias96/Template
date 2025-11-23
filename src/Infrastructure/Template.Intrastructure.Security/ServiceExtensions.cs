@@ -41,7 +41,10 @@ namespace Template.Security
             {
                 services.AddDbContext<SecurityDbContext>(option =>
                 {
-                    option.UseSqlServer(configuration.GetConnectionString("Template.SecurityConnection"),
+                    var connectionString = configuration.GetConnectionString("TemplateSecurityConnection") 
+                    ?? throw new InvalidOperationException("Connection string 'TemplateSecurityConnection' not found.");
+
+                    option.UseSqlServer(connectionString,
                         optionBuilder => optionBuilder.MigrationsAssembly(typeof(SecurityDbContext).Assembly.FullName)
                         .EnableRetryOnFailure(
                                 maxRetryCount: 3,

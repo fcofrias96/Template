@@ -12,15 +12,16 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class RoleServiceAsync : BaseServiceAsync<Role, SecurityDbContext>, IRoleServiceAsync
+    public class RoleServiceAsync : BaseServiceAsync<Role>, IRoleServiceAsync
     {
         private readonly IRolePermissionRepositoryAsync _rolePermissionRepository;
 
         public RoleServiceAsync(
             IMemoryCache cache,
             IMapper mapper,
-            IBaseRepositoryAsync<Role, SecurityDbContext> repositoryAsync,
-            IHttpContextAccessor httpContext, IRolePermissionRepositoryAsync rolePermissionRepository) : base(cache, mapper, repositoryAsync, httpContext)
+            IRoleRepositoryAsync repositoryAsync,
+            IHttpContextAccessor httpContext,
+            IRolePermissionRepositoryAsync rolePermissionRepository) : base(cache, mapper, repositoryAsync, httpContext)
         {
             _rolePermissionRepository = rolePermissionRepository;
         }

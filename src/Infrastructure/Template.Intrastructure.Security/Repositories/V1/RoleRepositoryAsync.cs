@@ -6,7 +6,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class RoleRepositoryAsync : BaseRepositoryAsync<Role, SecurityDbContext>, IRoleRepositoryAsync
+    public class RoleRepositoryAsync : BaseRepositoryAsync<Role>, IRoleRepositoryAsync
     {
         public RoleRepositoryAsync(SecurityDbContext securityDb, IConfigurationProvider configurationProvider) : base(securityDb, configurationProvider)
         {

@@ -10,16 +10,16 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class PermissionServiceAsync : BaseServiceAsync<Permission, SecurityDbContext>, IPermissionServiceAsync
+    public class PermissionServiceAsync : BaseServiceAsync<Permission>, IPermissionServiceAsync
     {
         private readonly IPermissionRepositoryAsync _permissionRepository;
 
         public PermissionServiceAsync(
             IMemoryCache cache,
             IMapper mapper,
-            IBaseRepositoryAsync<Permission, SecurityDbContext> repositoryAsync,
-            IHttpContextAccessor httpContext, IPermissionRepositoryAsync permissionRepositoryAsync)
-            : base(cache, mapper, repositoryAsync, httpContext)
+            IHttpContextAccessor httpContext,
+            IPermissionRepositoryAsync permissionRepositoryAsync)
+            : base(cache, mapper, permissionRepositoryAsync, httpContext)
         {
             _permissionRepository = permissionRepositoryAsync;
         }

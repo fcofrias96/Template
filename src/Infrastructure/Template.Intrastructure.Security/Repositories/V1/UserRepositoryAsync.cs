@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
@@ -6,27 +7,27 @@ using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
+using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class UserRepositoryAsync : IUserRepositoryAsync
+    public class UserRepositoryAsync : BaseRepositoryAsync<User>, IUserRepositoryAsync
     {
         private readonly SecurityDbContext _dbContext;
         private readonly UserManager<User> _userManager;
-        private readonly IBaseRepositoryAsync<User, SecurityDbContext> _readRepository;
 
         public UserRepositoryAsync(
             UserManager<User> userManager,
             SecurityDbContext dbContext,
-            IBaseRepositoryAsync<User, SecurityDbContext> readRepository
-            )
+            IConfigurationProvider configurationProvider
+            ): base(dbContext, configurationProvider)
         {
             _userManager = userManager;
             _dbContext = dbContext;
-            _readRepository = readRepository;
+
         }
 
         public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken)
@@ -58,31 +59,6 @@ namespace Template.Security.Repositories.V1
                 await _dbContext.UserRoles.AddRangeAsync(toAdd);
                 await _dbContext.SaveChangesAsync();
             }
-        }
-
-        public async Task<User?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetByIdAsync(id, cancellationToken);
-        }
-
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetByIdProjectedAsync<TKey, TDestination>(id, cancellationToken);
-        }
-
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetProjectedAsync<TDestination>(cancellationToken);
-        }
-
-        public Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<User> spec, CancellationToken cancellationToken)
-        {
-            return _readRepository.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
-        }
-
-        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<User> spec, CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
         }
 
         public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken)
@@ -130,10 +106,6 @@ namespace Template.Security.Repositories.V1
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(ISpecification<User> spec, CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetTotalCountAsync(spec, cancellationToken);
-        }
 
         public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {

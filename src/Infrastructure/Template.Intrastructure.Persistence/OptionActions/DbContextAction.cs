@@ -14,8 +14,11 @@ namespace Template.Persistence.OptionActions
             {
                 var isDevelopment = configuration.GetValue<string>("Environment") == "Development"
                     || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+                
+                var connectionString = configuration.GetConnectionString("TemplateMainConnection") 
+                ?? throw new InvalidOperationException("Connection string 'TemplateMainConnection' not found.");
 
-                options.UseSqlServer(configuration.GetConnectionString("TemplateMainConnection"),
+                options.UseSqlServer(connectionString,
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
                             .EnableRetryOnFailure(
                                 maxRetryCount: 3,

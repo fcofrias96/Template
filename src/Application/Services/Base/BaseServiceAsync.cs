@@ -15,16 +15,15 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class BaseServiceAsync<TEntity, TDbContext> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity, TDbContext>
+    public abstract class BaseServiceAsync<TEntity> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity>
         where TEntity : class, IEntityBase
-        where TDbContext : DbContext
     {
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
-        private readonly IBaseRepositoryAsync<TEntity, TDbContext> _repositoryAsync;
+        private readonly IBaseRepositoryAsync<TEntity> _repositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
 
-        public BaseServiceAsync(IMemoryCache cache, IMapper mapper, IBaseRepositoryAsync<TEntity, TDbContext> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
+        public BaseServiceAsync(IMemoryCache cache, IMapper mapper, IBaseRepositoryAsync<TEntity> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
         {
             _cache = cache;
             _mapper = mapper;

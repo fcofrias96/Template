@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using Template.Domain.Entities.V1;
 
 namespace Template.Persistence.DbContexts

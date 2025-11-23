@@ -24,8 +24,9 @@ namespace Template.Persistence.DbContexts.V1
             _auditDbContext = auditDbContext;
         }
 
-        public ApplicationDbContext()
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+
         }
 
         #region DbSets

@@ -7,7 +7,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class PermissionRepositoryAsync : BaseRepositoryAsync<Permission, SecurityDbContext>, IPermissionRepositoryAsync
+    public class PermissionRepositoryAsync : BaseRepositoryAsync<Permission>, IPermissionRepositoryAsync
     {
         private readonly SecurityDbContext _dbContext;
 
