@@ -23,11 +23,9 @@ namespace Template.Application.Services.Base
             _repositoryAsync = repository;
         }
 
-        public async Task<byte[]> ExportToCSVAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-            where TSpecification : ISpecification<TEntity>
+        public async Task<byte[]> ExportToCSVAsync<TDestination>(string title, ISpecification<TEntity> specification, CancellationToken cancellationToken)
         {
-            var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, false);
-            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
+            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(specification, cancellationToken);
 
             return GenerateCSV(title, data);
         }
@@ -38,11 +36,10 @@ namespace Template.Application.Services.Base
             return GenerateCSV(title, data);
         }
 
-        public async Task<byte[]> ExportToPdfAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-            where TSpecification : ISpecification<TEntity>
+        public async Task<byte[]> ExportToPdfAsync<TDestination>(string title, ISpecification<TEntity> specification, CancellationToken cancellationToken)
+
         {
-            var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, false);
-            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
+            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(specification, cancellationToken);
             return GeneratePdf(title, data);
         }
 
@@ -52,11 +49,10 @@ namespace Template.Application.Services.Base
             return GeneratePdf(title, data);
         }
 
-        public async Task<byte[]> ExportToDocxAsync<TDestination, TSpecification>(string title, IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-            where TSpecification : ISpecification<TEntity>
+        public async Task<byte[]> ExportToDocxAsync<TDestination>(string title, ISpecification<TEntity> specification, CancellationToken cancellationToken)
+
         {
-            var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters, false);
-            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(spec, cancellationToken);
+            var data = await _repositoryAsync.GetProjectedForExportAsync<TDestination>(specification, cancellationToken);
             return GenerateDoc(title, data);
         }
 

@@ -3,8 +3,10 @@ using Template.Api.Attributes;
 using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Items;
-using Template.Application.Models.Specification.V1;
+using Template.Application.Models.Specification;
+
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Persistence.Contracts.Services;
 
 namespace Template.Api.Controllers
@@ -47,7 +49,8 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto, ItemSpecification>(request, cancellationToken);
+            var specification = new Specification<Item>(request);
+            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto>(specification, cancellationToken);
             return Ok(response);
         }
 
@@ -71,7 +74,8 @@ namespace Template.Api.Controllers
         [HttpGet("export/docx")]
         public async Task<FileResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var file = await _itemServiceAsync.ExportToDocxAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request, cancellationToken);
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToDocxAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
             return File(file, FileContentType.DOC, "Items.docx");
         }
 
@@ -79,7 +83,8 @@ namespace Template.Api.Controllers
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto, ItemSpecification>("Lista de Artículos", request, cancellationToken);
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
             return File(file, FileContentType.PDF, "Items.pdf");
         }
 
@@ -87,7 +92,8 @@ namespace Template.Api.Controllers
         [HttpGet("export/csv")]
         public async Task<FileResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var file = await _itemServiceAsync.ExportToCSVAsync<ItemExportDto, ItemSpecification>("Artículos", request, cancellationToken);
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToCSVAsync<ItemExportDto>("Artículos", specification, cancellationToken);
             return File(file, FileContentType.CSV, "Items.csv");
         }
 

@@ -5,8 +5,10 @@ using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Categories;
-using Template.Application.Models.Specification.V1;
+using Template.Application.Models.Specification;
+
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Persistence.Contracts.Services;
 
 namespace Template.Api.Controllers
@@ -50,7 +52,8 @@ namespace Template.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
         {
-            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto, CategorySpecification>(request, cancellationToken);
+            var specification = new Specification<Category>(request);
+            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto>(specification, cancellationToken);
             return Ok(response);
         }
 

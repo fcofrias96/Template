@@ -32,6 +32,10 @@
     <ItemGroup>
       <ProjectReference Include="..\Domain\Template.Domain.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models\Specification\V1\" />
+    </ItemGroup>
   
   </Project>
   

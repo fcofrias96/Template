@@ -15,9 +15,9 @@ namespace Template.Application.Models.Specification
     /// Provides a base class for building query specifications for TEntity, including paging, sorting, and criteria.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity for which the specification is defined.</typeparam>
-    public abstract class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
+    public class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
     {
-        protected Specification(IQueryParametersBase queryParametersBase, bool applyPagination)
+        public Specification(IQueryParametersBase queryParametersBase, bool applyPagination = true)
         {
             if (applyPagination)
             {

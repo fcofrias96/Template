@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Constants;
 using Template.Application.Models.DTOs.V1.Users;
+using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Users;
-using Template.Security.Specification.V1;
+using Template.Security.Entities;
+
 
 namespace Template.Api.Controllers.Security
 {
@@ -38,7 +40,8 @@ namespace Template.Api.Controllers.Security
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<UserListDto>>>> GetAllUsers([FromQuery] UserQueryParameters request, CancellationToken cancellationToken)
         {
-            var pagedUsersResult = await _userServiceAsync.GetProjectedPaginatedAsync<UserListDto, UserSpecification>(request, cancellationToken);
+            var specification = new Specification<User>(request);
+            var pagedUsersResult = await _userServiceAsync.GetProjectedPaginatedAsync<UserListDto>(specification, cancellationToken);
             return Ok(pagedUsersResult);
         }
 

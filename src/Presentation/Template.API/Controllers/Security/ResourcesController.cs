@@ -3,10 +3,12 @@ using Template.Api.Attributes;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
+using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Resources;
-using Template.Security.Specification.V1;
+using Template.Security.Entities;
+using ActionType = Template.Application.Enums.ActionType;
 
 namespace Template.Api.Controllers.Security
 {
@@ -26,7 +28,8 @@ namespace Template.Api.Controllers.Security
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
-            var resources = await _resourceService.GetProjectedPaginatedAsync<ResourceListDto, ResourceSpecification>(request, cancellationToken);
+            var specification = new Specification<Resource>(request);
+            var resources = await _resourceService.GetProjectedPaginatedAsync<ResourceListDto>(specification, cancellationToken);
             return Ok(resources);
         }
 

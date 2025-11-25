@@ -3,10 +3,13 @@ using Template.Api.Attributes;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Roles;
+using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Roles;
-using Template.Security.Specification.V1;
+using Template.Security.Entities;
+using ActionType = Template.Application.Enums.ActionType;
+
 
 namespace Template.Api.Controllers.Security
 {
@@ -28,7 +31,8 @@ namespace Template.Api.Controllers.Security
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<RoleListDto>>>> GetProjectedPaginatedAsync([FromQuery] RoleQueryParameters request, CancellationToken cancellationToken)
         {
-            var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto, RoleSpecification>(request, cancellationToken);
+            var specification = new Specification<Role>(request);
+            var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto>(specification, cancellationToken);
             return Ok(roles);
         }
 

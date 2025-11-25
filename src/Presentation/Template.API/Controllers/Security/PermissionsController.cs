@@ -3,10 +3,12 @@ using Template.Api.Attributes;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Permissions;
+using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Permissions;
-using Template.Security.Specification.V1;
+using Template.Security.Entities;
+using ActionType = Template.Application.Enums.ActionType;
 
 namespace Template.Api.Controllers.Security
 {
@@ -26,7 +28,8 @@ namespace Template.Api.Controllers.Security
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
-            var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto, PermissionSpecification>(request, cancellationToken);
+            var specification = new Specification<Permission>(request);
+            var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto>(specification, cancellationToken);
             return Ok(permissions);
         }
 

@@ -65,35 +65,32 @@ namespace Template.Application.Services.Base
             return new ApiResponse<TDestination>(mappedEntity);
         }
 
-        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination, TSpecification>(IQueryParametersBase queryParameters, CancellationToken cancellationToken)
-        where TSpecification : ISpecification<TEntity>
+        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> specification, CancellationToken cancellationToken)
         {
-            var spec = SpecificationHelper.CreatorInstance<TSpecification, TEntity>(queryParameters);
-
-            if (spec.Skip % spec.Take != 0)
+            if (specification.Skip % specification.Take != 0)
             {
-                throw new BadRequestException($"The 'offset' value ({spec.Skip}) must be either zero or a multiple of the 'limit' value({spec.Take}).");
+                throw new BadRequestException($"The 'offset' value ({specification.Skip}) must be either zero or a multiple of the 'limit' value({specification.Take}).");
             }
 
-            var total = await _repositoryAsync.GetTotalCountAsync(spec, cancellationToken);
+            var total = await _repositoryAsync.GetTotalCountAsync(specification, cancellationToken);
 
-            if (total < spec.Skip)
+            if (total < specification.Skip)
             {
-                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({spec.Take}).");
+                throw new BadRequestException($"The 'offset' value must be either zero or minimum to 'total' value ({total}) and multiple of the 'limit' value({specification.Take}).");
             }
 
-            var items = await _repositoryAsync.GetProjectedPaginatedAsync<TDestination>(spec, cancellationToken);
+            var items = await _repositoryAsync.GetProjectedPaginatedAsync<TDestination>(specification, cancellationToken);
             var href = _httpContext?.HttpContext?.Request.GetEncodedUrl()!;
-            var next = UrlUtile.GetNextURL(href, spec.Take, spec.Skip, total);
-            var prev = UrlUtile.GetPrevURL(href, spec.Take, spec.Skip);
+            var next = UrlUtile.GetNextURL(href, specification.Take, specification.Skip, total);
+            var prev = UrlUtile.GetPrevURL(href, specification.Take, specification.Skip);
 
             var pagedCollection = new PagedCollection<TDestination>
             {
                 HRef = href,
                 Elements = items,
-                Limit = spec.Take,
+                Limit = specification.Take,
                 Next = next,
-                Offset = spec.Skip,
+                Offset = specification.Skip,
                 Prev = prev,
                 Total = total
             };
