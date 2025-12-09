@@ -22,7 +22,7 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class AuthenticationController :  ApiControllerBase
     {
-        private readonly IAuthServiceAsync _authService;
+        private readonly IAuthService _authService;
         private readonly JwtSettings _jwtSettings;
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Template.Api.Controllers.Security
         /// </summary>
         /// <param name="authService">Service responsible for authentication logic.</param>
         /// <param name="jwtSettings">JWT configuration settings (token lifetime, etc.).</param>
-        public AuthenticationController(IAuthServiceAsync authService, IOptions<JwtSettings> jwtSettings)
+        public AuthenticationController(IAuthService authService, IOptions<JwtSettings> jwtSettings)
         {
             _authService = authService;
             _jwtSettings = jwtSettings.Value;

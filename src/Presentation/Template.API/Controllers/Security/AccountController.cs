@@ -11,9 +11,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class AccountController :  ApiControllerBase
     {
-        private readonly IAuthServiceAsync _authService;
+        private readonly IAuthService _authService;
 
-        public AccountController(IAuthServiceAsync authService)
+        public AccountController(IAuthService authService)
         {
             _authService = authService;
         }

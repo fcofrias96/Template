@@ -20,9 +20,10 @@ namespace Template.Api.Attributes
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var permissionService = context.HttpContext.RequestServices.GetService<IPermissionServiceAsync>();
+            var httpContext = context.HttpContext;
+            var permissionService = httpContext.RequestServices.GetService<IPermissionService>();
 
-            var userIdClaim = context.HttpContext.User.FindFirst("userId");
+            var userIdClaim = httpContext.User.FindFirst("userId");
             if (userIdClaim == null)
             {
                 context.Result = new UnauthorizedResult();
@@ -31,7 +32,7 @@ namespace Template.Api.Attributes
 
             string userId = userIdClaim.Value;
 
-            var hasPermission = await permissionService!.HasPermissionAsync(userId, _resourceId, _actionId);
+            var hasPermission = await permissionService!.HasPermissionAsync(userId, _resourceId, _actionId, httpContext.RequestAborted);
 
             if (!hasPermission)
             {

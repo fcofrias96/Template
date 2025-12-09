@@ -12,9 +12,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class EmailController :  ApiControllerBase
     {
-        private readonly IAuthServiceAsync _authService;
+        private readonly IAuthService _authService;
 
-        public EmailController(IAuthServiceAsync authService)
+        public EmailController(IAuthService authService)
         {
             _authService = authService;
         }

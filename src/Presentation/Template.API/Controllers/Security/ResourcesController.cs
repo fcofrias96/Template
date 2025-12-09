@@ -18,9 +18,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class ResourcesController :  ApiControllerBase
     {
-        private readonly IResourceServiceAsync _resourceService;
+        private readonly IResourceService _resourceService;
 
-        public ResourcesController(IResourceServiceAsync resourceService)
+        public ResourcesController(IResourceService resourceService)
         {
             _resourceService = resourceService;
         }

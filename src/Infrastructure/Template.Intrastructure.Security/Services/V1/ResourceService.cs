@@ -8,9 +8,9 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class ResourceService : BaseServiceAsync<Resource>, IResourceServiceAsync
+    public class ResourceService : BaseServiceAsync<Resource>, IResourceService
     {
-        public ResourceService(ICacheService cache, IMapper mapper, IResourceRepositoryAsync repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
+        public ResourceService(ICacheService cache, IMapper mapper, IResourceRepository repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
         {
         }
     }

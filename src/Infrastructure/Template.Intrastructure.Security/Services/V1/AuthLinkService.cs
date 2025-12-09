@@ -33,8 +33,9 @@ public class AuthLinkService : IAuthLinkService
             currentRequestUrl.LastIndexOf("/auth", StringComparison.OrdinalIgnoreCase) + 5);
     }
 
-    public async Task<string> GenerateEmailConfirmationLinkAsync(User user)
+    public async Task<string> GenerateEmailConfirmationLinkAsync(User user, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(emailConfirmationToken));
 

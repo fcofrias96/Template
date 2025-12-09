@@ -3,7 +3,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public partial class ExportServiceAsync<TEntity> where TEntity : class, IEntityBase
+    public partial class ExportService<TEntity> where TEntity : class, IEntityBase
     {
         #region Private Methods
 

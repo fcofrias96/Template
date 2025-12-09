@@ -8,12 +8,12 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class MenuServiceAsync : IMenuServiceAsync
+    public class MenuService : IMenuService
     {
         private readonly IPermissionService _permissionService;
         private readonly SecurityDbContext _context;
 
-        public MenuServiceAsync(IPermissionService permissionService, SecurityDbContext context)
+        public MenuService(IPermissionService permissionService, SecurityDbContext context)
         {
             _permissionService = permissionService;
             _context = context;
@@ -21,7 +21,7 @@ namespace Template.Security.Services.V1
 
         public async Task<ApiResponse<MenuItemResponse>> GetMenuForUserAsync(ClaimsPrincipal user, CancellationToken cancellationToken)
         {
-            var userPermissionIds = _permissionService.GetUserPermissionIds(user, cancellationToken);
+            var userPermissionIds = await _permissionService.GetUserPermissionIdsAsync(user, cancellationToken);
 
             var menuItems = await _context.MenuItems
                                     .Select(m => new MenuItem

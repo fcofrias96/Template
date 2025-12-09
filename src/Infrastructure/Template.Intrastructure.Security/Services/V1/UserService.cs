@@ -19,24 +19,23 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class UserServiceAsync : BaseServiceAsync<User>,  IUserServiceAsync
+    public class UserService : BaseServiceAsync<User>,  IUserService
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly IUserRepositoryAsync _userRepository;
-        private readonly IUserRoleRepositoryAsync _userRoleRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
         private readonly ICacheService _cache;
-
-        public UserServiceAsync(
-            IUserRepositoryAsync userRepository,
+        public UserService(
+            IUserRepository userRepository,
             IMapper mapper,
-            IEmailServiceAsync emailService,
+            IEmailService emailService,
             IHttpContextAccessor httpContext,
-            IResourceServiceAsync moduleService,
+            IResourceService moduleService,
             UserManager<User> userManager,
             ICacheService memoryCache,
-            IUserRoleRepositoryAsync userRoleRepository,
+            IUserRoleRepository userRoleRepository,
             ICacheService cache
             ) : base(memoryCache, mapper, userRepository, httpContext)
         {
@@ -109,7 +108,7 @@ namespace Template.Security.Services.V1
 
             await _userRoleRepository.UpdateUserRolesAsync(userIdString, roleIds, cancellationToken);
 
-            _cache.Remove(PermissionServiceAsync.BuildPermissionsCacheKey(userIdString));
+            _cache.Remove(PermissionService.BuildPermissionsCacheKey(userIdString));
         }
 
         #region Private Methods

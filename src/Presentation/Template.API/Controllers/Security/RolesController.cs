@@ -22,9 +22,9 @@ namespace Template.Api.Controllers.Security
         [ApiVersion("1.0")]
         public class RolesController : ApiControllerBase
         {
-            private readonly IRoleServiceAsync _roleService;
+            private readonly IRoleService _roleService;
 
-            public RolesController(IRoleServiceAsync roleService)
+            public RolesController(IRoleService roleService)
             {
                 _roleService = roleService;
             }

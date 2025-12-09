@@ -7,11 +7,11 @@ using Template.Security.Settings;
 
 public class AuthEmailService : IAuthEmailService
 {
-    private readonly IEmailServiceAsync _emailServiceAsync;
+    private readonly IEmailService _emailServiceAsync;
     private readonly JwtSettings _jwtSettings;
 
     public AuthEmailService(
-        IEmailServiceAsync emailServiceAsync,
+        IEmailService emailServiceAsync,
         IOptions<JwtSettings> jwtSettings)
     {
         _emailServiceAsync = emailServiceAsync;

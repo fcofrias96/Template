@@ -14,19 +14,19 @@ using Template.Security.Entities;
 namespace Template.Security.Services.V1
 {
 
-    public class RoleServiceAsync : BaseServiceAsync<Role>, IRoleServiceAsync
+    public class RoleService : BaseServiceAsync<Role>, IRoleService
     {
-        private readonly IRolePermissionRepositoryAsync _rolePermissionRepository;
-        private readonly IUserRoleRepositoryAsync _userRoleRepository;
+        private readonly IRolePermissionRepository _rolePermissionRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
         private readonly ICacheService _cache;
 
-        public RoleServiceAsync(
+        public RoleService(
             ICacheService cache,
             IMapper mapper,
-            IRoleRepositoryAsync repositoryAsync,
+            IRoleRepository repositoryAsync,
             IHttpContextAccessor httpContext,
-            IRolePermissionRepositoryAsync rolePermissionRepository,
-            IUserRoleRepositoryAsync userRoleRepository)
+            IRolePermissionRepository rolePermissionRepository,
+            IUserRoleRepository userRoleRepository)
             : base(cache, mapper, repositoryAsync, httpContext)
         {
             _rolePermissionRepository = rolePermissionRepository;
@@ -87,7 +87,7 @@ namespace Template.Security.Services.V1
 
             foreach (var userId in userIds)
             {
-                _cache.Remove(PermissionServiceAsync.BuildPermissionsCacheKey(userId));
+                _cache.Remove(PermissionService.BuildPermissionsCacheKey(userId));
             }
         }
     }

@@ -14,12 +14,12 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class UserRepositoryAsync : BaseRepositoryAsync<User>, IUserRepositoryAsync
+    public class UserRepository : BaseRepositoryAsync<User>, IUserRepository
     {
         private readonly SecurityDbContext _dbContext;
         private readonly UserManager<User> _userManager;
 
-        public UserRepositoryAsync(
+        public UserRepository(
             UserManager<User> userManager,
             SecurityDbContext dbContext,
             IConfigurationProvider configurationProvider

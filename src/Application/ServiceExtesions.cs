@@ -42,7 +42,7 @@ namespace Template.Application
             #region Dependency Injection
 
             // services
-            services.AddScoped(typeof(IExportServiceAsync<>), typeof(ExportServiceAsync<>));
+            services.AddScoped(typeof(IExportService<>), typeof(ExportService<>));
             services.AddScoped<ICacheService, MemoryCacheService>();
 
             #endregion Dependency Injection

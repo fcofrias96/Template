@@ -4,7 +4,7 @@ using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IActionRepositoryAsync : IBaseRepositoryAsync<ActionType>
+    public interface IActionRepository : IBaseRepositoryAsync<ActionType>
     {
     }
 }

@@ -11,7 +11,7 @@ namespace Template.Email
         public static void AddInfrastructureEmail(this IServiceCollection service, IConfiguration configuration)
         {
             service.Configure<MailSettings>(configuration.GetSection("MailSettings"));
-            service.AddTransient<IEmailServiceAsync, EmailServiceAsync>();
+            service.AddTransient<IEmailService, EmailService>();
         }
     }
 }

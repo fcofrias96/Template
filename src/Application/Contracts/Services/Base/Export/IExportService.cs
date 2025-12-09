@@ -1,6 +1,6 @@
 ﻿namespace Template.Application.Contracts.Services.Base.Export
 {
-    public interface IExportServiceAsync<TEntity>
+    public interface IExportService<TEntity>
     {
         Task<byte[]> ExportToCSVAsync<TDestination>(string title, ISpecification<TEntity> specification, CancellationToken cancellationToken);
 

@@ -1,6 +1,6 @@
 ﻿namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IUserRoleRepositoryAsync
+    public interface IUserRoleRepository
     {
         /// <summary>
         /// Obtiene todos los IDs de roles asignados a un usuario.

@@ -5,7 +5,7 @@ using Template.Application.Models.Wrappers;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IAuthServiceAsync
+    public interface IAuthService
     {
         Task<ApiResponse<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto, CancellationToken cancellationToken);
 

@@ -105,23 +105,22 @@ namespace Template.Security
             #region Dependency injection
 
             // Repositories
-            services.AddScoped<IActionRepositoryAsync, ActionRepositoryAsync>();
-            services.AddScoped<IPermissionRepositoryAsync, PermissionRepositoryAsync>();
-            services.AddScoped<IResourceRepositoryAsync, ResourceRepository>();
-            services.AddScoped<IRolePermissionRepositoryAsync, RolePermissionRepositoryAsync>();
-            services.AddScoped<IRoleRepositoryAsync, RoleRepositoryAsync>();
-            services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
-            services.AddScoped<IUserRoleRepositoryAsync, UserRoleRepositoryAsync>();
+            services.AddScoped<IActionRepository, ActionRepository>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IResourceRepository, ResourceRepository>();
+            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
             //Services
-            services.AddScoped<IActionServiceAsync, ActionServiceAsync>();
-            services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
-            services.AddScoped<IPermissionServiceAsync, PermissionServiceAsync>();
-            services.AddScoped<IResourceServiceAsync, ResourceService>();
-            services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
-            services.AddScoped<IUserServiceAsync, UserServiceAsync>();
-            services.AddScoped<IMenuServiceAsync, MenuServiceAsync>();
+            services.AddScoped<IActionService, ActionService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IResourceService, ResourceService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUserAuthCacheService, UserAuthCacheService>();
             services.AddScoped<IAuthLinkService, AuthLinkService>();

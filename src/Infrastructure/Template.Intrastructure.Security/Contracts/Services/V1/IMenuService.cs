@@ -4,7 +4,7 @@ using Template.Security.Dtos.Menu;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IMenuServiceAsync
+    public interface IMenuService
     {
         Task<ApiResponse<MenuItemResponse>> GetMenuForUserAsync(ClaimsPrincipal user, CancellationToken cancellationToken);
     }

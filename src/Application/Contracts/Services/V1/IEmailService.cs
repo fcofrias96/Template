@@ -2,7 +2,7 @@
 
 namespace Template.Application.Contracts.Services.V1
 {
-    public interface IEmailServiceAsync
+    public interface IEmailService
     {
         Task SendEmailAsync(EmailDto emailDto, CancellationToken cancellationToken);
     }

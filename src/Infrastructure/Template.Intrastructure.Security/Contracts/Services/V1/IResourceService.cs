@@ -4,7 +4,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IResourceServiceAsync : IBaseServiceAsync<Resource>
+    public interface IResourceService : IBaseServiceAsync<Resource>
     {
     }
 }

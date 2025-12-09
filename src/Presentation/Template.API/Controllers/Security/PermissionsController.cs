@@ -18,9 +18,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class PermissionsController :  ApiControllerBase
     {
-        private readonly IPermissionServiceAsync _permissionService;
+        private readonly IPermissionService _permissionService;
 
-        public PermissionsController(IPermissionServiceAsync permissionService)
+        public PermissionsController(IPermissionService permissionService)
         {
             _permissionService = permissionService;
         }

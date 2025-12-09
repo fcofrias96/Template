@@ -17,22 +17,22 @@ using Template.Security.Settings;
 
 namespace Template.Security.Services.V1
 {
-    public class AuthServiceAsync : IAuthServiceAsync
+    public class AuthService : IAuthService
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IUserServiceAsync _userServiceAsync;
+        private readonly IUserService _userServiceAsync;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IAuthLinkService _authLinkService;
         private readonly IAuthEmailService _authEmailService;
         private readonly ICurrentUserService _currentUserService;
         private readonly JwtSettings _jwtSettings;
 
-        public AuthServiceAsync(
+        public AuthService(
             IOptions<JwtSettings> jwtSettings,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IUserServiceAsync userServiceAsync,
+            IUserService userServiceAsync,
             IJwtTokenService jwtTokenService,
             IAuthLinkService authLinkService,
             IAuthEmailService authEmailService,
@@ -150,7 +150,7 @@ namespace Template.Security.Services.V1
 
             await _userManager.AddToRoleAsync(user, Roles.User);
 
-            var confirmationLink = await _authLinkService.GenerateEmailConfirmationLinkAsync(user);
+            var confirmationLink = await _authLinkService.GenerateEmailConfirmationLinkAsync(user, cancellationToken);
             await _authEmailService.SendConfirmationEmailAsync(user, confirmationLink, cancellationToken);
 
             var message = $"User registered successfully. A confirmation email has been sent to {user.Email}. Please confirm your account by visiting the URL provided in the email.";
@@ -300,7 +300,7 @@ namespace Template.Security.Services.V1
                     throw new BadRequestException("Email is already confirmed.");
                 }
 
-                var confirmationLink = await _authLinkService.GenerateEmailConfirmationLinkAsync(user);
+                var confirmationLink = await _authLinkService.GenerateEmailConfirmationLinkAsync(user, cancellationToken);
                 await _authEmailService.SendConfirmationEmailAsync(user, confirmationLink, cancellationToken);
             }
 

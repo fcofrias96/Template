@@ -11,9 +11,9 @@ namespace Template.Api.Controllers
     [ApiVersion("1.0")]
     public class MenuController :  ApiControllerBase
     {
-        private readonly IMenuServiceAsync _menuService;
+        private readonly IMenuService _menuService;
 
-        public MenuController(IMenuServiceAsync menuService)
+        public MenuController(IMenuService menuService)
         {
             _menuService = menuService;
         }

@@ -13,7 +13,7 @@ namespace Template.Persistence.Services.V1
 {
     public class ItemService : BaseServiceAsync<Item>, IItemService
     {
-        public ItemService(ICacheService cache, IMapper mapper, IItemRepositoryAsync repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
+        public ItemService(ICacheService cache, IMapper mapper, IItemRepository repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
         {
         }
     }

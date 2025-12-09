@@ -18,9 +18,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class UsersController : ApiControllerBase
     {
-        private readonly IUserServiceAsync _userServiceAsync;
+        private readonly IUserService _userServiceAsync;
 
-        public UsersController(IUserServiceAsync userService)
+        public UsersController(IUserService userService)
         {
             _userServiceAsync = userService;
         }

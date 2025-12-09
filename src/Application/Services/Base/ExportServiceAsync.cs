@@ -13,12 +13,12 @@ using Xceed.Words.NET;
 
 namespace Template.Application.Services.Base
 {
-    public partial class ExportServiceAsync<TEntity> : IExportServiceAsync<TEntity>
+    public partial class ExportService<TEntity> : IExportService<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly IReadRepositoryAsync<TEntity> _repositoryAsync;
 
-        public ExportServiceAsync(IReadRepositoryAsync<TEntity> repository)
+        public ExportService(IReadRepositoryAsync<TEntity> repository)
         {
             _repositoryAsync = repository;
         }

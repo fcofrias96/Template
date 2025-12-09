@@ -1,35 +1,72 @@
-﻿using System.Security.Claims;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Template.Application.Contracts.Services.V1;
+using Template.Application.Services.Base;
+using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
-using Template.Security.DbContexts.V1;
+using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class PermissionService : IPermissionService
-    {
-        private readonly SecurityDbContext _context;
+    public readonly record struct PermissionKey(int ResourceId, int ActionId);
 
-        public PermissionService(SecurityDbContext context)
+    public class PermissionService : BaseServiceAsync<Permission>, IPermissionService
+    {
+        private readonly IPermissionRepository _permissionRepository;
+        private readonly ICacheService _cache;
+        private readonly TimeSpan _permissionsTtl = TimeSpan.FromDays(1);
+
+        public PermissionService(
+            ICacheService cache,
+            IMapper mapper,
+            IHttpContextAccessor httpContext,
+            IPermissionRepository permissionRepositoryAsync)
+            : base(cache, mapper, permissionRepositoryAsync, httpContext)
         {
-            _context = context;
+            _permissionRepository = permissionRepositoryAsync;
+            _cache = cache;
         }
 
-        public HashSet<int> GetUserPermissionIds(ClaimsPrincipal user, CancellationToken cancellationToken)
+        public async Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId, CancellationToken cancellationToken)
+        {
+            var cacheKey = BuildPermissionsCacheKey(userId);
+
+            // 1. Intentar leer del cache
+            var permissions = _cache.Get<HashSet<PermissionKey>>(cacheKey);
+
+            if (permissions is null)
+            {
+                // 2. No hay cache → ir al repo una sola vez
+                var userPermissions = await _permissionRepository.GetUserPermissionsAsync(userId, cancellationToken);
+                permissions = userPermissions.Select(p => new PermissionKey(p.ResourceId, p.ActionId)).ToHashSet();
+                _cache.Set(cacheKey, permissions, _permissionsTtl);
+            }
+
+            // 3. Validar en memoria
+            var key = new PermissionKey(resourceId, actionId);
+            return permissions.Contains(key);
+        }
+
+
+        public async Task<HashSet<int>> GetUserPermissionIdsAsync(ClaimsPrincipal user, CancellationToken cancellationToken)
         {
             if (user == null || !user!.Identity!.IsAuthenticated) { return new HashSet<int>(); }
 
             var userId = GetUserIdFromClaims(user);
             cancellationToken.ThrowIfCancellationRequested();
 
-            return _context.UserRoles
-                .Where(ur => ur.UserId == userId)
-                .SelectMany(ur => ur.Role.RolePermissions)
-                .Select(rp => rp.PermissionId)
-                .ToHashSet();
+            var role = await _permissionRepository.GetUserPermissionIdsAsync(userId, cancellationToken);
+
+            return role.ToHashSet();
         }
 
         private static string GetUserIdFromClaims(ClaimsPrincipal user)
         {
             return user.FindFirstValue("UserId") ?? string.Empty;
         }
+
+        public static string BuildPermissionsCacheKey(string userId) => $"permissions:user{userId}";
     }
 }

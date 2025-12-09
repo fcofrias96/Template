@@ -13,9 +13,9 @@ namespace Template.Api.Controllers.Security
     [ApiVersion("1.0")]
     public class ActionsController :  ApiControllerBase
     {
-        private readonly IActionServiceAsync _actionService;
+        private readonly IActionService _actionService;
 
-        public ActionsController(IActionServiceAsync actionService)
+        public ActionsController(IActionService actionService)
         {
             _actionService = actionService;
         }

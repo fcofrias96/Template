@@ -14,7 +14,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public abstract class BaseServiceAsync<TEntity> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity>
+    public abstract class BaseServiceAsync<TEntity> : ExportService<TEntity>, IBaseServiceAsync<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly ICacheService _cache;

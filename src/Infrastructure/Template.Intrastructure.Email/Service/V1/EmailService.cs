@@ -9,11 +9,11 @@ using Template.Email.Settings;
 
 namespace Template.Email.Service.V1
 {
-    public class EmailServiceAsync : IEmailServiceAsync
+    public class EmailService : IEmailService
     {
         private readonly MailSettings _mailSettings;
 
-        public EmailServiceAsync(IOptions<MailSettings> option)
+        public EmailService(IOptions<MailSettings> option)
         {
             _mailSettings = option.Value;
         }

@@ -6,11 +6,11 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class RolePermissionRepositoryAsync : IRolePermissionRepositoryAsync
+    public class RolePermissionRepository : IRolePermissionRepository
     {
         private readonly SecurityDbContext _dbContext;
 
-        public RolePermissionRepositoryAsync(SecurityDbContext dbContext)
+        public RolePermissionRepository(SecurityDbContext dbContext)
         {
             _dbContext = dbContext;
         }

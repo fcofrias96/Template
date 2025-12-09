@@ -5,11 +5,11 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class UserRoleRepositoryAsync : IUserRoleRepositoryAsync
+    public class UserRoleRepository : IUserRoleRepository
     {
         private readonly SecurityDbContext _dbContext;
 
-        public UserRoleRepositoryAsync(SecurityDbContext dbContext)
+        public UserRoleRepository(SecurityDbContext dbContext)
         {
             _dbContext = dbContext;
         }

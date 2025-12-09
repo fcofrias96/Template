@@ -13,7 +13,7 @@ namespace Template.Persistence.Services.V1
 {
     public class CategoryService : BaseServiceAsync<Category>, ICategoryService
     {
-        public CategoryService(ICacheService cache, IMapper mapper, ICategoryRepositoryAsync repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
+        public CategoryService(ICacheService cache, IMapper mapper, ICategoryRepository repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
         {
         }
     }
