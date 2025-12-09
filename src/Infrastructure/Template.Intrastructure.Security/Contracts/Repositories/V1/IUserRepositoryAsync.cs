@@ -14,8 +14,6 @@ namespace Template.Security.Contracts.Repositories.V1
 
         Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken);
 
-        Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken);
-
         Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken);
     }
 }

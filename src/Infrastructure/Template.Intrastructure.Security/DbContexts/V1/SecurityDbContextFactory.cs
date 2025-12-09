@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Template.Security.DbContexts.V1;
 
-namespace Template.Persistence.DbContexts
+namespace Template.Security.DbContexts.V1
 {
     public class SecurityDbContextFactory : IDesignTimeDbContextFactory<SecurityDbContext>
     {

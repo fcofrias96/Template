@@ -17,7 +17,7 @@ import { ProductDetail } from '@features/product/types/product-detail.interface'
 import { CategoryDetail } from '@features/category/types/category-detail.interface';
 import { map, Observable, Subject } from 'rxjs';
 import { DynamicModalComponent } from '@models/dynamic-modal.interface';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 
 @Component({
   selector: 'app-product-form',
@@ -33,7 +33,7 @@ import { Dropdown } from '@models/dropdown';
 })
 export class ProductFormComponent implements OnInit, DynamicModalComponent {
   public productForm: FormGroup;
-  public categories$: Observable<Dropdown[]>;
+  public categories$: Observable<Catalog[]>;
   @Input() productId!: number;
   @Input() edit = false;
   closeModal = new Subject<void>();
@@ -44,7 +44,7 @@ export class ProductFormComponent implements OnInit, DynamicModalComponent {
     private categoryService: CategoryService
   ) {
     this.productForm = this.initForm();
-    this.categories$ = this.categoryService.getDropdownList();
+    this.categories$ = this.categoryService.getCatalogList();
   }
 
   ngOnInit(): void {

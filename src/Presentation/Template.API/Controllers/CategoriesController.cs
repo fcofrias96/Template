@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
+using Template.Api.Controllers.Common;
 using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
@@ -17,7 +18,7 @@ namespace Template.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController :  ApiControllerBase
     {
         #region Private Variable
 
@@ -50,12 +51,12 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
         {
             var specification = new Specification<Category>(request);
             var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto>(specification, cancellationToken);
             return Ok(response);
-        }
+		}
 
         [Permission(Resources.Category, ActionType.Read)]
         [HttpGet("{id}")]
@@ -75,10 +76,10 @@ namespace Template.Api.Controllers
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet("catalog")]
-        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _categoryServiceAsync.GetProjectedAsync<Catalog>(cancellationToken);
-            return Ok(resources);
+            var result = await _categoryServiceAsync.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
+            return FromEtagResult(result);
         }
 
         [Permission(Resources.Category, ActionType.Export)]

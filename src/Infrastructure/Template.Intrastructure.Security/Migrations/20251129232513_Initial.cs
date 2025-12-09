@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace Template.Security.Migrations
 {
     /// <inheritdoc />
-    public partial class Inint : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,7 +75,7 @@ namespace Template.Security.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     IsTokenRevoked = table.Column<bool>(type: "bit", nullable: false),
                     TokenRevokedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -214,13 +215,13 @@ namespace Template.Security.Migrations
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -338,8 +339,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "LastModifiedAt", "LastModifiedBy", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73", null, null, null, "Admin", "ADMIN" },
-                    { "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4", null, null, null, "User", "USER" }
+                    { "22a31205-9e97-485f-8dcc-513352384901", null, null, null, "Admin", "ADMIN" },
+                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", null, null, null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -347,8 +348,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsTokenRevoked", "LastModifiedAt", "LastModifiedBy", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TokenRevokedTime", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "38e421a1-f30c-4370-8fe9-18a8e862765a", 0, "dcb99289-a140-4e26-9b61-82e2fed452c0", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAELHa5v0v0n+Ul3Ppwyk2PaFdJfXxunTfgTA4L90zv7Cilg1oXGypZHoBAV9HRG4Csw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "386a9ec1-f60e-47b0-91e2-1a1cf37aefb5", null, false, "johnJames" },
-                    { "46259c0b-4468-4f1e-ba63-5907e9a711b4", 0, "ba4e85c4-ab47-4c22-bb23-f982648b405c", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEFz5Vme/IR2oPbRXVK1bfhlqJfbYiAo9VKhg+kdMz+I9YIZh0nkvaRuu4Y3elB/jMw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "d6ab4226-acbb-4bd9-bf0c-fb3b24709ffd", null, false, "johnDoe" }
+                    { "04999930-0310-4099-b60b-c30d2270b399", 0, "f6a89674-d3bc-4032-a775-00da2899a534", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEAmWpUOv8Ew8Fx+Nk692gsmt6LY3H9irWtgQr+WpIVv1gCTwHeUFhzKGAd+J8Dgfaw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "ba5a478d-5f26-45b8-91b1-beb39bc0f240", null, false, "johnJames" },
+                    { "fae98e51-b062-4769-acf4-f7f7e581bdd3", 0, "3432c31d-5276-4a80-a675-9f7d56ee1810", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEMnvYGx7apqE6gUvoKQVp7GmsGHkJ59LR5VbNqjLHKulpi83Nsr3IVEMAFmHgE4itg==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "89d7a504-fcea-4781-8ee3-a48098529efb", null, false, "johnDoe" }
                 });
 
             migrationBuilder.InsertData(
@@ -395,9 +396,9 @@ namespace Template.Security.Migrations
                 columns: new[] { "RoleId", "UserId", "Discriminator" },
                 values: new object[,]
                 {
-                    { "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4", "38e421a1-f30c-4370-8fe9-18a8e862765a", "UserRole" },
-                    { "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73", "46259c0b-4468-4f1e-ba63-5907e9a711b4", "UserRole" },
-                    { "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4", "46259c0b-4468-4f1e-ba63-5907e9a711b4", "UserRole" }
+                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", "04999930-0310-4099-b60b-c30d2270b399", "UserRole" },
+                    { "22a31205-9e97-485f-8dcc-513352384901", "fae98e51-b062-4769-acf4-f7f7e581bdd3", "UserRole" },
+                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", "fae98e51-b062-4769-acf4-f7f7e581bdd3", "UserRole" }
                 });
 
             migrationBuilder.InsertData(
@@ -415,40 +416,40 @@ namespace Template.Security.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
-                    { 1, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 2, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 3, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 4, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 5, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 6, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 7, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 8, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 9, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 10, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 11, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 12, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 13, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 14, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 15, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 16, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 17, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 18, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 19, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 20, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 21, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 22, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 23, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 24, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 25, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 26, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 27, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 28, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 29, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 30, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 31, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 32, "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73" },
-                    { 23, "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4" },
-                    { 28, "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4" }
+                    { 1, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 2, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 3, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 4, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 5, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 6, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 7, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 8, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 9, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 10, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 11, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 12, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 13, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 14, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 15, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 16, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 17, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 18, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 19, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 20, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 21, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 22, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 23, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 24, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 25, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 26, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 27, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 28, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 29, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 30, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 31, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 32, "22a31205-9e97-485f-8dcc-513352384901" },
+                    { 23, "390b8dd1-657d-409d-a1f8-e543e2d6db6c" },
+                    { 28, "390b8dd1-657d-409d-a1f8-e543e2d6db6c" }
                 });
 
             migrationBuilder.InsertData(

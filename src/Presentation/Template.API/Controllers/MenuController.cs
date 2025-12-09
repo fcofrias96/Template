@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Template.Api.Controllers.Common;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Menu;
@@ -8,7 +9,7 @@ namespace Template.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class MenuController : ControllerBase
+    public class MenuController :  ApiControllerBase
     {
         private readonly IMenuServiceAsync _menuService;
 

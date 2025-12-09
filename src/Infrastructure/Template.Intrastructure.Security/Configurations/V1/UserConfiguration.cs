@@ -18,6 +18,9 @@ namespace Template.Security.Configurations.V1
             builder.Property(p => p.LastName)
                 .IsRequired();
 
+            builder.Property(p => p.RefreshToken)
+                .IsRequired(false);
+
             builder.HasData(UserSeed.Data);
 
             base.Configure(builder);

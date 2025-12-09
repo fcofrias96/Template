@@ -11,6 +11,7 @@ using System.Text;
 using Template.Application.Constants;
 using Template.Application.Extensions;
 using Template.Security.Contracts.Repositories.V1;
+using Template.Security.Contracts.Services;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
@@ -110,17 +111,24 @@ namespace Template.Security
             services.AddScoped<IRolePermissionRepositoryAsync, RolePermissionRepositoryAsync>();
             services.AddScoped<IRoleRepositoryAsync, RoleRepositoryAsync>();
             services.AddScoped<IUserRepositoryAsync, UserRepositoryAsync>();
+            services.AddScoped<IUserRoleRepositoryAsync, UserRoleRepositoryAsync>();
 
             //Services
             services.AddScoped<IActionServiceAsync, ActionServiceAsync>();
             services.AddScoped<IAuthServiceAsync, AuthServiceAsync>();
             services.AddScoped<IPermissionServiceAsync, PermissionServiceAsync>();
             services.AddScoped<IResourceServiceAsync, ResourceService>();
-            services.AddScoped<IRolePermissionServiceAsync, RolePermissionServiceAsync>();
             services.AddScoped<IRoleServiceAsync, RoleServiceAsync>();
             services.AddScoped<IUserServiceAsync, UserServiceAsync>();
             services.AddScoped<IMenuServiceAsync, MenuServiceAsync>();
             services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUserAuthCacheService, UserAuthCacheService>();
+            services.AddScoped<IAuthLinkService, AuthLinkService>();
+            services.AddScoped<IAuthEmailService, AuthEmailService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+
 
             #endregion Dependency injection
 

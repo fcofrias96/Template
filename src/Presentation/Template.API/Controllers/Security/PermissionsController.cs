@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
+using Template.Api.Controllers.Common;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Permissions;
@@ -15,7 +16,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class PermissionsController : ControllerBase
+    public class PermissionsController :  ApiControllerBase
     {
         private readonly IPermissionServiceAsync _permissionService;
 
@@ -26,7 +27,7 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Permission, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
             var specification = new Specification<Permission>(request);
             var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto>(specification, cancellationToken);
@@ -68,10 +69,10 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Permission, ActionType.Read)]
         [HttpGet("catalog")]
-        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _permissionService.GetProjectedAsync<Catalog>(cancellationToken);
-            return Ok(resources);
-        }
+			var result = await _permissionService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
+			return FromEtagResult(result);
+		}
     }
 }

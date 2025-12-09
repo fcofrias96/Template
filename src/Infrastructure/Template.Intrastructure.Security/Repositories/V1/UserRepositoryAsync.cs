@@ -30,37 +30,7 @@ namespace Template.Security.Repositories.V1
 
         }
 
-        public async Task UpdateUserRolesAsync(string userId, string[] newRoleIds, CancellationToken cancellationToken)
-        {
-            var newRolesSet = new HashSet<string>(newRoleIds);
-
-            await _dbContext.UserRoles
-                .Where(ur => ur.UserId == userId && !newRolesSet.Contains(ur.RoleId))
-                .ExecuteDeleteAsync(cancellationToken);
-
-            var currentRoleIds = await _dbContext.UserRoles
-                .Where(ur => ur.UserId == userId)
-                .Select(ur => ur.RoleId)
-                .ToListAsync();
-
-            var currentRoleSet = currentRoleIds.ToHashSet();
-
-            var toAdd = newRolesSet
-                .Where(roleId => !currentRoleSet.Contains(roleId))
-                .Select(roleId => new UserRole
-                {
-                    UserId = userId,
-                    RoleId = roleId
-                })
-                .ToList();
-
-            if (toAdd.Count > 0)
-            {
-                await _dbContext.UserRoles.AddRangeAsync(toAdd);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
-
+      
         public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users

@@ -22,4 +22,7 @@ namespace Template.Application.Services.Base
 
         #endregion Private Methods
     }
+
+    
+
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
+using Template.Security.Dtos.UserPermission;
 using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
@@ -16,16 +17,16 @@ namespace Template.Security.Repositories.V1
             _dbContext = securityDb;
         }
 
-        public async Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId)
+        public async Task<IReadOnlyList<UserPermissionDto>> GetUserPermissionsAsync(string userId)
         {
-            var hasPermission = await _dbContext.RolePermissions
-                .AnyAsync(rp =>
-                    rp.Role.UserRoles.Any(ur => ur.UserId == userId) &&
-                    rp.Permission.Resource.Id == resourceId &&
-                    rp.Permission.ActionType.Id == actionId
-                );
-
-            return hasPermission;
+            return await _dbContext.RolePermissions
+                .Where(rp => rp.Role.UserRoles.Any(ur => ur.UserId == userId))
+                .Select(rp => new UserPermissionDto
+                {
+                    ResourceId = rp.Permission.Resource.Id,
+                    ActionId = rp.Permission.ActionType.Id
+                })
+                .ToListAsync();
         }
     }
 }

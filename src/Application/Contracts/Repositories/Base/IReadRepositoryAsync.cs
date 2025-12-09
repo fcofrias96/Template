@@ -13,5 +13,7 @@
         Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken);
 
         Task<int> GetTotalCountAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken);
+
+        Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(CancellationToken cancellationToken);
     }
 }

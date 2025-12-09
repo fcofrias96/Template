@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Template.Api.Controllers.Common;
 using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.DTOs.V1.Token;
 using Template.Application.Models.Wrappers;
@@ -19,7 +20,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/auth")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController :  ApiControllerBase
     {
         private readonly IAuthServiceAsync _authService;
         private readonly JwtSettings _jwtSettings;

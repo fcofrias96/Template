@@ -1,4 +1,4 @@
-export interface Dropdown {
+export interface Catalog {
   id: string;
   name: string;
 }

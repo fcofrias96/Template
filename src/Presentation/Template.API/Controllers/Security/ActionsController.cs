@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
+using Template.Api.Controllers.Common;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.Wrappers;
@@ -10,7 +11,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class ActionsController : ControllerBase
+    public class ActionsController :  ApiControllerBase
     {
         private readonly IActionServiceAsync _actionService;
 
@@ -21,10 +22,10 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Action, ActionType.Read)]
         [HttpGet("catalog")]
-        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetActions(CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetActions(CancellationToken cancellationToken)
         {
-            var actions = await _actionService.GetProjectedAsync(cancellationToken);
-            return Ok(actions);
+            var result = await _actionService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
+            return FromEtagResult(result);
         }
     }
 }

@@ -15,11 +15,15 @@ namespace Template.Security.Configurations.V1
 
             builder.HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId);
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false); // Make navigation optional to avoid warning
 
             builder.HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId);
+                .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false); // Make navigation optional to avoid warning
 
             builder.HasData(UserRoleSeed.Data);
         }

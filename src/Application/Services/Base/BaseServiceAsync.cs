@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
+using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
-using Template.Application.Extensions;
+using Template.Application.Models.DTOs;
 using Template.Application.Models.Wrappers;
 using Template.Application.Utilities;
 using Template.Domain.Contracts;
@@ -18,12 +17,17 @@ namespace Template.Application.Services.Base
     public abstract class BaseServiceAsync<TEntity> : ExportServiceAsync<TEntity>, IBaseServiceAsync<TEntity>
         where TEntity : class, IEntityBase
     {
-        private readonly IMemoryCache _cache;
+        private readonly ICacheService _cache;
         private readonly IMapper _mapper;
         private readonly IBaseRepositoryAsync<TEntity> _repositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly TimeSpan _ttl = TimeSpan.FromDays(1);
+        protected virtual string EntityName => typeof(TEntity).Name;
+        protected virtual string BuildListKey()=> $"{EntityName}:list:all";
+        protected virtual string BuildListEtag(DateTimeOffset lastModifiedAt, int count)=> $"\"{lastModifiedAt.Ticks}-{count}\"";
 
-        public BaseServiceAsync(IMemoryCache cache, IMapper mapper, IBaseRepositoryAsync<TEntity> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
+
+        protected BaseServiceAsync(ICacheService cache, IMapper mapper, IBaseRepositoryAsync<TEntity> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
         {
             _cache = cache;
             _mapper = mapper;
@@ -35,7 +39,7 @@ namespace Template.Application.Services.Base
         {
             var entity = _mapper.Map<TEntity>(source);
             await _repositoryAsync.CreateAsync(entity, cancellationToken);
-            _cache.InvalidateCache<TEntity>();
+            _cache.Remove(BuildListKey());
             return entity;
         }
 
@@ -44,14 +48,14 @@ namespace Template.Application.Services.Base
             var entity = await GetByIdAsync(id, cancellationToken);
             entity.IsDeleted = true;
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
-            _cache.InvalidateCache<TEntity>();
+            _cache.Remove(BuildListKey());
         }
 
         public virtual async Task PermanentDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
             var entity = await GetByIdAsync(id, cancellationToken);
             await _repositoryAsync.DeleteAsync(entity, cancellationToken);
-            _cache.InvalidateCache<TEntity>();
+            _cache.Remove(BuildListKey());
         }
 
         public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
@@ -100,13 +104,15 @@ namespace Template.Application.Services.Base
 
         public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
         {
-            string cacheKey = $"{typeof(TEntity).FullName}Cache";
+            var key = BuildListKey();
+            var cached = _cache.Get<IReadOnlyList<TDestination>>(key);
 
-            if (!_cache.TryGetValue(cacheKey, out IReadOnlyList<TDestination> mappedEntities))
-            {
-                mappedEntities = await _repositoryAsync.GetProjectedAsync<TDestination>(cancellationToken);
-                _cache.Set(cacheKey, mappedEntities, TimeSpan.FromHours(24));
-            }
+            if (cached is not null)
+                return new ApiResponse<IReadOnlyList<TDestination>>(cached);
+
+            var mappedEntities = await _repositoryAsync.GetProjectedAsync<TDestination>(cancellationToken);
+
+            _cache.Set(key, mappedEntities, _ttl);
 
             return new ApiResponse<IReadOnlyList<TDestination>>(mappedEntities);
         }
@@ -139,8 +145,78 @@ namespace Template.Application.Services.Base
 
             var entity = await GetByIdAsync(id, cancellationToken);
             _mapper.Map(source, entity);
-            _cache.InvalidateCache<TEntity>();
+            _cache.Remove(BuildListKey());
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
+        }
+
+        public async Task<EtagListResult<TDestination>> GetProjectedWithEtagAsync<TDestination>(
+            CancellationToken cancellationToken)
+        {
+            var key = BuildListKey();
+            var clientEtag = _httpContext.HttpContext?.Request.Headers["If-None-Match"].FirstOrDefault();
+
+            // 1. Intentar leer del cache (data + etag)
+            var cached = _cache.Get<ListCacheEntry<TDestination>>(key);
+
+            if (cached is not null)
+            {
+                // Si el cliente envió ETag y coincide → no modificado
+                if (!string.IsNullOrWhiteSpace(clientEtag) &&
+                    string.Equals(clientEtag, cached.Etag, StringComparison.Ordinal))
+                {
+                    return new EtagListResult<TDestination>
+                    {
+                        IsNotModified = true,
+                        Etag = cached.Etag,
+                        Items = Array.Empty<TDestination>()
+                    };
+                }
+
+                // Si no coincide → devolvemos data del cache con el ETag actual
+                return new EtagListResult<TDestination>
+                {
+                    IsNotModified = false,
+                    Etag = cached.Etag,
+                    Items = cached.Data
+                };
+            }
+
+            // 2. No hay cache → vamos a repo
+
+            // 2.1. Traemos metadata (para ETag)
+            var (lastModified, count) = await _repositoryAsync
+                .GetListMetadataAsync(cancellationToken);
+
+            var etag = BuildListEtag(lastModified, count);
+
+            // 2.2. Traemos la proyección
+            var mappedEntities = await _repositoryAsync
+                .GetProjectedAsync<TDestination>(cancellationToken);
+
+            var entry = new ListCacheEntry<TDestination>
+            {
+                Data = mappedEntities,
+                Etag = etag,
+                LastModifiedAt = lastModified,
+                Count = count
+            };
+
+            _cache.Set(key, entry, _ttl);
+
+            return new EtagListResult<TDestination>
+            {
+                IsNotModified = false,
+                Etag = etag,
+                Items = mappedEntities
+            };
+        }
+
+        private sealed class ListCacheEntry<T>
+        {
+            public IReadOnlyList<T> Data { get; init; } = Array.Empty<T>();
+            public string Etag { get; init; } = string.Empty;
+            public DateTimeOffset LastModifiedAt { get; init; }
+            public int Count { get; init; }
         }
     }
 }

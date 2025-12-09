@@ -20,7 +20,5 @@ namespace Template.Application.Models.DTOs.V1.Users
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        public string[] Roles { get; set; }
     }
 }

@@ -41,7 +41,6 @@ else
 app.UseStaticFiles();
 app.UseMiddleware<RequestTimingMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<ETagMiddleware>();
 app.UseCors("CorsPolicy");
 app.UseResponseCompression();
 app.UseAuthentication();

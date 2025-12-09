@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Template.Api.Controllers.Common;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
@@ -8,7 +9,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/accounts")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class AccountController : ControllerBase
+    public class AccountController :  ApiControllerBase
     {
         private readonly IAuthServiceAsync _authService;
 

@@ -1,24 +1,17 @@
-﻿using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Models.DTOs;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Template.Application.Contracts.Services.V1;
+using Template.Application.Services.Base;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
-using Template.Security.DbContexts.V1;
 using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Services.V1
 {
-    public class ActionServiceAsync : IActionServiceAsync
+    public class ActionServiceAsync : BaseServiceAsync<ActionType>, IActionServiceAsync
     {
-        private readonly IActionRepositoryAsync _readRepository;
-
-        public ActionServiceAsync(IActionRepositoryAsync readRepository)
+        public ActionServiceAsync(ICacheService cache, IMapper mapper, IActionRepositoryAsync  repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
         {
-            _readRepository = readRepository;
-        }
-
-        public async Task<IReadOnlyList<Catalog>> GetProjectedAsync(CancellationToken cancellationToken)
-        {
-            return await _readRepository.GetProjectedAsync<Catalog>(cancellationToken);
         }
     }
 }

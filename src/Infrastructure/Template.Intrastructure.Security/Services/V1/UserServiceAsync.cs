@@ -25,6 +25,8 @@ namespace Template.Security.Services.V1
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepositoryAsync _userRepository;
+        private readonly IUserRoleRepositoryAsync _userRoleRepository;
+        private readonly ICacheService _cache;
 
         public UserServiceAsync(
             IUserRepositoryAsync userRepository,
@@ -33,13 +35,17 @@ namespace Template.Security.Services.V1
             IHttpContextAccessor httpContext,
             IResourceServiceAsync moduleService,
             UserManager<User> userManager,
-            IMemoryCache memoryCache
+            ICacheService memoryCache,
+            IUserRoleRepositoryAsync userRoleRepository,
+            ICacheService cache
             ) : base(memoryCache, mapper, userRepository, httpContext)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _httpContext = httpContext;
             _userManager = userManager;
+            _userRoleRepository = userRoleRepository;
+            _cache = cache;
         }
 
         public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
@@ -80,7 +86,6 @@ namespace Template.Security.Services.V1
             var user = await GetUser(userId);
             _mapper.Map(userUpdateDTO, user);
             await _userManager.UpdateAsync(user);
-            await _userRepository.UpdateUserRolesAsync(userId.ToString(), userUpdateDTO.Roles, cancellationToken);
         }
 
         public async Task<UserDetailDto> GetUserDetailAsync(Guid userId, CancellationToken cancellationToken)
@@ -96,6 +101,15 @@ namespace Template.Security.Services.V1
         public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
         {
             return await _userRepository.GetResourcesAsync(userId, cancellationToken);
+        }
+
+        public async Task UpdateUserRolesAsync(Guid userId, IEnumerable<string> roleIds, CancellationToken cancellationToken)
+        {
+            var userIdString = userId.ToString();
+
+            await _userRoleRepository.UpdateUserRolesAsync(userIdString, roleIds, cancellationToken);
+
+            _cache.Remove(PermissionServiceAsync.BuildPermissionsCacheKey(userIdString));
         }
 
         #region Private Methods

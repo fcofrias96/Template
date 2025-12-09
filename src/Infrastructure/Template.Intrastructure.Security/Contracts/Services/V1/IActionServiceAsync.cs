@@ -1,9 +1,9 @@
-﻿using Template.Application.Models.DTOs;
+﻿using Template.Application.Contracts.Services.Base;
+using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IActionServiceAsync
+    public interface IActionServiceAsync : IReadServiceAsync<ActionType>
     {
-        Task<IReadOnlyList<Catalog>> GetProjectedAsync(CancellationToken cancellationToken);
     }
 }

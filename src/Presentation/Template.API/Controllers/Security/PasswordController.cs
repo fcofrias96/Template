@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Template.Api.Controllers.Common;
 using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.Wrappers;
 using Template.Security.Contracts.Services.V1;
@@ -8,7 +9,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/password")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class PasswordController : ControllerBase
+    public class PasswordController :  ApiControllerBase
     {
         private readonly IAuthServiceAsync _authService;
 

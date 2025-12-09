@@ -14,7 +14,7 @@ import { DynamicModalComponent } from '@models/dynamic-modal.interface';
 import { FormFieldComponent } from '@shared/components/form-field/form-field.component';
 import { Observable, Subject } from 'rxjs';
 import { RoleService } from '@features/role/services/role.service';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 import { CheckboxListComponent } from '@shared/components/checkbox-list/checkbox-list.component';
 
 @Component({
@@ -34,7 +34,7 @@ export class UserFormComponent implements OnInit, DynamicModalComponent {
   @Input() userId!: number;
   @Input() edit = false;
   closeModal = new Subject<void>();
-  public roles$: Observable<Dropdown[]>;
+  public roles$: Observable<Catalog[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +42,7 @@ export class UserFormComponent implements OnInit, DynamicModalComponent {
     private roleService: RoleService
   ) {
     this.userForm = this.initForm();
-    this.roles$ = this.roleService.getDropdownList();
+    this.roles$ = this.roleService.getCatalogList();
   }
 
   ngOnInit(): void {

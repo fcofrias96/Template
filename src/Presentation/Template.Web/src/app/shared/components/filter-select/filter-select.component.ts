@@ -99,7 +99,7 @@ export class FilterSelectComponent
     return null;
   }
 
-  toggleDropdown(): void {
+  toggleCatalog(): void {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.filteredOptions = [...this.options];

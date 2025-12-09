@@ -19,7 +19,7 @@ import { ActionService } from 'app/core/services/action.service';
 import { Observable, Subject } from 'rxjs';
 import { FormFieldComponent } from '../../../../shared/components/form-field/form-field.component';
 import { SelectComponent } from '@shared/components/select/select.component';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 
 @Component({
   selector: 'app-permission-form',
@@ -39,7 +39,7 @@ export class PermissionFormComponent implements OnInit, DynamicModalComponent {
   @Input() permissionId!: number;
   @Input() edit = false;
   closeModal = new Subject<void>();
-  actions$!: Observable<Dropdown[]>;
+  actions$!: Observable<Catalog[]>;
   resources$!: Observable<Resource[]>;
 
   constructor(
@@ -64,8 +64,8 @@ export class PermissionFormComponent implements OnInit, DynamicModalComponent {
         });
     }
 
-    this.resources$ = this.resourceService.getDropdownList();
-    this.actions$ = this.actionService.getDropdownList();
+    this.resources$ = this.resourceService.getCatalogList();
+    this.actions$ = this.actionService.getCatalogList();
   }
 
   private initForm(): FormGroup {

@@ -8,7 +8,7 @@ import { CreateRole } from '@features/role/types/create-role.interface';
 import { RoleDetail } from '@features/role/types/role-detail.interface';
 import { UpdateRole } from '@features/role/types/update-role.interface';
 import { Permission } from '@features/user/types/user-detail.interface';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 import { DynamicModalComponent } from '@models/dynamic-modal.interface';
 import { CheckboxListComponent } from '@shared/components/checkbox-list/checkbox-list.component';
 import { FormFieldComponent } from '@shared/components/form-field/form-field.component';
@@ -26,7 +26,7 @@ export class RoleFormComponent implements OnInit, DynamicModalComponent {
   @Input() roleId!: number;
   @Input() edit = false;
   closeModal = new Subject<void>();
-  permissions$: Observable<Dropdown[]>;
+  permissions$: Observable<Catalog[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -34,7 +34,7 @@ export class RoleFormComponent implements OnInit, DynamicModalComponent {
     private permissionService: PermissionService,
   ) {
     this.roleForm = this.initForm();
-    this.permissions$ = this.permissionService.getDropdownList();
+    this.permissions$ = this.permissionService.getCatalogList();
   }
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 
 @Component({
   selector: 'app-select',
@@ -21,7 +21,7 @@ export class SelectComponent implements ControlValueAccessor {
   @Input() label!: string;
   @Input() placeholder?: string;
   @Input() isRequired = false;
-  @Input() options: Dropdown[] = [];
+  @Input() options: Catalog[] = [];
   @Input() validationMessage?: string;
   @Input() validationClass?: string;
 

@@ -15,7 +15,7 @@ namespace Template.Application.Repository
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        public BaseRepositoryAsync(DbContext dbContext, IConfigurationProvider configurationProvider)
+        protected BaseRepositoryAsync(DbContext dbContext, IConfigurationProvider configurationProvider)
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
@@ -111,6 +111,16 @@ namespace Template.Application.Repository
             }
 
             return query;
+        }
+
+        public async Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(CancellationToken cancellationToken)
+        {
+            var query = _dbSet.Where(e => !e.IsDeleted);
+
+            var lastModified = await query.MaxAsync(e => e.LastModifiedAt, cancellationToken) ?? DateTimeOffset.MinValue;
+            var count = await query.CountAsync(cancellationToken);
+
+            return (lastModified, count);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Template.Security.Configurations.V1
 
             builder.HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
+            builder.HasQueryFilter(rp => !rp.Role.IsDeleted && !rp.Permission.IsDeleted);
+
             builder.HasData(RolePermissionSeed.Data);
         }
     }

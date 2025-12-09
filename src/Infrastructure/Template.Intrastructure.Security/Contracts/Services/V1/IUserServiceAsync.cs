@@ -20,5 +20,8 @@ namespace Template.Security.Contracts.Services.V1
         Task<UserDetailDto> GetUserDetailAsync(Guid userId, CancellationToken cancellationToken);
 
         Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken);
+
+        Task UpdateUserRolesAsync(Guid userId, IEnumerable<string> roleIds, CancellationToken cancellationToken);
+
     }
 }

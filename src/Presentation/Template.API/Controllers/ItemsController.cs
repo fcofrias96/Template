@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
+using Template.Api.Controllers.Common;
 using Template.Application.Constants;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs.V1.Items;
@@ -14,7 +15,7 @@ namespace Template.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class ItemsController : ControllerBase
+    public class ItemsController :  ApiControllerBase
     {
         #region Private Variable
 

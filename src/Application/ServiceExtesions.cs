@@ -6,7 +6,9 @@ using System.IO.Compression;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
+using Template.Application.Contracts.Services.V1;
 using Template.Application.Repository;
+using Template.Application.Services;
 using Template.Application.Services.Base;
 using Template.Application.SetupOptions;
 
@@ -41,6 +43,7 @@ namespace Template.Application
 
             // services
             services.AddScoped(typeof(IExportServiceAsync<>), typeof(ExportServiceAsync<>));
+            services.AddScoped<ICacheService, MemoryCacheService>();
 
             #endregion Dependency Injection
         }

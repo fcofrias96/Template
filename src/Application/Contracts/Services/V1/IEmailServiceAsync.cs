@@ -6,4 +6,5 @@ namespace Template.Application.Contracts.Services.V1
     {
         Task SendEmailAsync(EmailDto emailDto, CancellationToken cancellationToken);
     }
+
 }

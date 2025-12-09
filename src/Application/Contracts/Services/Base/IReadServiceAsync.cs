@@ -1,4 +1,5 @@
-﻿using Template.Application.Models.Wrappers;
+﻿using Template.Application.Models.DTOs;
+using Template.Application.Models.Wrappers;
 
 namespace Template.Application.Contracts.Services.Base
 {
@@ -11,5 +12,7 @@ namespace Template.Application.Contracts.Services.Base
         Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken);
 
         Task<TEntity> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken);
+
+        Task<EtagListResult<TDestination>> GetProjectedWithEtagAsync<TDestination>(CancellationToken cancellationToken);
     }
 }

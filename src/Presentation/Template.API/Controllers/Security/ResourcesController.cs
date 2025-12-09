@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
+using Template.Api.Controllers.Common;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
@@ -15,7 +16,7 @@ namespace Template.Api.Controllers.Security
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class ResourcesController : ControllerBase
+    public class ResourcesController :  ApiControllerBase
     {
         private readonly IResourceServiceAsync _resourceService;
 
@@ -26,7 +27,7 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
             var specification = new Specification<Resource>(request);
             var resources = await _resourceService.GetProjectedPaginatedAsync<ResourceListDto>(specification, cancellationToken);
@@ -35,11 +36,11 @@ namespace Template.Api.Controllers.Security
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet("catalog")]
-        public async Task<ActionResult<ApiResponse<List<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
-            var resources = await _resourceService.GetProjectedAsync<Catalog>(cancellationToken);
-            return Ok(resources);
-        }
+			var result = await _resourceService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
+			return FromEtagResult(result);
+		}
 
         [Permission(Resources.Resource, ActionType.Read)]
         [HttpGet("{id}")]

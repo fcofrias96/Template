@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { ApiRepository } from '../repositories/api.repository';
 import { PagedCollection } from '@models/paged-collection.interface';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 
 export abstract class ApiService {
   constructor(protected apiRepository: ApiRepository, protected url: string) { }
@@ -15,8 +15,8 @@ export abstract class ApiService {
   }
 
   //@Cacheable()
-  getDropdownList(showLoading = true): Observable<Dropdown[]> {
-    return this.apiRepository.get<Dropdown[]>(`${this.url}/dropdown`, { showLoading });
+  getCatalogList(showLoading = true): Observable<Catalog[]> {
+    return this.apiRepository.get<Catalog[]>(`${this.url}/catalog`, { showLoading });
   }
 
   getPagedList<T>(

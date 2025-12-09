@@ -22,7 +22,7 @@ import { SelectComponent } from '../select/select.component';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { PagedCollection } from '@models/paged-collection.interface';
 import { NotificationService } from 'app/core/services/notification.service';
-import { Dropdown } from '@models/dropdown';
+import { Catalog } from '@models/catalog';
 
 @Component({
   selector: 'app-generic-table',
@@ -42,7 +42,7 @@ export class GenericTableComponent implements OnChanges, OnDestroy {
   >;
   @Input() actions!: Partial<Record<ActionType, (element: any) => void>>;
 
-  public readonly itemsPerPageOptions: Dropdown[] = [];
+  public readonly itemsPerPageOptions: Catalog[] = [];
   private filterSubject = new Subject<{ column: string; value: string }>();
   private unsubscribe$: Subject<void> = new Subject<void>();
   searchParams: URLSearchParams = new URLSearchParams();

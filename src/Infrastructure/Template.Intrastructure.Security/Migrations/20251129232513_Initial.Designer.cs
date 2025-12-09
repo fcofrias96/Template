@@ -12,8 +12,8 @@ using Template.Security.DbContexts.V1;
 namespace Template.Security.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20251111151825_Inint")]
-    partial class Inint
+    [Migration("20251129232513_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -894,7 +894,7 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            Id = "22a31205-9e97-485f-8dcc-513352384901",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "Admin",
@@ -902,7 +902,7 @@ namespace Template.Security.Migrations
                         },
                         new
                         {
-                            Id = "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4",
+                            Id = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "User",
@@ -927,172 +927,172 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            RoleId = "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4",
+                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4",
+                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 1
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 2
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 3
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 4
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 5
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 6
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 7
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 8
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 9
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 10
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 11
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 12
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 13
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 14
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 15
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 16
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 17
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 18
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 19
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 20
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 21
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 22
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 24
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 25
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 26
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 27
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 29
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 30
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 31
                         },
                         new
                         {
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
                             PermissionId = 32
                         });
                 });
@@ -1173,7 +1173,6 @@ namespace Template.Security.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("RefreshToken")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("RefreshTokenExpiryTime")
@@ -1207,9 +1206,9 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "46259c0b-4468-4f1e-ba63-5907e9a711b4",
+                            Id = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ba4e85c4-ab47-4c22-bb23-f982648b405c",
+                            ConcurrencyStamp = "3432c31d-5276-4a80-a675-9f7d56ee1810",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -1220,19 +1219,19 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFz5Vme/IR2oPbRXVK1bfhlqJfbYiAo9VKhg+kdMz+I9YIZh0nkvaRuu4Y3elB/jMw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMnvYGx7apqE6gUvoKQVp7GmsGHkJ59LR5VbNqjLHKulpi83Nsr3IVEMAFmHgE4itg==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "d6ab4226-acbb-4bd9-bf0c-fb3b24709ffd",
+                            SecurityStamp = "89d7a504-fcea-4781-8ee3-a48098529efb",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "38e421a1-f30c-4370-8fe9-18a8e862765a",
+                            Id = "04999930-0310-4099-b60b-c30d2270b399",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dcb99289-a140-4e26-9b61-82e2fed452c0",
+                            ConcurrencyStamp = "f6a89674-d3bc-4032-a775-00da2899a534",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -1243,11 +1242,11 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAELHa5v0v0n+Ul3Ppwyk2PaFdJfXxunTfgTA4L90zv7Cilg1oXGypZHoBAV9HRG4Csw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAmWpUOv8Ew8Fx+Nk692gsmt6LY3H9irWtgQr+WpIVv1gCTwHeUFhzKGAd+J8Dgfaw==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "386a9ec1-f60e-47b0-91e2-1a1cf37aefb5",
+                            SecurityStamp = "ba5a478d-5f26-45b8-91b1-beb39bc0f240",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -1268,18 +1267,18 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "46259c0b-4468-4f1e-ba63-5907e9a711b4",
-                            RoleId = "2e77a3b8-0c72-49ed-8aa3-7b325d09cf73"
+                            UserId = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
+                            RoleId = "22a31205-9e97-485f-8dcc-513352384901"
                         },
                         new
                         {
-                            UserId = "46259c0b-4468-4f1e-ba63-5907e9a711b4",
-                            RoleId = "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4"
+                            UserId = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
+                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c"
                         },
                         new
                         {
-                            UserId = "38e421a1-f30c-4370-8fe9-18a8e862765a",
-                            RoleId = "c9c5188a-3cd2-4cb7-90a7-4fdbab10d5f4"
+                            UserId = "04999930-0310-4099-b60b-c30d2270b399",
+                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c"
                         });
                 });
 
@@ -1378,14 +1377,12 @@ namespace Template.Security.Migrations
                     b.HasOne("Template.Security.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Template.Security.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Role");
 
