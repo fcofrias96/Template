@@ -7,7 +7,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public abstract class BaseRepositoryAsync<TEntity> : IBaseRepositoryAsync<TEntity>
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly DbContext _dbContext;
@@ -15,7 +15,7 @@ namespace Template.Application.Repository
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        protected BaseRepositoryAsync(DbContext dbContext, IConfigurationProvider configurationProvider)
+        protected BaseRepository(DbContext dbContext, IConfigurationProvider configurationProvider)
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();

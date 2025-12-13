@@ -3,7 +3,7 @@ using Template.Application.Models.Wrappers;
 
 namespace Template.Application.Contracts.Services.Base
 {
-    public interface IReadServiceAsync<TEntity>
+    public interface IReadService<TEntity>
     {
         Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken);
 

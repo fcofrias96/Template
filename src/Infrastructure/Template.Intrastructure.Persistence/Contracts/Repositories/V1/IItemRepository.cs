@@ -4,7 +4,7 @@ using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Contracts.Repositories.V1
 {
-    public interface IItemRepository : IBaseRepositoryAsync<Item>
+    public interface IItemRepository : IBaseRepository<Item>
     {
     }
 }

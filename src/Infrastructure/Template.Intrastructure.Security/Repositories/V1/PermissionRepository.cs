@@ -9,7 +9,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class PermissionRepository : BaseRepositoryAsync<Permission>, IPermissionRepository
+    public class PermissionRepository : BaseRepository<Permission>, IPermissionRepository
     {
         private readonly SecurityDbContext _dbContext;
 

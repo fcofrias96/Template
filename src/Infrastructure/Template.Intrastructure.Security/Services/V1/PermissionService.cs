@@ -12,7 +12,7 @@ namespace Template.Security.Services.V1
 {
     public readonly record struct PermissionKey(int ResourceId, int ActionId);
 
-    public class PermissionService : BaseServiceAsync<Permission>, IPermissionService
+    public class PermissionService : BaseService<Permission>, IPermissionService
     {
         private readonly IPermissionRepository _permissionRepository;
         private readonly ICacheService _cache;

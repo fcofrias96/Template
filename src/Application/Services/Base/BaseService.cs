@@ -14,12 +14,12 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public abstract class BaseServiceAsync<TEntity> : ExportService<TEntity>, IBaseServiceAsync<TEntity>
+    public abstract class BaseService<TEntity> : ExportService<TEntity>, IBaseService<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly ICacheService _cache;
         private readonly IMapper _mapper;
-        private readonly IBaseRepositoryAsync<TEntity> _repositoryAsync;
+        private readonly IBaseRepository<TEntity> _repositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
         private readonly TimeSpan _ttl = TimeSpan.FromDays(1);
         protected virtual string EntityName => typeof(TEntity).Name;
@@ -27,7 +27,7 @@ namespace Template.Application.Services.Base
         protected virtual string BuildListEtag(DateTimeOffset lastModifiedAt, int count)=> $"\"{lastModifiedAt.Ticks}-{count}\"";
 
 
-        protected BaseServiceAsync(ICacheService cache, IMapper mapper, IBaseRepositoryAsync<TEntity> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
+        protected BaseService(ICacheService cache, IMapper mapper, IBaseRepository<TEntity> repositoryAsync, IHttpContextAccessor httpContext) : base(repositoryAsync)
         {
             _cache = cache;
             _mapper = mapper;

@@ -1,6 +1,6 @@
 ﻿namespace Template.Application.Contracts.Repositories.Base
 {
-    public interface IReadRepositoryAsync<TEntity>
+    public interface IReadRepository<TEntity>
     {
         Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken);
 

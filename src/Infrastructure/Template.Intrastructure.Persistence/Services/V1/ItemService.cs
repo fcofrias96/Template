@@ -11,7 +11,7 @@ using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Services.V1
 {
-    public class ItemService : BaseServiceAsync<Item>, IItemService
+    public class ItemService : BaseService<Item>, IItemService
     {
         public ItemService(ICacheService cache, IMapper mapper, IItemRepository repositoryAsync, IHttpContextAccessor httpContext) : base(cache, mapper, repositoryAsync, httpContext)
         {

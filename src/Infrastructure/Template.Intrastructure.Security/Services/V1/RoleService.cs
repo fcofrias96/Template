@@ -14,7 +14,7 @@ using Template.Security.Entities;
 namespace Template.Security.Services.V1
 {
 
-    public class RoleService : BaseServiceAsync<Role>, IRoleService
+    public class RoleService : BaseService<Role>, IRoleService
     {
         private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly IUserRoleRepository _userRoleRepository;

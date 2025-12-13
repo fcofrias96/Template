@@ -5,7 +5,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IRoleService : IBaseServiceAsync<Role>
+    public interface IRoleService : IBaseService<Role>
     {
         Task<ApiResponse<IReadOnlyList<RolePermissionDto>>> GetPermissionsAsync(string roleId, CancellationToken cancellationToken);
         Task UpdatePermissionsAsync(string roleId, IEnumerable<int> permissionIds, CancellationToken cancellationToken);

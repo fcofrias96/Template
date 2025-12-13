@@ -7,7 +7,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IUserService : IReadServiceAsync<User>
+    public interface IUserService : IReadService<User>
     {
         Task DeleteAsync(Guid userId, CancellationToken cancellationToken);
 

@@ -14,7 +14,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class UserRepository : BaseRepositoryAsync<User>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
         private readonly SecurityDbContext _dbContext;
         private readonly UserManager<User> _userManager;

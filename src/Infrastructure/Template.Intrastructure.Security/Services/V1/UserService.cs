@@ -19,7 +19,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class UserService : BaseServiceAsync<User>,  IUserService
+    public class UserService : BaseService<User>,  IUserService
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;

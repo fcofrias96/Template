@@ -3,11 +3,11 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Contracts.Services.Base
 {
-    public interface IBaseServiceAsync<TEntity> :
-        ICreateServiceAsync<TEntity>,
-        IDeleteServiceAsync,
-        IReadServiceAsync<TEntity>,
-        IUpdateServiceAsync
+    public interface IBaseService<TEntity> :
+        ICreateService<TEntity>,
+        IDeleteService,
+        IReadService<TEntity>,
+        IUpdateService
         where TEntity : class, IEntityBase
 
     {

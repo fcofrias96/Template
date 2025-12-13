@@ -16,9 +16,9 @@ namespace Template.Application.Services.Base
     public partial class ExportService<TEntity> : IExportService<TEntity>
         where TEntity : class, IEntityBase
     {
-        private readonly IReadRepositoryAsync<TEntity> _repositoryAsync;
+        private readonly IReadRepository<TEntity> _repositoryAsync;
 
-        public ExportService(IReadRepositoryAsync<TEntity> repository)
+        public ExportService(IReadRepository<TEntity> repository)
         {
             _repositoryAsync = repository;
         }

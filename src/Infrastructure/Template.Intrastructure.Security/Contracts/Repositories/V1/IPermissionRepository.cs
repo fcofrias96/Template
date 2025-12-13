@@ -6,7 +6,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IPermissionRepository : IBaseRepositoryAsync<Permission>
+    public interface IPermissionRepository : IBaseRepository<Permission>
     {
         Task<IReadOnlyList<UserPermissionDto>> GetUserPermissionsAsync(string userId, CancellationToken cancellationToken);
 

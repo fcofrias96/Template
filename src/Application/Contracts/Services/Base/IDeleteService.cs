@@ -1,6 +1,6 @@
 ﻿namespace Template.Application.Contracts.Services.Base
 {
-    public interface IDeleteServiceAsync
+    public interface IDeleteService
     {
         Task SoftDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken);
 

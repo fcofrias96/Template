@@ -5,7 +5,7 @@ using Template.Persistence.DbContexts.V1;
 
 namespace Template.Persistence.Contracts.Services
 {
-    public interface ICategoryService : IBaseServiceAsync<Category>, IExportService<Category>
+    public interface ICategoryService : IBaseService<Category>, IExportService<Category>
     {
     }
 }

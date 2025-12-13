@@ -3,7 +3,7 @@ using ActionType = Template.Security.Entities.ActionType;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IActionService : IReadServiceAsync<ActionType>
+    public interface IActionService : IReadService<ActionType>
     {
     }
 }

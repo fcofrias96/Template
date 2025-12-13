@@ -6,7 +6,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IUserRepository : IBaseRepositoryAsync<User>
+    public interface IUserRepository : IBaseRepository<User>
     {
         Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 
