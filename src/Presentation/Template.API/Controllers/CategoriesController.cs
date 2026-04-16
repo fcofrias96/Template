@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Api.Controllers.Common;
 using Template.Application.Constants;
-using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Categories;
 using Template.Application.Models.Specification;
@@ -11,6 +11,7 @@ using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
 using Template.Domain.Entities.V1;
 using Template.Persistence.Contracts.Services;
+using Template.Security.Entities;
 
 namespace Template.Api.Controllers
 {
@@ -62,7 +63,7 @@ namespace Template.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _categoryServiceAsync.GetByIdProjectedAsync<int, CategoryDetailDto>(id, cancellationToken);
+            var response = await _categoryServiceAsync.GetByIdProjectedAsync<CategoryDetailDto>(id, cancellationToken);
             return Ok(response);
         }
 
@@ -79,7 +80,7 @@ namespace Template.Api.Controllers
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
             var result = await _categoryServiceAsync.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
-            return FromEtagResult(result);
+            return result.ToActionResult();
         }
 
         [Permission(Resource.Category, PermissionAction.Export)]

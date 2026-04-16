@@ -6,7 +6,7 @@ using Template.Email.Settings;
 
 namespace Template.Email
 {
-    public static class ServiceExtensiones
+    public static class ServiceExtensions
     {
         public static void AddInfrastructureEmail(this IServiceCollection service, IConfiguration configuration)
         {

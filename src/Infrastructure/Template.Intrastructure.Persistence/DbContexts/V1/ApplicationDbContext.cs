@@ -5,6 +5,7 @@ using Template.Application.Models;
 using Template.Domain.Contracts;
 using Template.Domain.Entities.V1;
 using Template.Persistence.Configuration.V1;
+using Template.Security.Entities;
 using Category = Template.Domain.Entities.V1.Category;
 
 namespace Template.Persistence.DbContexts.V1

@@ -8,6 +8,8 @@ using Template.Persistence.DbContexts.V1;
 using Template.Persistence.OptionActions;
 using Template.Persistence.Repositories.V1;
 using Template.Persistence.Services.V1;
+using Template.Application.Contracts.Repositories.Base;
+using Template.Domain.Entities.V1;
 
 namespace Template.Persistence
 {
@@ -37,6 +39,10 @@ namespace Template.Persistence
             //Repositories
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            // Map IBaseRepository<TEntity> to the concrete repository implementations so BaseServiceDeps<TEntity> resolves correctly
+            services.AddScoped<IBaseRepository<Item>>(sp => sp.GetRequiredService<IItemRepository>());
+            services.AddScoped<IBaseRepository<Category>>(sp => sp.GetRequiredService<ICategoryRepository>());
 
             //Services
             services.AddScoped<IItemService, ItemService>();

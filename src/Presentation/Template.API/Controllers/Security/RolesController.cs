@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Api.Controllers.Common;
-using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Permissions.Template.Application.Models.DTOs.V1.Roles;
 using Template.Security.Dtos.RolePermission;
@@ -47,7 +46,7 @@ namespace Template.Api.Controllers.Security
                 int id,
                 CancellationToken cancellationToken)
             {
-                var role = await _roleService.GetByIdProjectedAsync<int, RoleDetailDto>(id, cancellationToken);
+                var role = await _roleService.GetByIdProjectedAsync<RoleDetailDto>(id, cancellationToken);
                 return Ok(role);
             }
 
@@ -68,7 +67,7 @@ namespace Template.Api.Controllers.Security
                 [FromBody] RoleUpdateDto roleUpdateDTO,
                 CancellationToken cancellationToken)
             {
-                await _roleService.UpdateAsync(id.ToString(), roleUpdateDTO, cancellationToken);
+                await _roleService.UpdateAsync(id, roleUpdateDTO, cancellationToken);
                 return NoContent();
             }
 
@@ -86,7 +85,7 @@ namespace Template.Api.Controllers.Security
                 CancellationToken cancellationToken)
             {
                 var result = await _roleService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
-                return FromEtagResult(result);
+                return result.ToActionResult();
             }
 
 

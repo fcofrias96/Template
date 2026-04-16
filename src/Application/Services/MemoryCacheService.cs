@@ -14,12 +14,7 @@ namespace Template.Application.Services
 
         public T? Get<T>(string key)
         {
-            if (_memoryCache.TryGetValue(key, out var value))
-            {
-                return (T?)value;
-            }
-
-            return default;
+            return _memoryCache.TryGetValue(key, out var value) ? (T?)value : default;
         }
 
         public void Set<T>(string key, T value, TimeSpan ttl)
@@ -32,9 +27,19 @@ namespace Template.Application.Services
             _memoryCache.Set(key, value, options);
         }
 
-        public void Remove(string key)
+        public void Remove(string key) => _memoryCache.Remove(key);
+
+        public Task<T> GetOrCreateAsync<T>(
+            string key,
+            TimeSpan ttl,
+            Func<CancellationToken, Task<T>> factory,
+            CancellationToken ct = default)
         {
-            _memoryCache.Remove(key);
+            return _memoryCache.GetOrCreateAsync(key, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = ttl;
+                return await factory(ct);
+            })!;
         }
     }
 

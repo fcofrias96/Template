@@ -2,6 +2,8 @@
 {
     public interface IDeleteRepository<in TEntity>
     {
-        Task DeleteAsync(TEntity entity, CancellationToken cancellationToken);
+        Task HardDeletesAsync(TEntity entity, CancellationToken cancellationToken);
+
+        Task SoftDeleteAsync(TEntity entity, CancellationToken cancellationToken);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Template.Application.Configuration;
 using Template.Security.Seeds;
-using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
+using PermissionAction = Template.Security.Entities.PermissionAction;
 
 namespace Template.Security.Configurations.V1
 {

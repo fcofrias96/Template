@@ -1,5 +1,5 @@
 ﻿using Template.Application.Contracts.Services.Base;
-using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
+using PermissionAction = Template.Security.Entities.PermissionAction;
 
 namespace Template.Security.Contracts.Services.V1
 {

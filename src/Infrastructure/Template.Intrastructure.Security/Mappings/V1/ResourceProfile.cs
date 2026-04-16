@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
-using Template.Domain.Entities.V1;
+using Template.Security.Entities;
 
 namespace Template.Security.Mappings.V1
 {

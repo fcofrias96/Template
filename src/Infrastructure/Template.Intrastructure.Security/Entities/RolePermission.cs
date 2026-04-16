@@ -1,10 +1,11 @@
-﻿using Template.Domain.Entities.V1;
+﻿using Template.Domain.Common;
 
 namespace Template.Security.Entities
 {
-    public class RolePermission
-    {
-        public int RoleId { get; set; }
+    public class RolePermission: EntityBase<int>
+	{
+		public override int Id { get; set; }
+		public int RoleId { get; set; }
         public ApplicationRole Role { get; set; }
         public int PermissionId { get; set; }
         public Permission Permission { get; set; }

@@ -1,12 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
-using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Contracts.Services.V1;
+﻿using Template.Application.Contracts.Services.V1;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.RolePermission;
@@ -22,25 +17,22 @@ namespace Template.Security.Services.V1
         private readonly ICacheService _cache;
 
         public RoleService(
-            ICacheService cache,
-            IMapper mapper,
             IRoleRepository repositoryAsync,
-            IHttpContextAccessor httpContext,
             IRolePermissionRepository rolePermissionRepository,
-            IUserRoleRepository userRoleRepository)
-            : base(cache, mapper, repositoryAsync, httpContext)
+            IUserRoleRepository userRoleRepository,
+            BaseServiceDeps<ApplicationRole> baseServiceDeps)
+            : base(baseServiceDeps)
         {
             _rolePermissionRepository = rolePermissionRepository;
             _userRoleRepository = userRoleRepository;
-            _cache = cache;
+            _cache = baseServiceDeps.Cache;
         }
 
-        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TKey, TDestination>(
-            TKey id,
+        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TDestination>(
+            int id,
             CancellationToken cancellationToken)
         {
-            string idString = id?.ToString() ?? string.Empty;
-            return base.GetByIdProjectedAsync<string, TDestination>(idString, cancellationToken);
+            return base.GetByIdProjectedAsync<TDestination>(id, cancellationToken);
         }
 
         public  async Task<ApiResponse<IReadOnlyList<RolePermissionDto>>> GetPermissionsAsync(int roleId, CancellationToken cancellationToken)
@@ -51,8 +43,8 @@ namespace Template.Security.Services.V1
         }
 
 
-        public override async Task UpdateAsync<TKey, TSource>(
-            TKey id,
+        public override async Task UpdateAsync< TSource>(
+            int id,
             TSource source,
             CancellationToken cancellationToken)
         {

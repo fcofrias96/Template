@@ -2,6 +2,6 @@
 {
     public interface IUpdateService
     {
-        Task UpdateAsync<TKey, TSource>(TKey id, TSource source, CancellationToken cancellationToken);
+        Task UpdateAsync<TSource>(int id, TSource source, CancellationToken cancellationToken);
     }
 }

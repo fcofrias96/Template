@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
+using PermissionAction = Template.Security.Entities.PermissionAction;
 
 namespace Template.Security.Seeds
 {

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Template.Application.Models.DTOs;
-using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
+using PermissionAction = Template.Security.Entities.PermissionAction;
 
 namespace Template.Security.Mappings.V1
 {

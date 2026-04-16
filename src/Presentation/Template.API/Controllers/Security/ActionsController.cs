@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Api.Controllers.Common;
-using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
+using Template.Security.Entities;
 
 namespace Template.Api.Controllers.Security
 {
@@ -26,7 +26,7 @@ namespace Template.Api.Controllers.Security
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetActions(CancellationToken cancellationToken)
         {
             var result = await _actionService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
-            return FromEtagResult(result);
+            return result.ToActionResult();
         }
     }
 }

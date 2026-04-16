@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Dtos.Menu;
+using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {

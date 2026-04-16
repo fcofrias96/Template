@@ -3,11 +3,12 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
+using Template.Domain.Common;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly DbContext _dbContext;
@@ -15,7 +16,7 @@ namespace Template.Application.Repository
         private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        protected BaseRepository(DbContext dbContext, IConfigurationProvider configurationProvider)
+        public BaseRepository(DbContext dbContext, IConfigurationProvider configurationProvider)
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<TEntity>();
@@ -28,7 +29,7 @@ namespace Template.Application.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
+        public async Task HardDeletesAsync(TEntity entity, CancellationToken cancellationToken)
         {
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -38,6 +39,15 @@ namespace Template.Application.Repository
         {
             return await _dbSet.AsNoTracking()
                               .ProjectTo<TDestination>(_configurationProvider)
+                              .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
+        {
+            var query = _dbSet.AsQueryable().AsNoTracking();
+            query = ApplySpecification(query, spec, false);
+
+            return await query.ProjectTo<TDestination>(_configurationProvider)
                               .ToListAsync(cancellationToken);
         }
 
@@ -59,12 +69,12 @@ namespace Template.Application.Repository
                               .ToListAsync(cancellationToken);
         }
 
-        public async Task<TEntity?> GetByIdAsync<TKey>(TKey id, CancellationToken cancellationToken)
+        public async Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             return await _dbSet.FindAsync(new object?[] { id, cancellationToken }, cancellationToken: cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TKey, TDestination>(TKey id, CancellationToken cancellationToken)
+        public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(int id, CancellationToken cancellationToken)
         {
             var query = _dbSet.AsQueryable().AsNoTracking();
 
@@ -113,14 +123,31 @@ namespace Template.Application.Repository
             return query;
         }
 
-        public async Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(CancellationToken cancellationToken)
+        public async Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(ISpecification<TEntity>? spec = default, CancellationToken cancellationToken = default)
         {
-            var query = _dbSet.Where(e => !e.IsDeleted);
+            var query = _dbSet.AsQueryable();
+            if (spec is not null) query = ApplySpecification(query, spec, false);
 
-            var lastModified = await query.MaxAsync(e => e.LastModifiedAt, cancellationToken) ?? DateTimeOffset.MinValue;
+            var lastModified = await query.MaxAsync(e => EF.Property<DateTimeOffset?>(e, ShadowProps.LastModifiedAt), cancellationToken) ?? DateTimeOffset.MinValue;
             var count = await query.CountAsync(cancellationToken);
 
             return (lastModified, count);
+        }
+
+        public async Task<byte[]?> GetRowVersionAsync(int id, CancellationToken cancellationToken)
+        {
+            return await _dbSet.AsNoTracking()
+                .Where(e => e.Id.Equals(id))
+                .Select(e => EF.Property<byte[]>(e, ShadowProps.RowVersion))
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task SoftDeleteAsync(TEntity entity, CancellationToken ct)
+        {
+            var entry = _dbContext.Entry(entity);
+            entry.State = EntityState.Modified;
+            entry.Property(ShadowProps.IsDeleted).CurrentValue = true;
+            await _dbContext.SaveChangesAsync(ct);
         }
     }
 }

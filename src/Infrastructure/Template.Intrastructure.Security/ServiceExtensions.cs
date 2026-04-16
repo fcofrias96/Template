@@ -23,6 +23,7 @@ using Template.Security.TokenProviderConfigurations;
 using Template.Security.TokenProviderConfigurations.ChangeEmail;
 using Template.Security.TokenProviderConfigurations.EmailConfirmation;
 using Template.Security.TokenProviderConfigurations.PasswordReset;
+using Template.Application.Contracts.Repositories.Base; // <-- added
 
 namespace Template.Security
 {
@@ -105,13 +106,6 @@ namespace Template.Security
 
             #region Dependency injection
 
-            //services.Scan(scan => scan
-            //    .FromAssemblyOf<AssemblyMarker>()
-            //    .AddClasses(c => c.Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Repository")))
-            //    .AsImplementedInterfaces()
-            //    .WithScopedLifetime()
-            //)
-
             // Repositories
             services.AddScoped<IActionRepository, ActionRepository>();
             services.AddScoped<IPermissionRepository, PermissionRepository>();
@@ -120,6 +114,14 @@ namespace Template.Security
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
+            // Map IBaseRepository<TEntity> to the concrete repository implementations so BaseServiceDeps<TEntity> resolves correctly
+            services.AddScoped<IBaseRepository<PermissionAction>>(sp => sp.GetRequiredService<IActionRepository>());
+            services.AddScoped<IBaseRepository<Permission>>(sp => sp.GetRequiredService<IPermissionRepository>());
+            services.AddScoped<IBaseRepository<Resource>>(sp => sp.GetRequiredService<IResourceRepository>());
+            services.AddScoped<IBaseRepository<RolePermission>>(sp => sp.GetRequiredService<IRolePermissionRepository>());
+            services.AddScoped<IBaseRepository<ApplicationRole>>(sp => sp.GetRequiredService<IRoleRepository>());
+            services.AddScoped<IBaseRepository<ApplicationUser>>(sp => sp.GetRequiredService<IUserRepository>());
 
             //Services
             services.AddScoped<IActionService, ActionService>();
@@ -134,8 +136,6 @@ namespace Template.Security
             services.AddScoped<IAuthLinkService, AuthLinkService>();
             services.AddScoped<IAuthEmailService, AuthEmailService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-
 
             #endregion Dependency injection
 

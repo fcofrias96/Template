@@ -2,7 +2,7 @@
 using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
-using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
+using PermissionAction = Template.Security.Entities.PermissionAction;
 
 namespace Template.Security.Repositories.V1
 {

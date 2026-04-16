@@ -1,8 +1,8 @@
-﻿using Azure.Monitor.OpenTelemetry.Exporter;
+﻿
+using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -12,13 +12,13 @@ using Serilog.Formatting.Compact;
 using Serilog.Formatting.Json;
 using Template.Monitoring.Utilities;
 
-namespace Template.Monitoring
+namespace Template.Infrastructure.Monitoring
 {
     public static class ServiceExtensions
     {
-        private const string ServiceName = "Template.Api";
+        private const string ServiceName = "Template.Presentation.Api";
         private const string ServiceVersion = "1.0.0";
-        private const string ApplicationName = "Template";
+        private const string ApplicationName = "Appointment";
         private const string AppInsightsConnectionStringKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
 
         public static void AddMonitoringInfrastructure(
@@ -27,25 +27,25 @@ namespace Template.Monitoring
         {
             var connectionString = configuration[AppInsightsConnectionStringKey];
 
-            ConfigureSerilog(builder, configuration);
+            ConfigureSerilog(builder, connectionString);
             ConfigureOpenTelemetry(builder, connectionString);
         }
 
-        private static void ConfigureSerilog(WebApplicationBuilder builder, IConfiguration configuration)
+        private static void ConfigureSerilog(WebApplicationBuilder builder, string? connectionString)
         {
-            var env = builder.Environment;
+            var isDeployed = !string.IsNullOrWhiteSpace(connectionString);
 
             builder.Host.UseSerilog((context, loggerConfiguration) =>
             {
                 ConfigureBaseSerilog(loggerConfiguration);
 
-                if (env.IsDevelopment())
+                if (isDeployed)
                 {
-                    ConfigureDevelopmentLogging(loggerConfiguration);
+                    ConfigureDeployedLogging(loggerConfiguration, connectionString!);
                 }
                 else
                 {
-                    ConfigureProductionLogging(loggerConfiguration, configuration);
+                    ConfigureLocalLogging(loggerConfiguration);
                 }
             });
         }
@@ -63,7 +63,7 @@ namespace Template.Monitoring
                 .WriteTo.Console(new CompactJsonFormatter());
         }
 
-        private static void ConfigureDevelopmentLogging(LoggerConfiguration loggerConfiguration)
+        private static void ConfigureLocalLogging(LoggerConfiguration loggerConfiguration)
         {
             ConfigureFileLogging(loggerConfiguration, LogEventLevel.Information, "./Logs/Info/log-.json");
             ConfigureFileLogging(loggerConfiguration, LogEventLevel.Warning, "./Logs/Warnings/warning-.json");
@@ -88,40 +88,31 @@ namespace Template.Monitoring
             });
         }
 
-        private static void ConfigureProductionLogging(
+        private static void ConfigureDeployedLogging(
             LoggerConfiguration loggerConfiguration,
-            IConfiguration configuration)
+            string connectionString)
         {
-            var aiConnectionString = configuration[AppInsightsConnectionStringKey];
-
-            if (string.IsNullOrWhiteSpace(aiConnectionString))
-            {
-                throw new InvalidOperationException(
-                    "Application Insights connection string is required for non-development environments. " +
-                    $"Please configure '{AppInsightsConnectionStringKey}' in your application settings.");
-            }
-
             loggerConfiguration.WriteTo.ApplicationInsights(
-                aiConnectionString,
+                connectionString,
                 TelemetryConverter.Traces);
         }
 
         private static void ConfigureOpenTelemetry(WebApplicationBuilder builder, string? connectionString)
         {
-            var env = builder.Environment;
+            var isDeployed = !string.IsNullOrWhiteSpace(connectionString);
 
             builder.Services.AddOpenTelemetry()
                 .ConfigureResource(resource =>
                 {
                     resource.AddService(serviceName: ServiceName, serviceVersion: ServiceVersion);
                 })
-                .WithMetrics(metrics => ConfigureMetrics(metrics, env, connectionString))
-                .WithTracing(tracing => ConfigureTracing(tracing, env, connectionString));
+                .WithMetrics(metrics => ConfigureMetrics(metrics, isDeployed, connectionString))
+                .WithTracing(tracing => ConfigureTracing(tracing, isDeployed, connectionString));
         }
 
         private static void ConfigureMetrics(
             MeterProviderBuilder metrics,
-            IHostEnvironment env,
+            bool isDeployed,
             string? connectionString)
         {
             metrics
@@ -129,10 +120,8 @@ namespace Template.Monitoring
                 .AddHttpClientInstrumentation()
                 .AddMeter(ObservabilityMetrics.MeterName);
 
-            if (env.IsProduction())
+            if (isDeployed)
             {
-                ValidateConnectionString(connectionString, "metrics");
-
                 metrics.AddAzureMonitorMetricExporter(options =>
                 {
                     options.ConnectionString = connectionString;
@@ -146,17 +135,15 @@ namespace Template.Monitoring
 
         private static void ConfigureTracing(
             TracerProviderBuilder tracing,
-            IHostEnvironment env,
+            bool isDeployed,
             string? connectionString)
         {
             tracing
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation();
 
-            if (env.IsProduction())
+            if (isDeployed)
             {
-                ValidateConnectionString(connectionString, "traces");
-
                 tracing.AddAzureMonitorTraceExporter(options =>
                 {
                     options.ConnectionString = connectionString;
@@ -165,16 +152,6 @@ namespace Template.Monitoring
             else
             {
                 tracing.AddConsoleExporter();
-            }
-        }
-
-        private static void ValidateConnectionString(string? connectionString, string telemetryType)
-        {
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException(
-                    $"Application Insights connection string is required for {telemetryType} in production. " +
-                    $"Configure '{AppInsightsConnectionStringKey}' in your settings.");
             }
         }
     }

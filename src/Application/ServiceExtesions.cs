@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
+using Template.Application.Caching;
+using Template.Application.Contracts.Caching;
+using Template.Application.Contracts.Etag;
 using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.Base.Export;
 using Template.Application.Contracts.Services.V1;
+using Template.Application.Etag;
 using Template.Application.Repository;
 using Template.Application.Services;
 using Template.Application.Services.Base;
@@ -42,8 +46,18 @@ namespace Template.Application
             #region Dependency Injection
 
             // services
-            services.AddScoped(typeof(IExportService<>), typeof(ExportService<>));
+            services.AddScoped(typeof(BaseServiceDeps<>));
+            services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddScoped<ICacheService, MemoryCacheService>();
+            services.AddScoped<ICacheNamespaceVersion, CacheNamespaceVersion>();
+            services.AddScoped<ICachePolicyRegistry, CachePolicyRegistry>();
+            services.AddScoped<ICacheKeyFactory, CacheKeyFactory>();
+            services.AddScoped<ICacheKeyBuilder, CacheKeyBuilder>();
+            services.AddScoped<IEtagCacheExecutor, EtagCacheExecutor>();
+            services.AddScoped<IEtagHttpResponder, EtagHttpResponder>();
+            services.AddScoped<ICacheService, MemoryCacheService>();
+
+            services.AddScoped(typeof(IExportService<>), typeof(ExportService<>));
 
             #endregion Dependency Injection
         }

@@ -1,9 +1,10 @@
-﻿using Template.Security.Dtos.RolePermission;
+﻿using Template.Application.Contracts.Repositories.Base;
+using Template.Security.Dtos.RolePermission;
 using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IRolePermissionRepository
+    public interface IRolePermissionRepository : IBaseRepository<RolePermission>
     {
         Task UpdateAsync(int roleId, int[] newPermissionIds, CancellationToken cancellationToken);
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Template.Domain.Entities.V1;
 using Template.Security.Configurations.V1;
 using Template.Security.Entities;
 

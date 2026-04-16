@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
-using Template.Application.Contracts;
-using Template.Application.Contracts.Services.Base;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Exceptions;
 using Template.Application.Extensions;
@@ -12,10 +9,8 @@ using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
-using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
@@ -30,22 +25,18 @@ namespace Template.Security.Services.V1
         private readonly ICacheService _cache;
         public UserService(
             IUserRepository userRepository,
-            IMapper mapper,
-            IEmailService emailService,
             IHttpContextAccessor httpContext,
-            IResourceService moduleService,
             UserManager<ApplicationUser> userManager,
-            ICacheService memoryCache,
             IUserRoleRepository userRoleRepository,
-            ICacheService cache
-            ) : base(memoryCache, mapper, userRepository, httpContext)
+            BaseServiceDeps<ApplicationUser> baseServiceDeps
+            ) : base(baseServiceDeps)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
-            _httpContext = httpContext;
+            _mapper = baseServiceDeps.Mapper;
+            _httpContext = baseServiceDeps.Http;
             _userManager = userManager;
             _userRoleRepository = userRoleRepository;
-            _cache = cache;
+            _cache = baseServiceDeps.Cache;
         }
 
         public async Task DeleteAsync(int userId, CancellationToken cancellationToken)

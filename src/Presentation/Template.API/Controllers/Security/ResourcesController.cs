@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Template.Api.Attributes;
 using Template.Api.Controllers.Common;
-using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Resources;
+using Template.Security.Entities;
 
 
 namespace Template.Api.Controllers.Security
@@ -39,14 +39,14 @@ namespace Template.Api.Controllers.Security
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
 			var result = await _resourceService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
-			return FromEtagResult(result);
+			return result.ToActionResult();
 		}
 
         [Permission(Resource.ResourceItem, PermissionAction.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ResourceDetailDto>>> GetResource(int id, CancellationToken cancellationToken)
         {
-            var resource = await _resourceService.GetByIdProjectedAsync<int, ResourceDetailDto>(id, cancellationToken);
+            var resource = await _resourceService.GetByIdProjectedAsync<ResourceDetailDto>(id, cancellationToken);
             return Ok(resource);
         }
 

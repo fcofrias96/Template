@@ -1,6 +1,6 @@
 ﻿using Template.Application.Attributes;
 using Template.Application.Utilities;
-using Template.Domain.Entities.V1;
+using Template.Security.Entities;
 
 namespace Template.Security.Dtos.Permissions
 {

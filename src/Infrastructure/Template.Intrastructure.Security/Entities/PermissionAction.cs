@@ -1,6 +1,6 @@
 ﻿using Template.Domain.Common;
 
-namespace Template.Domain.Entities.V1
+namespace Template.Security.Entities
 {
     public class PermissionAction : EntityBase<int>
     {

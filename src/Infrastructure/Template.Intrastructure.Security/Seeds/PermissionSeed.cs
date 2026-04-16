@@ -1,6 +1,6 @@
 ﻿using Template.Application.Enums;
 using Template.Application.Extensions;
-using Template.Domain.Entities.V1;
+using Template.Security.Entities;
 
 namespace Template.Security.Seeds
 {

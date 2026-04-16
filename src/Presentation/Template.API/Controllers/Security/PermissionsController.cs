@@ -2,13 +2,14 @@
 using Template.Api.Attributes;
 using Template.Api.Controllers.Common;
 using Template.Application.Enums;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Permissions;
+using Template.Security.Entities;
 
 
 namespace Template.Api.Controllers.Security
@@ -38,7 +39,7 @@ namespace Template.Api.Controllers.Security
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<PermissionDetailDto>>> GetPermission(int id, CancellationToken cancellationToken)
         {
-            var permission = await _permissionService.GetByIdProjectedAsync<int, PermissionDetailDto>(id, cancellationToken);
+            var permission = await _permissionService.GetByIdProjectedAsync<PermissionDetailDto>(id, cancellationToken);
             return Ok(permission);
         }
 
@@ -72,7 +73,7 @@ namespace Template.Api.Controllers.Security
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
 			var result = await _permissionService.GetProjectedWithEtagAsync<Catalog>(cancellationToken);
-			return FromEtagResult(result);
-		}
+			return result.ToActionResult();
+        }
     }
 }

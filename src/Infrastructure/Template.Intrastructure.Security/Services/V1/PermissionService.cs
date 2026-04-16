@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Services.Base;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
+using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
@@ -19,14 +16,12 @@ namespace Template.Security.Services.V1
         private readonly TimeSpan _permissionsTtl = TimeSpan.FromDays(1);
 
         public PermissionService(
-            ICacheService cache,
-            IMapper mapper,
-            IHttpContextAccessor httpContext,
-            IPermissionRepository permissionRepositoryAsync)
-            : base(cache, mapper, permissionRepositoryAsync, httpContext)
+            IPermissionRepository permissionRepositoryAsync,
+            BaseServiceDeps<Permission> deps)
+            : base(deps)
         {
             _permissionRepository = permissionRepositoryAsync;
-            _cache = cache;
+            _cache = deps.Cache;
         }
 
         public async Task<bool> HasPermissionAsync(int userId, int resourceId, int actionId, CancellationToken cancellationToken)
