@@ -8,6 +8,12 @@ namespace Template.Application.Configuration
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
+
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
+
             builder.Property(x => x.CreatedBy)
                    .HasColumnType("nvarchar(30)")
                    .HasDefaultValue("System");

@@ -12,8 +12,8 @@ using Template.Security.DbContexts.V1;
 namespace Template.Security.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20260102180755_RowVersion")]
-    partial class RowVersion
+    [Migration("20260416224602_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,30 @@ namespace Template.Security.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -40,14 +64,35 @@ namespace Template.Security.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
-
                     b.ToTable("RoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -65,17 +110,14 @@ namespace Template.Security.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserClaims", (string)null);
+                    b.ToTable("UserClamis", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -86,9 +128,8 @@ namespace Template.Security.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -97,32 +138,32 @@ namespace Template.Security.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("nvarchar(34)");
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.ToTable("UserRoles", (string)null);
 
-                    b.HasDiscriminator().HasValue("IdentityUserRole<string>");
+                    b.HasDiscriminator().HasValue("IdentityUserRole<int>");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -138,13 +179,17 @@ namespace Template.Security.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.ActionType", b =>
+            modelBuilder.Entity("Template.Security.Entities.ApplicationRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -169,8 +214,12 @@ namespace Template.Security.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -180,48 +229,199 @@ namespace Template.Security.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ActionType");
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = "586d148c-453b-445a-9da4-2362097ade76",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Create",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN",
                             RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 2,
+                            ConcurrencyStamp = "59646e52-7a37-40f7-ab07-39c27ee86c5f",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Read",
+                            Name = "User",
+                            NormalizedName = "USER",
                             RowVersion = new byte[0]
+                        });
+                });
+
+            modelBuilder.Entity("Template.Security.Entities.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsTokenRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("TokenRevokedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "7a94a976-70e2-425d-ab9f-390e522e89e8",
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "johnDoe@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "John",
+                            IsDeleted = false,
+                            IsTokenRevoked = false,
+                            LastName = "Doe",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "JOHNDOE@GMAIL.COM",
+                            NormalizedUserName = "JOHNDOE",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMS1U/rCmbhpgg8HvI4UhkjqH8+Eq3smL5YxtO/olevHfbo9ZJJLCUf2mRkRoETpOQ==",
+                            PhoneNumberConfirmed = false,
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            RowVersion = new byte[0],
+                            SecurityStamp = "ad73f6ef-fc82-4228-bb7d-dbe7eba7bc33",
+                            TwoFactorEnabled = false,
+                            UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "26e9d865-6df9-462b-a7c0-5506755c8268",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "johnJames@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "John",
                             IsDeleted = false,
-                            Name = "Update",
-                            RowVersion = new byte[0]
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IsDeleted = false,
-                            Name = "Delete",
-                            RowVersion = new byte[0]
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IsDeleted = false,
-                            Name = "Export",
-                            RowVersion = new byte[0]
+                            IsTokenRevoked = false,
+                            LastName = "James",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "JOHNJAMES@GMAIL.COM",
+                            NormalizedUserName = "JOHNJAMES",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOox2RBueDbn3dfWN/H/bune6V6N+I427OE2bEuRUVUjyfGbZ7JPaZQD34mN3EZMAQ==",
+                            PhoneNumberConfirmed = false,
+                            RefreshToken = "",
+                            RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            RowVersion = new byte[0],
+                            SecurityStamp = "0330f0b7-f6eb-4cd5-a28e-ec871ba9da01",
+                            TwoFactorEnabled = false,
+                            UserName = "johnJames"
                         });
                 });
 
@@ -404,7 +604,7 @@ namespace Template.Security.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ActionTypeId")
+                    b.Property<int>("ActionId")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -447,9 +647,9 @@ namespace Template.Security.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActionTypeId");
+                    b.HasIndex("ActionId");
 
-                    b.HasIndex("ResourceId", "ActionTypeId")
+                    b.HasIndex("ResourceId", "ActionId")
                         .IsUnique();
 
                     b.ToTable("Permissions");
@@ -458,7 +658,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 1,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating users",
                             IsDeleted = false,
@@ -469,7 +669,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 2,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading user details",
                             IsDeleted = false,
@@ -480,7 +680,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 3,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating users",
                             IsDeleted = false,
@@ -491,7 +691,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 4,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting users",
                             IsDeleted = false,
@@ -502,7 +702,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 5,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting user data",
                             IsDeleted = false,
@@ -513,7 +713,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 6,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating resources",
                             IsDeleted = false,
@@ -524,7 +724,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 7,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading resources",
                             IsDeleted = false,
@@ -535,7 +735,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 8,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating resources",
                             IsDeleted = false,
@@ -546,7 +746,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 9,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting resources",
                             IsDeleted = false,
@@ -557,7 +757,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 10,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting resource data",
                             IsDeleted = false,
@@ -568,7 +768,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 11,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating roles",
                             IsDeleted = false,
@@ -579,7 +779,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 12,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading roles",
                             IsDeleted = false,
@@ -590,7 +790,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 13,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating roles",
                             IsDeleted = false,
@@ -601,7 +801,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 14,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting roles",
                             IsDeleted = false,
@@ -612,7 +812,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 15,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting role data",
                             IsDeleted = false,
@@ -623,7 +823,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 16,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating permissions",
                             IsDeleted = false,
@@ -634,7 +834,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 17,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading permissions",
                             IsDeleted = false,
@@ -645,7 +845,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 18,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating permissions",
                             IsDeleted = false,
@@ -656,7 +856,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 19,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting permissions",
                             IsDeleted = false,
@@ -667,7 +867,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 20,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting permission data",
                             IsDeleted = false,
@@ -678,7 +878,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 21,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading actions",
                             IsDeleted = false,
@@ -689,7 +889,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 22,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating categories",
                             IsDeleted = false,
@@ -700,7 +900,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 23,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading categories",
                             IsDeleted = false,
@@ -711,7 +911,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 24,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating categories",
                             IsDeleted = false,
@@ -722,7 +922,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 25,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting categories",
                             IsDeleted = false,
@@ -733,7 +933,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 26,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting category data",
                             IsDeleted = false,
@@ -744,7 +944,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 27,
-                            ActionTypeId = 1,
+                            ActionId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows creating items",
                             IsDeleted = false,
@@ -755,7 +955,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 28,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading items",
                             IsDeleted = false,
@@ -766,7 +966,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 29,
-                            ActionTypeId = 3,
+                            ActionId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows updating items",
                             IsDeleted = false,
@@ -777,7 +977,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 30,
-                            ActionTypeId = 4,
+                            ActionId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows deleting items",
                             IsDeleted = false,
@@ -788,7 +988,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 31,
-                            ActionTypeId = 5,
+                            ActionId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows exporting item data",
                             IsDeleted = false,
@@ -799,12 +999,99 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 32,
-                            ActionTypeId = 2,
+                            ActionId = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "Allows reading configuration settings",
                             IsDeleted = false,
                             Name = "Read Configuration",
                             ResourceId = 6,
+                            RowVersion = new byte[0]
+                        });
+                });
+
+            modelBuilder.Entity("Template.Security.Entities.PermissionAction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(30)")
+                        .HasDefaultValue("System");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PermissionAction");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IsDeleted = false,
+                            Name = "Create",
+                            RowVersion = new byte[0]
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IsDeleted = false,
+                            Name = "Read",
+                            RowVersion = new byte[0]
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IsDeleted = false,
+                            Name = "Update",
+                            RowVersion = new byte[0]
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IsDeleted = false,
+                            Name = "Delete",
+                            RowVersion = new byte[0]
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            IsDeleted = false,
+                            Name = "Export",
                             RowVersion = new byte[0]
                         });
                 });
@@ -875,7 +1162,7 @@ namespace Template.Security.Migrations
                             Id = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Resource",
+                            Name = "ResourceItem",
                             RowVersion = new byte[0]
                         },
                         new
@@ -920,85 +1207,10 @@ namespace Template.Security.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetimeoffset")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(30)")
-                        .HasDefaultValue("System");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IsDeleted = false,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN",
-                            RowVersion = new byte[0]
-                        },
-                        new
-                        {
-                            Id = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            IsDeleted = false,
-                            Name = "User",
-                            NormalizedName = "USER",
-                            RowVersion = new byte[0]
-                        });
-                });
-
             modelBuilder.Entity("Template.Security.Entities.RolePermission", b =>
                 {
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
@@ -1012,342 +1224,179 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
+                            RoleId = 2,
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
+                            RoleId = 2,
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 1
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 2
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 3
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 4
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 5
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 6
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 7
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 8
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 9
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 10
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 11
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 12
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 13
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 14
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 15
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 16
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 17
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 18
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 19
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 20
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 21
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 22
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 24
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 25
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 26
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 27
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 29
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 30
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 31
                         },
                         new
                         {
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
+                            RoleId = 1,
                             PermissionId = 32
                         });
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.User", b =>
+            modelBuilder.Entity("Template.Security.Entities.ApplicationUserRole", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetimeoffset")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(30)")
-                        .HasDefaultValue("System");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsTokenRevoked")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LastModifiedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("TokenRevokedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("Users", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "12f9c0c6-c864-4025-9268-23e98335035f",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "johnDoe@gmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "John",
-                            IsDeleted = false,
-                            IsTokenRevoked = false,
-                            LastName = "Doe",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "JOHNDOE@GMAIL.COM",
-                            NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAECHjisV3uePVjpXlULWu4rFkernhh4qdnv+lj3RXIF+or3Ja92qzw4AnDKnM+F9LDw==",
-                            PhoneNumberConfirmed = false,
-                            RefreshToken = "",
-                            RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            RowVersion = new byte[0],
-                            SecurityStamp = "65229fa6-1e0d-4fc7-bf0c-68ffa5d6f682",
-                            TwoFactorEnabled = false,
-                            UserName = "johnDoe"
-                        },
-                        new
-                        {
-                            Id = "0656fa2e-2388-44b4-8c21-53741e9d2f16",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "6096b751-9389-442c-8a08-8d7d4e73b88f",
-                            CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "johnJames@gmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "John",
-                            IsDeleted = false,
-                            IsTokenRevoked = false,
-                            LastName = "James",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "JOHNJAMES@GMAIL.COM",
-                            NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKNdTIDLmFtHkT4EormRGlLvfWuxCnLp/9ML5QRZkUkIc//c9zCsgQmsuJFXRjuZLA==",
-                            PhoneNumberConfirmed = false,
-                            RefreshToken = "",
-                            RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            RowVersion = new byte[0],
-                            SecurityStamp = "357f8d79-2298-4fa2-a5ab-bdf04c91c0e4",
-                            TwoFactorEnabled = false,
-                            UserName = "johnJames"
-                        });
-                });
-
-            modelBuilder.Entity("Template.Security.Entities.UserRole", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<int>");
 
                     b.HasIndex("RoleId");
 
@@ -1355,56 +1404,56 @@ namespace Template.Security.Migrations
 
                     b.ToTable("UserRoles", (string)null);
 
-                    b.HasDiscriminator().HasValue("UserRole");
+                    b.HasDiscriminator().HasValue("ApplicationUserRole");
 
                     b.HasData(
                         new
                         {
-                            UserId = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
-                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7"
+                            UserId = 1,
+                            RoleId = 1
                         },
                         new
                         {
-                            UserId = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
-                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5"
+                            UserId = 1,
+                            RoleId = 2
                         },
                         new
                         {
-                            UserId = "0656fa2e-2388-44b4-8c21-53741e9d2f16",
-                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5"
+                            UserId = 2,
+                            RoleId = 2
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Template.Security.Entities.Role", null)
+                    b.HasOne("Template.Security.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Template.Security.Entities.User", null)
+                    b.HasOne("Template.Security.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Template.Security.Entities.User", null)
+                    b.HasOne("Template.Security.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Template.Security.Entities.User", null)
+                    b.HasOne("Template.Security.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1429,9 +1478,9 @@ namespace Template.Security.Migrations
 
             modelBuilder.Entity("Template.Security.Entities.Permission", b =>
                 {
-                    b.HasOne("Template.Security.Entities.ActionType", "ActionType")
+                    b.HasOne("Template.Security.Entities.PermissionAction", "Action")
                         .WithMany("Permissions")
-                        .HasForeignKey("ActionTypeId")
+                        .HasForeignKey("ActionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1441,7 +1490,7 @@ namespace Template.Security.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ActionType");
+                    b.Navigation("Action");
 
                     b.Navigation("Resource");
                 });
@@ -1454,7 +1503,7 @@ namespace Template.Security.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Template.Security.Entities.Role", "Role")
+                    b.HasOne("Template.Security.Entities.ApplicationRole", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1465,14 +1514,14 @@ namespace Template.Security.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.UserRole", b =>
+            modelBuilder.Entity("Template.Security.Entities.ApplicationUserRole", b =>
                 {
-                    b.HasOne("Template.Security.Entities.Role", "Role")
+                    b.HasOne("Template.Security.Entities.ApplicationRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Template.Security.Entities.User", "User")
+                    b.HasOne("Template.Security.Entities.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1482,9 +1531,16 @@ namespace Template.Security.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.ActionType", b =>
+            modelBuilder.Entity("Template.Security.Entities.ApplicationRole", b =>
                 {
-                    b.Navigation("Permissions");
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Template.Security.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Template.Security.Entities.MenuItem", b =>
@@ -1497,21 +1553,14 @@ namespace Template.Security.Migrations
                     b.Navigation("RolePermissions");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.Resource", b =>
+            modelBuilder.Entity("Template.Security.Entities.PermissionAction", b =>
                 {
                     b.Navigation("Permissions");
                 });
 
-            modelBuilder.Entity("Template.Security.Entities.Role", b =>
+            modelBuilder.Entity("Template.Security.Entities.Resource", b =>
                 {
-                    b.Navigation("RolePermissions");
-
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Template.Security.Entities.User", b =>
-                {
-                    b.Navigation("UserRoles");
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

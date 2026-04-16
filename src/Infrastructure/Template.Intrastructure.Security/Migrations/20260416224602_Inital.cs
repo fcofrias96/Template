@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Template.Security.Migrations
 {
     /// <inheritdoc />
-    public partial class RowVersion : Migration
+    public partial class Inital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ActionType",
+                name: "PermissionAction",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -29,7 +29,7 @@ namespace Template.Security.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActionType", x => x.Id);
+                    table.PrimaryKey("PK_PermissionAction", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,10 +52,26 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedBy = table.Column<string>(type: "nvarchar(30)", nullable: false, defaultValue: "System"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
@@ -72,10 +88,26 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserClamis",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserClamis", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -117,7 +149,7 @@ namespace Template.Security.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ResourceId = table.Column<int>(type: "int", nullable: false),
-                    ActionTypeId = table.Column<int>(type: "int", nullable: false),
+                    ActionId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(30)", nullable: false, defaultValue: "System"),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
@@ -129,9 +161,9 @@ namespace Template.Security.Migrations
                 {
                     table.PrimaryKey("PK_Permissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Permissions_ActionType_ActionTypeId",
-                        column: x => x.ActionTypeId,
-                        principalTable: "ActionType",
+                        name: "FK_Permissions_PermissionAction_ActionId",
+                        column: x => x.ActionId,
+                        principalTable: "PermissionAction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -143,20 +175,20 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleClaims",
+                name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleClaims_Roles_RoleId",
+                        name: "FK_AspNetRoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
@@ -169,7 +201,7 @@ namespace Template.Security.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -191,7 +223,7 @@ namespace Template.Security.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,9 +240,9 @@ namespace Template.Security.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,7 +265,7 @@ namespace Template.Security.Migrations
                 name: "UserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -288,7 +320,7 @@ namespace Template.Security.Migrations
                 name: "RolePermissions",
                 columns: table => new
                 {
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -309,7 +341,12 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ActionType",
+                table: "MenuItems",
+                columns: new[] { "Id", "Icon", "LastModifiedAt", "LastModifiedBy", "Order", "ParentId", "PermissionId", "Title", "Url" },
+                values: new object[] { 1, "dashboard-icon", null, null, 1, null, null, "Dashboard", "/dashboard" });
+
+            migrationBuilder.InsertData(
+                table: "PermissionAction",
                 columns: new[] { "Id", "LastModifiedAt", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
@@ -321,18 +358,13 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "MenuItems",
-                columns: new[] { "Id", "Icon", "LastModifiedAt", "LastModifiedBy", "Order", "ParentId", "PermissionId", "Title", "Url" },
-                values: new object[] { 1, "dashboard-icon", null, null, 1, null, null, "Dashboard", "/dashboard" });
-
-            migrationBuilder.InsertData(
                 table: "Resources",
                 columns: new[] { "Id", "LastModifiedAt", "LastModifiedBy", "Name" },
                 values: new object[,]
                 {
                     { 1, null, null, "User" },
                     { 2, null, null, "Role" },
-                    { 3, null, null, "Resource" },
+                    { 3, null, null, "ResourceItem" },
                     { 4, null, null, "Permission" },
                     { 5, null, null, "Action" },
                     { 6, null, null, "Configuration" },
@@ -345,8 +377,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "LastModifiedAt", "LastModifiedBy", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", null, null, null, "User", "USER" },
-                    { "88ab3e6c-524d-494f-b48c-64647ba82bc7", null, null, null, "Admin", "ADMIN" }
+                    { 1, "586d148c-453b-445a-9da4-2362097ade76", null, null, "Admin", "ADMIN" },
+                    { 2, "59646e52-7a37-40f7-ab07-39c27ee86c5f", null, null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -354,13 +386,13 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsTokenRevoked", "LastModifiedAt", "LastModifiedBy", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TokenRevokedTime", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "0656fa2e-2388-44b4-8c21-53741e9d2f16", 0, "6096b751-9389-442c-8a08-8d7d4e73b88f", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEKNdTIDLmFtHkT4EormRGlLvfWuxCnLp/9ML5QRZkUkIc//c9zCsgQmsuJFXRjuZLA==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "357f8d79-2298-4fa2-a5ab-bdf04c91c0e4", null, false, "johnJames" },
-                    { "c447db6b-08f1-4c9d-adfd-ca11e2852d97", 0, "12f9c0c6-c864-4025-9268-23e98335035f", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAECHjisV3uePVjpXlULWu4rFkernhh4qdnv+lj3RXIF+or3Ja92qzw4AnDKnM+F9LDw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "65229fa6-1e0d-4fc7-bf0c-68ffa5d6f682", null, false, "johnDoe" }
+                    { 1, 0, "7a94a976-70e2-425d-ab9f-390e522e89e8", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEMS1U/rCmbhpgg8HvI4UhkjqH8+Eq3smL5YxtO/olevHfbo9ZJJLCUf2mRkRoETpOQ==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "ad73f6ef-fc82-4228-bb7d-dbe7eba7bc33", null, false, "johnDoe" },
+                    { 2, 0, "26e9d865-6df9-462b-a7c0-5506755c8268", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEOox2RBueDbn3dfWN/H/bune6V6N+I427OE2bEuRUVUjyfGbZ7JPaZQD34mN3EZMAQ==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "0330f0b7-f6eb-4cd5-a28e-ec871ba9da01", null, false, "johnJames" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Permissions",
-                columns: new[] { "Id", "ActionTypeId", "Description", "LastModifiedAt", "LastModifiedBy", "Name", "ResourceId" },
+                columns: new[] { "Id", "ActionId", "Description", "LastModifiedAt", "LastModifiedBy", "Name", "ResourceId" },
                 values: new object[,]
                 {
                     { 1, 1, "Allows creating users", null, null, "Create User", 1 },
@@ -402,9 +434,9 @@ namespace Template.Security.Migrations
                 columns: new[] { "RoleId", "UserId", "Discriminator" },
                 values: new object[,]
                 {
-                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", "0656fa2e-2388-44b4-8c21-53741e9d2f16", "UserRole" },
-                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", "c447db6b-08f1-4c9d-adfd-ca11e2852d97", "UserRole" },
-                    { "88ab3e6c-524d-494f-b48c-64647ba82bc7", "c447db6b-08f1-4c9d-adfd-ca11e2852d97", "UserRole" }
+                    { 1, 1, "ApplicationUserRole" },
+                    { 2, 1, "ApplicationUserRole" },
+                    { 2, 2, "ApplicationUserRole" }
                 });
 
             migrationBuilder.InsertData(
@@ -422,40 +454,40 @@ namespace Template.Security.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
-                    { 23, "31fffcda-fd94-49d5-98d1-158aa3a35be5" },
-                    { 28, "31fffcda-fd94-49d5-98d1-158aa3a35be5" },
-                    { 1, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 2, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 3, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 4, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 5, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 6, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 7, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 8, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 9, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 10, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 11, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 12, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 13, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 14, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 15, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 16, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 17, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 18, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 19, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 20, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 21, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 22, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 23, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 24, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 25, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 26, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 27, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 28, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 29, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 30, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 31, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
-                    { 32, "88ab3e6c-524d-494f-b48c-64647ba82bc7" }
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 3, 1 },
+                    { 4, 1 },
+                    { 5, 1 },
+                    { 6, 1 },
+                    { 7, 1 },
+                    { 8, 1 },
+                    { 9, 1 },
+                    { 10, 1 },
+                    { 11, 1 },
+                    { 12, 1 },
+                    { 13, 1 },
+                    { 14, 1 },
+                    { 15, 1 },
+                    { 16, 1 },
+                    { 17, 1 },
+                    { 18, 1 },
+                    { 19, 1 },
+                    { 20, 1 },
+                    { 21, 1 },
+                    { 22, 1 },
+                    { 23, 1 },
+                    { 24, 1 },
+                    { 25, 1 },
+                    { 26, 1 },
+                    { 27, 1 },
+                    { 28, 1 },
+                    { 29, 1 },
+                    { 30, 1 },
+                    { 31, 1 },
+                    { 32, 1 },
+                    { 23, 2 },
+                    { 28, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -470,6 +502,11 @@ namespace Template.Security.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_ParentId_Order",
                 table: "MenuItems",
                 columns: new[] { "ParentId", "Order" },
@@ -482,20 +519,15 @@ namespace Template.Security.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permissions_ActionTypeId",
+                name: "IX_Permissions_ActionId",
                 table: "Permissions",
-                column: "ActionTypeId");
+                column: "ActionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permissions_ResourceId_ActionTypeId",
+                name: "IX_Permissions_ResourceId_ActionId",
                 table: "Permissions",
-                columns: new[] { "ResourceId", "ActionTypeId" },
+                columns: new[] { "ResourceId", "ActionId" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RoleClaims_RoleId",
-                table: "RoleClaims",
-                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_PermissionId",
@@ -546,6 +578,9 @@ namespace Template.Security.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
                 name: "MenuItems");
 
             migrationBuilder.DropTable(
@@ -556,6 +591,9 @@ namespace Template.Security.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
+
+            migrationBuilder.DropTable(
+                name: "UserClamis");
 
             migrationBuilder.DropTable(
                 name: "UserLogins");
@@ -576,7 +614,7 @@ namespace Template.Security.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "ActionType");
+                name: "PermissionAction");
 
             migrationBuilder.DropTable(
                 name: "Resources");

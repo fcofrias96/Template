@@ -12,7 +12,7 @@ using Serilog.Formatting.Compact;
 using Serilog.Formatting.Json;
 using Template.Monitoring.Utilities;
 
-namespace Template.Infrastructure.Monitoring
+namespace Template.Monitoring
 {
     public static class ServiceExtensions
     {

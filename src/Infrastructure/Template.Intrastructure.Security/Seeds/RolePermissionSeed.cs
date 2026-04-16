@@ -1,5 +1,4 @@
 ﻿using Template.Application.Constants;
-using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Seeds
@@ -11,25 +10,23 @@ namespace Template.Security.Seeds
         private static List<RolePermission> InitializeData()
         {
             var data = new List<RolePermission>
-        {
-            #region Admin
+            { 
+                // User
+                new RolePermission
+                {
+                    RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
+                    PermissionId = PermissionSeed.Data.First(p => p.ActionId == PermissionAction.Read && p.ResourceId == Resource.Category).Id
+                },
+                new RolePermission
+                {
+                    RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
+                    PermissionId = PermissionSeed.Data.First(p => p.ActionId == PermissionAction.Read && p.ResourceId == Resource.Item).Id
+                },
+            };
 
-            new RolePermission
-            {
-                RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
-                PermissionId = 23
-            },
-            new RolePermission
-            {
-                RoleId = RoleSeed.Data.First(x => x.Name == Roles.User).Id,
-                PermissionId = 28
-            },
-
-            #endregion Admin
-        };
-
+            // Admin
             data.AddRange(GetAdminRolePermissions());
-
+ 
             return data;
         }
 
@@ -38,7 +35,7 @@ namespace Template.Security.Seeds
             var rolePermissions = new List<RolePermission>();
             var roleId = RoleSeed.Data.First(x => x.Name == Roles.Admin).Id;
 
-            for (var index = 1; index <= 32; index++)
+            for (var index = 1; index <= PermissionSeed.Data.Count; index++)
             {
                 rolePermissions.Add(new RolePermission
                 {

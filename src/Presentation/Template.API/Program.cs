@@ -17,7 +17,6 @@ builder.Services.AddPersistenceInfrastructure(configuration);
 builder.Services.AddInfrastructureEmail(configuration);
 builder.AddMonitoringInfrastructure(configuration);
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

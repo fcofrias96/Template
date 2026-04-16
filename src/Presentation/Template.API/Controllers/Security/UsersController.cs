@@ -50,7 +50,7 @@ namespace Template.Api.Controllers.Security
             int id,
             CancellationToken cancellationToken)
         {
-            var user = await _userServiceAsync.GetUserDetailAsync(id, cancellationToken);
+            var user = await _userServiceAsync.GetDetailAsync(id, cancellationToken);
             return Ok(user);
         }
 
@@ -63,7 +63,7 @@ namespace Template.Api.Controllers.Security
             return Ok(response);
         }
 
-        [HttpPatch("{id}/roles")]
+        [HttpPut("{id}/roles")]
         public async Task<ActionResult> UpdateRolesAsync(
             int id,
             [FromBody] UpdateUserRolesDto request,

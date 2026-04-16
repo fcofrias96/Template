@@ -2,9 +2,8 @@
 
 namespace Template.Domain.Entities.V1
 {
-    public class Item : EntityBase<int>
+    public class Item : EntityBase
     {
-        public override int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }

@@ -13,7 +13,7 @@ namespace Template.Persistence.Configuration.V1
             #region Properties
 
             builder.Property(x => x.Name)
-                   .HasColumnType("VARCHAR(15)")
+                   .HasColumnType("VARCHAR(25)")
                    .IsRequired();
 
             #endregion Properties

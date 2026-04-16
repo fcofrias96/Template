@@ -17,12 +17,6 @@ namespace Template.Security.Entities
         public DateTimeOffset? LastModifiedAt { get; set; }
         public bool IsDeleted { get; set; }
 
-        object IEntityBase.Id
-        {
-            get => Id;
-            set => Id = (int)value;
-        }
-
         public ICollection<ApplicationUserRole> UserRoles { get; set; } = [];
 
         public byte[] RowVersion { get; private set; } = Array.Empty<byte>();

@@ -54,7 +54,7 @@ namespace Template.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(15)");
+                        .HasColumnType("VARCHAR(25)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -80,7 +80,7 @@ namespace Template.Persistence.Migrations
                             Id = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Electrodomestic",
+                            Name = "HouseholdAppliance",
                             RowVersion = new byte[0]
                         },
                         new
@@ -105,8 +105,9 @@ namespace Template.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");

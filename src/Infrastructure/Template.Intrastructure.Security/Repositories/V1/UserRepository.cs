@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Template.Application.Contracts;
-using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Repository;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
@@ -18,7 +15,6 @@ namespace Template.Security.Repositories.V1
     public class UserRepository : BaseRepository<ApplicationUser>, IUserRepository
     {
         private readonly SecurityDbContext _dbContext;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public UserRepository(
             UserManager<ApplicationUser> userManager,
@@ -26,23 +22,23 @@ namespace Template.Security.Repositories.V1
             IConfigurationProvider configurationProvider
             ): base(dbContext, configurationProvider)
         {
-            _userManager = userManager;
             _dbContext = dbContext;
-
         }
 
       
         public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
+                .AsNoTracking()
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.UserRoles.Select(ur => new RoleListDto { Id = ur.RoleId, Name = ur.Role.Name ?? String.Empty }))
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<UserDetailDto?> GetUserDetailAsync(int userId, CancellationToken cancellationToken)
+        public async Task<UserDetailDto?> GetDetailAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
+                .AsNoTracking()
                 .Where(u => u.Id == userId)
                 .Select(u => new UserDetailDto
                 {
@@ -78,14 +74,15 @@ namespace Template.Security.Repositories.V1
         }
 
 
-        public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> GetByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
         }
 
         public async Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
+                .AsNoTracking()
                 .Where(u => u.Id == userId)
                 .SelectMany(u => u.UserRoles
                     .SelectMany(ur => ur.Role.RolePermissions)

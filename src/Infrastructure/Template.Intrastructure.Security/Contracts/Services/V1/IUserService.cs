@@ -3,7 +3,6 @@ using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
-using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Services.V1
@@ -14,11 +13,11 @@ namespace Template.Security.Contracts.Services.V1
 
         Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(int userId, CancellationToken cancellationToken);
 
-        Task<ApplicationUser?> GetUserByRefreshToken(string refreshToken, CancellationToken cancellationToken);
+        Task<ApplicationUser?> GetByRefreshToken(string refreshToken, CancellationToken cancellationToken);
 
         Task UpdateAsync(int userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken);
 
-        Task<UserDetailDto> GetUserDetailAsync(int userId, CancellationToken cancellationToken);
+        Task<UserDetailDto> GetDetailAsync(int userId, CancellationToken cancellationToken);
 
         Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken);
 

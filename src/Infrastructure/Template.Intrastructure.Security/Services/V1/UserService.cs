@@ -1,50 +1,60 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Template.Application.Contracts.Services.V1;
+using Template.Application.Contracts.Caching.Invalidators;
 using Template.Application.Exceptions;
-using Template.Application.Extensions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
 using Template.Security.Contracts.Repositories.V1;
+using Template.Security.Contracts.Services;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class UserService : BaseService<ApplicationUser>,  IUserService
+    public class UserService : BaseService<ApplicationUser>, IUserService
     {
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly ICurrentUserService _currentUserService;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly IUserRoleRepository _userRoleRepository;
-        private readonly ICacheService _cache;
+        private readonly IUserAuthCacheInvalidator _userAuthCacheInvalidator;
+        private readonly IPermissionCacheInvalidator _permissionCacheInvalidator;
+        private readonly IMenuCacheInvalidator _menuCacheInvalidator;
+
+
         public UserService(
-            IUserRepository userRepository,
-            IHttpContextAccessor httpContext,
+            IResourceService resourceService,
             UserManager<ApplicationUser> userManager,
             IUserRoleRepository userRoleRepository,
-            BaseServiceDeps<ApplicationUser> baseServiceDeps
-            ) : base(baseServiceDeps)
+            IUserAuthCacheInvalidator userAuthCacheInvalidator,
+            IPermissionCacheInvalidator permissionCacheInvalidator,
+            IMenuCacheInvalidator menuCacheInvalidator,
+            ICurrentUserService currentUserService,
+            BaseServiceDeps<ApplicationUser> deps
+
+        )
+            : base(deps)
         {
-            _userRepository = userRepository;
-            _mapper = baseServiceDeps.Mapper;
-            _httpContext = baseServiceDeps.Http;
+            _userRepository = (IUserRepository) deps.Repository;
+            _mapper = deps.Mapper;
             _userManager = userManager;
             _userRoleRepository = userRoleRepository;
-            _cache = baseServiceDeps.Cache;
+            _userAuthCacheInvalidator = userAuthCacheInvalidator;
+            _permissionCacheInvalidator = permissionCacheInvalidator;
+            _menuCacheInvalidator = menuCacheInvalidator;
+            _currentUserService = currentUserService;
         }
 
         public async Task DeleteAsync(int userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await GetUser(userId);
-            user.MarkDeleted();
-            await _userManager.UpdateAsync(user);
+            await _userRepository.SoftDeleteAsync(user, cancellationToken);
+
         }
 
         public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(int userId, CancellationToken cancellationToken)
@@ -53,14 +63,14 @@ namespace Template.Security.Services.V1
             return new ApiResponse<IReadOnlyList<RoleListDto>>(roles);
         }
 
-        public async Task<ApplicationUser?> GetUserByRefreshToken(string refreshToken, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> GetByRefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
-            return await _userRepository.GetUserByRefreshTokenAsync(refreshToken, cancellationToken);
+            return await _userRepository.GetByRefreshTokenAsync(refreshToken, cancellationToken);
         }
 
         public async Task UpdateAsync(int userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
         {
-            var currentUserId = _httpContext?.HttpContext?.GetUserId();
+            var currentUserId = _currentUserService.UserId;
 
             if (userId != userUpdateDTO.Id)
             {
@@ -77,9 +87,9 @@ namespace Template.Security.Services.V1
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<UserDetailDto> GetUserDetailAsync(int userId, CancellationToken cancellationToken)
+        public async Task<UserDetailDto> GetDetailAsync(int userId, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserDetailAsync(userId, cancellationToken);
+            var user = await _userRepository.GetDetailAsync(userId, cancellationToken);
             if (user == null)
             {
                 throw new NotFoundException("User", userId);
@@ -94,9 +104,11 @@ namespace Template.Security.Services.V1
 
         public async Task UpdateUserRolesAsync(int userId, IEnumerable<int> roleIds, CancellationToken cancellationToken)
         {
-            await _userRoleRepository.UpdateUserRolesAsync(userId, roleIds, cancellationToken);
 
-            _cache.Remove(PermissionService.BuildPermissionsCacheKey(userId));
+            await _userRoleRepository.UpdateUserRolesAsync(userId, roleIds, cancellationToken);
+            _permissionCacheInvalidator.InvalidateUser(userId);
+            _userAuthCacheInvalidator.InvalidateUser(userId);
+            _menuCacheInvalidator?.InvalidatePermissions();
         }
 
         #region Private Methods

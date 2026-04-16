@@ -2,9 +2,8 @@
 
 namespace Template.Security.Entities
 {
-    public class MenuItem : EntityBase<int>
+    public class MenuItem : EntityBase
     {
-        public override int Id { get; set; }
         public string Title { get; set; }
         public string Url { get; set; }
         public string Icon { get; set; }

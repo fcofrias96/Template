@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Dtos.RolePermission;
@@ -8,11 +7,11 @@ using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class RolePermissionRepository : BaseRepository<RolePermission>, IRolePermissionRepository
+    public class RolePermissionRepository :  IRolePermissionRepository
     {
         private readonly SecurityDbContext _dbContext;
 
-        public RolePermissionRepository(SecurityDbContext dbContext, IConfigurationProvider configurationProvider) : base(dbContext, configurationProvider)
+        public RolePermissionRepository(SecurityDbContext dbContext, IConfigurationProvider configurationProvider)
         {
             _dbContext = dbContext;
         }

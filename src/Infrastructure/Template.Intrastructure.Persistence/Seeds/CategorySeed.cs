@@ -1,5 +1,5 @@
-﻿using Template.Application.Enums;
-using Category = Template.Domain.Entities.V1.Category;
+﻿
+using Template.Domain.Entities.V1;
 
 namespace Template.Persistence.Seeds
 {
@@ -9,23 +9,23 @@ namespace Template.Persistence.Seeds
         {
             new Category
             {
-                Id= (int) Categories.Clothes,
-                Name= nameof(Categories.Clothes)
+                Id=  Category.Clothes,
+                Name= nameof(Category.Clothes)
             },
             new Category
             {
-                Id= (int) Categories.Electrodomestic,
-                Name= nameof(Categories.Electrodomestic)
+                Id=  Category.HouseholdAppliance,
+                Name= nameof(Category.HouseholdAppliance)
             },
             new Category
             {
-                Id= (int) Categories.Fruit,
-                Name= nameof(Categories.Fruit)
+                Id=  Category.Fruit,
+                Name= nameof(Category.Fruit)
             },
             new Category
             {
-                Id= (int) Categories.Tool,
-                Name= nameof(Categories.Tool)
+                Id=  Category.Tool,
+                Name= nameof(Category.Tool)
             }
         };
     }

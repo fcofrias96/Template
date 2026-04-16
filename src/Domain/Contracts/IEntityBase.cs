@@ -2,7 +2,7 @@
 {
     public interface IEntityBase
     {
-        object Id { get; set; }
+        int Id { get; set; }
         string CreatedBy { get; set; }
         DateTimeOffset CreatedAt { get; set; }
         string? LastModifiedBy { get; set; }

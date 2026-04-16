@@ -4,7 +4,7 @@ using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IRolePermissionRepository : IBaseRepository<RolePermission>
+    public interface IRolePermissionRepository
     {
         Task UpdateAsync(int roleId, int[] newPermissionIds, CancellationToken cancellationToken);
 

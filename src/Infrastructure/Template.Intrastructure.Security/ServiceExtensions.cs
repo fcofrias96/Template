@@ -8,9 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Template.Application.Caching.Invalidators;
 using Template.Application.Constants;
+using Template.Application.Contracts.Caching.Invalidators;
+using Template.Application.Contracts.Repositories.Base;
 using Template.Application.Extensions;
-using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Contracts.Services.V1;
@@ -23,7 +25,6 @@ using Template.Security.TokenProviderConfigurations;
 using Template.Security.TokenProviderConfigurations.ChangeEmail;
 using Template.Security.TokenProviderConfigurations.EmailConfirmation;
 using Template.Security.TokenProviderConfigurations.PasswordReset;
-using Template.Application.Contracts.Repositories.Base; // <-- added
 
 namespace Template.Security
 {
@@ -116,26 +117,28 @@ namespace Template.Security
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
             // Map IBaseRepository<TEntity> to the concrete repository implementations so BaseServiceDeps<TEntity> resolves correctly
-            services.AddScoped<IBaseRepository<PermissionAction>>(sp => sp.GetRequiredService<IActionRepository>());
-            services.AddScoped<IBaseRepository<Permission>>(sp => sp.GetRequiredService<IPermissionRepository>());
-            services.AddScoped<IBaseRepository<Resource>>(sp => sp.GetRequiredService<IResourceRepository>());
-            services.AddScoped<IBaseRepository<RolePermission>>(sp => sp.GetRequiredService<IRolePermissionRepository>());
             services.AddScoped<IBaseRepository<ApplicationRole>>(sp => sp.GetRequiredService<IRoleRepository>());
             services.AddScoped<IBaseRepository<ApplicationUser>>(sp => sp.GetRequiredService<IUserRepository>());
+            services.AddScoped<IBaseRepository<Permission>>(sp => sp.GetRequiredService<IPermissionRepository>());
+            services.AddScoped<IBaseRepository<PermissionAction>>(sp => sp.GetRequiredService<IActionRepository>());
+            services.AddScoped<IBaseRepository<Resource>>(sp => sp.GetRequiredService<IResourceRepository>());
 
             //Services
             services.AddScoped<IActionService, ActionService>();
+            services.AddScoped<IAuthEmailService, AuthEmailService>();
+            services.AddScoped<IAuthLinkService, AuthLinkService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IMenuCacheInvalidator, MenuCacheInvalidator>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IPermissionCacheInvalidator, PermissionCacheInvalidator>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IResourceService, ResourceService>();
             services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUserAuthCacheInvalidator, UserAuthCacheInvalidator>();
             services.AddScoped<IUserAuthCacheService, UserAuthCacheService>();
-            services.AddScoped<IAuthLinkService, AuthLinkService>();
-            services.AddScoped<IAuthEmailService, AuthEmailService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IUserService, UserService>();
 
             #endregion Dependency injection
 

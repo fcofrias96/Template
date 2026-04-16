@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
-using Template.Domain.Common;
 using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
@@ -128,7 +127,7 @@ namespace Template.Application.Repository
             var query = _dbSet.AsQueryable();
             if (spec is not null) query = ApplySpecification(query, spec, false);
 
-            var lastModified = await query.MaxAsync(e => EF.Property<DateTimeOffset?>(e, ShadowProps.LastModifiedAt), cancellationToken) ?? DateTimeOffset.MinValue;
+            var lastModified = await query.MaxAsync(e => e.LastModifiedAt, cancellationToken) ?? DateTimeOffset.MinValue;
             var count = await query.CountAsync(cancellationToken);
 
             return (lastModified, count);
@@ -138,16 +137,16 @@ namespace Template.Application.Repository
         {
             return await _dbSet.AsNoTracking()
                 .Where(e => e.Id.Equals(id))
-                .Select(e => EF.Property<byte[]>(e, ShadowProps.RowVersion))
+                .Select(e => e.RowVersion)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task SoftDeleteAsync(TEntity entity, CancellationToken ct)
+        public async Task SoftDeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
             var entry = _dbContext.Entry(entity);
             entry.State = EntityState.Modified;
-            entry.Property(ShadowProps.IsDeleted).CurrentValue = true;
-            await _dbContext.SaveChangesAsync(ct);
+            entry.Property(p => p.IsDeleted).CurrentValue = true;
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

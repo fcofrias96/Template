@@ -2,10 +2,8 @@
 
 namespace Template.Security.Entities
 {
-    public class Permission : EntityBase<int>
+    public class Permission : EntityBase
     {
-        public override int Id { get; set; }
-
         public string Name { get; set; }
         public string? Description { get; set; }
         public int ResourceId { get; set; }

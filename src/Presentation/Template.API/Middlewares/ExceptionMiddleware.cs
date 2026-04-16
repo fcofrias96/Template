@@ -130,7 +130,7 @@ namespace Template.Api.Middlewares
                 {
                     ["TraceId"] = context.TraceIdentifier,
                     ["UserName"] = context.GetUserName(),
-                    ["ClientIP"] = clientIP,
+                    ["ClientIP"] = clientIP?.ToString() ?? "Unknown",
                     ["RequestMethod"] = request.Method,
                     ["RequestPath"] = request.Path,
                     ["RequestQueryString"] = request.QueryString.ToString(),

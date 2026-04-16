@@ -8,12 +8,14 @@ namespace Template.Persistence.OptionActions
 {
     public static class DbContextAction
     {
+        private const string DevelopmentEnvironmentName = "Development";
+
         public static readonly Func<IConfiguration, Action<DbContextOptionsBuilder>> DbOptions = configuration =>
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                var isDevelopment = configuration.GetValue<string>("Environment") == "Development"
-                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+                var isDevelopment = configuration.GetValue<string>("Environment") == DevelopmentEnvironmentName
+                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == DevelopmentEnvironmentName;
                 
                 var connectionString = configuration.GetConnectionString("TemplateMainConnection") 
                 ?? throw new InvalidOperationException("Connection string 'TemplateMainConnection' not found.");
@@ -39,8 +41,8 @@ namespace Template.Persistence.OptionActions
         {
             Action<DbContextOptionsBuilder> Options = (options) =>
             {
-                var isDevelopment = configuration.GetValue<string>("Environment") == "Development"
-                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+                var isDevelopment = configuration.GetValue<string>("Environment") == DevelopmentEnvironmentName
+                    || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == DevelopmentEnvironmentName;
 
                 options.UseSqlServer(configuration.GetConnectionString("TemplateAuditConnection"),
                             optionBuilder => optionBuilder.MigrationsAssembly(typeof(AuditDbContext).Assembly.FullName)

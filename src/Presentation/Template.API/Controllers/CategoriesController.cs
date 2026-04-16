@@ -21,12 +21,7 @@ namespace Template.Api.Controllers
     [ApiVersion("1.0")]
     public class CategoriesController :  ApiControllerBase
     {
-        #region Private Variable
-
         private readonly ICategoryService _categoryServiceAsync;
-
-        #endregion Private Variable
-
         public CategoriesController(ICategoryService categoryServiceAsync)
         {
             _categoryServiceAsync = categoryServiceAsync;

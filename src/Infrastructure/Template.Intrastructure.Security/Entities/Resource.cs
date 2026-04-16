@@ -2,7 +2,7 @@
 
 namespace Template.Security.Entities
 {
-    public class Resource : EntityBase<int>
+    public class Resource : EntityBase
     {
         public const int User = 1;
         public const int Role = 2;
@@ -12,8 +12,7 @@ namespace Template.Security.Entities
         public const int Configuration = 6;
         public const int Category = 7;
         public const int Item = 8;
-
-        public override int Id { get; set; }
+        
         public string Name { get; set; }
 
         public ICollection<Permission> Permissions { get; set; } = [];

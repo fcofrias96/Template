@@ -11,9 +11,6 @@ namespace Template.Persistence.Configuration.V1
         {
             #region Properties
 
-            builder.Property(x => x.Id)
-                   .HasDefaultValueSql("NEWID()");
-
             builder.Property(x => x.Name)
                     .HasColumnType("VARCHAR(50)")
                     .IsRequired();

@@ -12,8 +12,8 @@ using Template.Persistence.DbContexts;
 namespace Template.Persistence.Migrations.AuditDb
 {
     [DbContext(typeof(AuditDbContext))]
-    [Migration("20251112163610_Init")]
-    partial class Init
+    [Migration("20260416221642_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

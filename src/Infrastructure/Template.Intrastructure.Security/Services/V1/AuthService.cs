@@ -261,7 +261,7 @@ namespace Template.Security.Services.V1
                 throw new ForbiddenException("No refresh token provided");
             }
 
-            var user = await _userServiceAsync.GetUserByRefreshToken(refreshToken, cancellationToken);
+            var user = await _userServiceAsync.GetByRefreshToken(refreshToken, cancellationToken);
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTimeOffset.UtcNow || user.IsTokenRevoked)
             {

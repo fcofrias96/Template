@@ -4,39 +4,41 @@ using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Entities;
 
-public class UserAuthCacheService : IUserAuthCacheService
+namespace Template.Security.Services.V1
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ICacheService _cache;
-    private readonly TimeSpan _authCacheTtl = TimeSpan.FromHours(1);
-
-    public UserAuthCacheService(UserManager<ApplicationUser> userManager, ICacheService cache)
+    public class UserAuthCacheService : IUserAuthCacheService
     {
-        _userManager = userManager;
-        _cache = cache;
-    }
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ICacheService _cache;
+        private readonly TimeSpan _authCacheTtl = TimeSpan.FromHours(1);
 
-    public async Task<UserAuthCacheEntry> GetUserAuthDataAsync(ApplicationUser user, CancellationToken cancellationToken)
-    {
-        var cacheKey = $"auth:user:{user.Id}";
-        var cached = _cache.Get<UserAuthCacheEntry>(cacheKey);
-        if (cached is not null)
+        public UserAuthCacheService(UserManager<ApplicationUser> userManager, ICacheService cache)
         {
-            return cached;
+            _userManager = userManager;
+            _cache = cache;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-        var userClaims = await _userManager.GetClaimsAsync(user);
-        var userRoles = await _userManager.GetRolesAsync(user);
-
-        var entry = new UserAuthCacheEntry
+        public async Task<UserAuthCacheEntry> GetUserAuthDataAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
-            Claims = userClaims.ToList(),
-            Roles = userRoles.ToList()
-        };
+            var cacheKey = $"auth:user:{user.Id}";
+            var cached = _cache.Get<UserAuthCacheEntry>(cacheKey);
+            if (cached is not null)
+            {
+                return cached;
+            }
 
-        _cache.Set(cacheKey, entry, _authCacheTtl);
-        return entry;
+            cancellationToken.ThrowIfCancellationRequested();
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var entry = new UserAuthCacheEntry
+            {
+                Claims = userClaims.ToList(),
+                Roles = userRoles.ToList()
+            };
+
+            _cache.Set(cacheKey, entry, _authCacheTtl);
+            return entry;
+        }
     }
 }
- 
