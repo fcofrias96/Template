@@ -1,17 +1,17 @@
-﻿using Template.Application.Extensions;
-using ActionType = Template.Security.Entities.ActionType;
+﻿using System.Collections.Generic;
+using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
 
 namespace Template.Security.Seeds
 {
     public static class ActionSeed
     {
-        public static List<ActionType> Data { get; } = Enum.GetValues(typeof(Application.Enums.ActionType))
-        .Cast<Application.Enums.ActionType>()
-        .Select(action => new ActionType
+        public static List<PermissionAction> Data { get; } = new List<PermissionAction>
         {
-            Id = action.ToInt(),
-            Name = action.ToName(),
-        })
-        .ToList();
+            new PermissionAction { Id = PermissionAction.Create, Name = nameof(PermissionAction.Create) },
+            new PermissionAction { Id = PermissionAction.Read, Name = nameof(PermissionAction.Read) },
+            new PermissionAction { Id = PermissionAction.Update, Name = nameof(PermissionAction.Update) },
+            new PermissionAction { Id = PermissionAction.Delete, Name = nameof(PermissionAction.Delete) },
+            new PermissionAction { Id = PermissionAction.Export, Name = nameof(PermissionAction.Export) },
+        };
     }
 }

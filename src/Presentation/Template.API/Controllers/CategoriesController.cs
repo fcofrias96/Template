@@ -33,7 +33,7 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Permission(Resources.Category, ActionType.Create)]
+        [Permission(Resource.Category, PermissionAction.Create)]
         [HttpPost]
         public async Task<ActionResult> CreateCategoryAsync([FromBody] CategoryCreateDto categoryCreateDTO, CancellationToken cancellationToken)
         {
@@ -41,7 +41,7 @@ namespace Template.Api.Controllers
             return CreatedAtAction(nameof(GetCategoryAsync), new { id = category.Id }, category);
         }
 
-        [Permission(Resources.Category, ActionType.Delete)]
+        [Permission(Resource.Category, PermissionAction.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategoryAsync(int id, CancellationToken cancellationToken)
         {
@@ -49,7 +49,7 @@ namespace Template.Api.Controllers
             return NoContent();
         }
 
-        [Permission(Resources.Category, ActionType.Read)]
+        [Permission(Resource.Category, PermissionAction.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
         {
@@ -58,7 +58,7 @@ namespace Template.Api.Controllers
             return Ok(response);
 		}
 
-        [Permission(Resources.Category, ActionType.Read)]
+        [Permission(Resource.Category, PermissionAction.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id, CancellationToken cancellationToken)
         {
@@ -66,15 +66,15 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Category, ActionType.Update)]
-        [HttpPut("{id}")]
+        [Permission(Resource.Category, PermissionAction.Update)]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO, CancellationToken cancellationToken)
         {
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);
             return NoContent();
         }
 
-        [Permission(Resources.Resource, ActionType.Read)]
+        [Permission(Resource.ResourceItem, PermissionAction.Read)]
         [HttpGet("catalog")]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
@@ -82,7 +82,7 @@ namespace Template.Api.Controllers
             return FromEtagResult(result);
         }
 
-        [Permission(Resources.Category, ActionType.Export)]
+        [Permission(Resource.Category, PermissionAction.Export)]
         [HttpGet("export/docx")]
         public async Task<FileResult> ExportToWordAsync(CancellationToken cancellationToken)
         {
@@ -90,7 +90,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.DOC, "Categories.docx");
         }
 
-        [Permission(Resources.Category, ActionType.Export)]
+        [Permission(Resource.Category, PermissionAction.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync(CancellationToken cancellationToken)
         {
@@ -98,7 +98,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.PDF, "Categories.pdf");
         }
 
-        [Permission(Resources.Category, ActionType.Export)]
+        [Permission(Resource.Category, PermissionAction.Export)]
         [HttpGet("export/csv")]
         public async Task<FileResult> ExportToCSVAsync(CancellationToken cancellationToken)
         {

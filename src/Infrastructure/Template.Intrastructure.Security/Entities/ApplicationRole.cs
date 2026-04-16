@@ -3,7 +3,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Security.Entities
 {
-    public class Role : IdentityRole<string>, IEntityBase
+    public class ApplicationRole : IdentityRole<int>, IEntityBase
     {
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
@@ -14,10 +14,17 @@ namespace Template.Security.Entities
         object IEntityBase.Id
         {
             get => Id;
-            set => Id = (string)value;
+            set => Id = (int)value;
         }
 
         public ICollection<RolePermission> RolePermissions { get; set; } = [];
-        public ICollection<UserRole> UserRoles { get; set; } = [];
+        public ICollection<ApplicationUserRole> UserRoles { get; set; } = [];
+
+        public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+        public void MarkDeleted()
+        {
+            if (IsDeleted) return;
+            IsDeleted = true;
+        }
     }
 }

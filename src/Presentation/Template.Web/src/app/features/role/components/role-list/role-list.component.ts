@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './role-list.component.scss',
 })
 export class RoleListComponent implements OnInit, OnDestroy {
-  roles$: Observable<PagedCollection<Role>>;
+  roles$: Observable<PagedCollection<ApplicationRole>>;
   columns: TableColumn[];
   itemsPerPage = 15;
   unsubscribe$: Subject<void> = new Subject<void>();
@@ -58,11 +58,11 @@ export class RoleListComponent implements OnInit, OnDestroy {
 
   private getRoles(
     searchParams: URLSearchParams | null = null
-  ): Observable<PagedCollection<Role>> {
+  ): Observable<PagedCollection<ApplicationRole>> {
     if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
-    return this.roleService.getPagedList<Role>(searchParams);
+    return this.roleService.getPagedList<ApplicationRole>(searchParams);
   }
 
   handleFilter(searchParams: URLSearchParams) {

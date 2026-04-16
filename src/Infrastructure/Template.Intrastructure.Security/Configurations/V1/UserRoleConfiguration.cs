@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 using Template.Security.Seeds;
 
 namespace Template.Security.Configurations.V1
 {
-    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
+    public class UserRoleConfiguration : IEntityTypeConfiguration<ApplicationUserRole>
     {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUserRole> builder)
         {
             builder.ToTable("UserRoles");
 
@@ -17,13 +18,13 @@ namespace Template.Security.Configurations.V1
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false); // Make navigation optional to avoid warning
+                .IsRequired(false); 
 
             builder.HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false); // Make navigation optional to avoid warning
+                .IsRequired(false); 
 
             builder.HasData(UserRoleSeed.Data);
         }

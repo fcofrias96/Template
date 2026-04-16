@@ -5,6 +5,7 @@ using Template.Application.Constants;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.UserRole;
 using Template.Security.Dtos.Users;
@@ -26,7 +27,7 @@ namespace Template.Api.Controllers.Security
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             await _userServiceAsync.DeleteAsync(id, cancellationToken);
             return NoContent();
@@ -37,7 +38,7 @@ namespace Template.Api.Controllers.Security
             [FromQuery] UserQueryParameters request,
             CancellationToken cancellationToken)
         {
-            var specification = new Specification<User>(request);
+            var specification = new Specification<ApplicationUser>(request);
             var pagedUsersResult = await _userServiceAsync
                 .GetProjectedPaginatedAsync<UserListDto>(specification, cancellationToken);
 
@@ -46,7 +47,7 @@ namespace Template.Api.Controllers.Security
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<UserDetailDto>>> GetByIdAsync(
-            Guid id,
+            int id,
             CancellationToken cancellationToken)
         {
             var user = await _userServiceAsync.GetUserDetailAsync(id, cancellationToken);
@@ -55,16 +56,16 @@ namespace Template.Api.Controllers.Security
 
         [HttpGet("{id}/roles")]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<string>>>> GetRolesAsync(
-            Guid id,
+            int id,
             CancellationToken cancellationToken)
         {
             var response = await _userServiceAsync.GetRolesAsync(id, cancellationToken);
             return Ok(response);
         }
 
-        [HttpPut("{id}/roles")]
+        [HttpPatch("{id}/roles")]
         public async Task<ActionResult> UpdateRolesAsync(
-            Guid id,
+            int id,
             [FromBody] UpdateUserRolesDto request,
             CancellationToken cancellationToken)
         {
@@ -72,9 +73,9 @@ namespace Template.Api.Controllers.Security
             return NoContent();
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateAsync(
-            Guid id,
+            int id,
             [FromBody] UserUpdateDto userUpdateDTO,
             CancellationToken cancellationToken)
         {

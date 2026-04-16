@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Template.Application.Configuration;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 using Template.Security.Seeds;
 
 namespace Template.Security.Configurations.V1
 {
-    public class UserConfiguration : EntityBaseConfiguration<User>
+    public class UserConfiguration : EntityBaseConfiguration<ApplicationUser>
     {
-        public override void Configure(EntityTypeBuilder<User> builder)
+        public override void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.ToTable("Users");
 

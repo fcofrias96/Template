@@ -17,7 +17,7 @@ namespace Template.Application.Utilities
         private static readonly (Type AttributeType, string Separator, bool IsRange)[] AttributeFormats =
         {
             (typeof(NumberListFormatAttribute), ",", false),
-            (typeof(GuidListFormatAttribute), ",", false),
+            (typeof(intListFormatAttribute), ",", false),
             (typeof(DateRangeFormatAttribute), "..", true),
             (typeof(NumberRangeFormatAttribute), "..", true)
         };

@@ -6,10 +6,10 @@ using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Resources;
-using Template.Security.Entities;
-using ActionType = Template.Application.Enums.ActionType;
+
 
 namespace Template.Api.Controllers.Security
 {
@@ -25,7 +25,7 @@ namespace Template.Api.Controllers.Security
             _resourceService = resourceService;
         }
 
-        [Permission(Resources.Resource, ActionType.Read)]
+        [Permission(Resource.ResourceItem, PermissionAction.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
@@ -34,7 +34,7 @@ namespace Template.Api.Controllers.Security
             return Ok(resources);
         }
 
-        [Permission(Resources.Resource, ActionType.Read)]
+        [Permission(Resource.ResourceItem, PermissionAction.Read)]
         [HttpGet("catalog")]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(CancellationToken cancellationToken)
         {
@@ -42,7 +42,7 @@ namespace Template.Api.Controllers.Security
 			return FromEtagResult(result);
 		}
 
-        [Permission(Resources.Resource, ActionType.Read)]
+        [Permission(Resource.ResourceItem, PermissionAction.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ResourceDetailDto>>> GetResource(int id, CancellationToken cancellationToken)
         {
@@ -50,7 +50,7 @@ namespace Template.Api.Controllers.Security
             return Ok(resource);
         }
 
-        [Permission(Resources.Resource, ActionType.Create)]
+        [Permission(Resource.ResourceItem, PermissionAction.Create)]
         [HttpPost]
         public async Task<ActionResult> CreateResource([FromBody] ResourceCreateDto resourceCreateDto, CancellationToken cancellationToken)
         {
@@ -59,15 +59,15 @@ namespace Template.Api.Controllers.Security
             return CreatedAtAction(nameof(GetResource), new { id = resource.Id }, resource);
         }
 
-        [Permission(Resources.Resource, ActionType.Update)]
-        [HttpPut("{id}")]
+        [Permission(Resource.ResourceItem, PermissionAction.Update)]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateResource(int id, [FromBody] ResourceUpdateDto resourceUpdateDTO, CancellationToken cancellationToken)
         {
             await _resourceService.UpdateAsync(id, resourceUpdateDTO, cancellationToken);
             return NoContent();
         }
 
-        [Permission(Resources.Resource, ActionType.Delete)]
+        [Permission(Resource.ResourceItem, PermissionAction.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteResource(int id, CancellationToken cancellationToken)
         {

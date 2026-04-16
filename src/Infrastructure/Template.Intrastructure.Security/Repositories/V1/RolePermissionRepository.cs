@@ -20,7 +20,7 @@ namespace Template.Security.Repositories.V1
         /// Ignora los que ya estén asignados.
         /// </summary>
         public async Task AddPermissionsAsync(
-            string roleId,
+            int roleId,
             IEnumerable<RolePermissionDetailDto> permissions,
             CancellationToken cancellationToken)
         {
@@ -61,7 +61,7 @@ namespace Template.Security.Repositories.V1
         /// Devuelve los permisos asignados a un rol, proyectados a DTO.
         /// </summary>
         public async Task<IReadOnlyList<RolePermissionDto>> GetPermissionsByRoleIdAsync(
-            string roleId,
+            int roleId,
             CancellationToken cancellationToken)
         {
             return await _dbContext.RolePermissions
@@ -80,7 +80,7 @@ namespace Template.Security.Repositories.V1
         /// Si algún permiso no está asignado, se ignora.
         /// </summary>
         public async Task RemovePermissionsAsync(
-            string roleId,
+            int roleId,
             IEnumerable<RolePermissionDetailDto> permissions,
             CancellationToken cancellationToken)
         {
@@ -101,7 +101,7 @@ namespace Template.Security.Repositories.V1
         /// Reemplaza completamente la lista de permisos de un rol.
         /// </summary>
         public async Task UpdateAsync(
-            string roleId,
+            int roleId,
             int[] newPermissionIds,
             CancellationToken cancellationToken)
         {

@@ -6,12 +6,13 @@ using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Specification;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.Permissions.Template.Application.Models.DTOs.V1.Roles;
 using Template.Security.Dtos.RolePermission;
 using Template.Security.Dtos.Roles;
 using Template.Security.Entities;
-using ActionType = Template.Application.Enums.ActionType;
+
 
 
 
@@ -29,28 +30,28 @@ namespace Template.Api.Controllers.Security
                 _roleService = roleService;
             }
 
-            [Permission(Resources.Role, ActionType.Read)]
+            [Permission(Resource.Role, PermissionAction.Read)]
             [HttpGet]
             public async Task<ActionResult<ApiResponse<IReadOnlyList<RoleListDto>>>> GetProjectedPaginatedAsync(
                 [FromQuery] RoleQueryParameters request,
                 CancellationToken cancellationToken)
             {
-                var specification = new Specification<Role>(request);
+                var specification = new Specification<ApplicationRole>(request);
                 var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto>(specification, cancellationToken);
                 return Ok(roles);
             }
 
-            [Permission(Resources.Role, ActionType.Read)]
+            [Permission(Resource.Role, PermissionAction.Read)]
             [HttpGet("{id}")]
             public async Task<ActionResult<ApiResponse<RoleDetailDto>>> GetRole(
-                Guid id,
+                int id,
                 CancellationToken cancellationToken)
             {
-                var role = await _roleService.GetByIdProjectedAsync<Guid, RoleDetailDto>(id, cancellationToken);
+                var role = await _roleService.GetByIdProjectedAsync<int, RoleDetailDto>(id, cancellationToken);
                 return Ok(role);
             }
 
-            [Permission(Resources.Role, ActionType.Create)]
+            [Permission(Resource.Role, PermissionAction.Create)]
             [HttpPost]
             public async Task<ActionResult> CreateRole(
                 [FromBody] RoleCreateDto roleCreateDto,
@@ -60,10 +61,10 @@ namespace Template.Api.Controllers.Security
                 return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
             }
 
-            [Permission(Resources.Role, ActionType.Update)]
-            [HttpPut("{id}")]
+            [Permission(Resource.Role, PermissionAction.Update)]
+            [HttpPatch("{id}")]
             public async Task<ActionResult> UpdateRole(
-                Guid id,
+                int id,
                 [FromBody] RoleUpdateDto roleUpdateDTO,
                 CancellationToken cancellationToken)
             {
@@ -71,15 +72,15 @@ namespace Template.Api.Controllers.Security
                 return NoContent();
             }
 
-            [Permission(Resources.Role, ActionType.Delete)]
+            [Permission(Resource.Role, PermissionAction.Delete)]
             [HttpDelete("{id}")]
-            public async Task<ActionResult> DeleteRole(Guid id, CancellationToken cancellationToken)
+            public async Task<ActionResult> DeleteRole(int id, CancellationToken cancellationToken)
             {
                 await _roleService.SoftDeleteAsync(id, cancellationToken);
                 return NoContent();
             }
 
-            [Permission(Resources.Role, ActionType.Read)]
+            [Permission(Resource.Role, PermissionAction.Read)]
             [HttpGet("catalog")]
             public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetProjectedAsync(
                 CancellationToken cancellationToken)
@@ -89,24 +90,24 @@ namespace Template.Api.Controllers.Security
             }
 
 
-            [Permission(Resources.Role, ActionType.Read)]
+            [Permission(Resource.Role, PermissionAction.Read)]
             [HttpGet("{id}/permissions")]
             public async Task<ActionResult<ApiResponse<IReadOnlyList<RolePermissionDto>>>> GetRolePermissions(
-                Guid id,
+                int id,
                 CancellationToken cancellationToken)
             {
-                var result = await _roleService.GetPermissionsAsync(id.ToString(), cancellationToken);
+                var result = await _roleService.GetPermissionsAsync(id, cancellationToken);
                 return Ok(result);
             }
 
-            [Permission(Resources.Role, ActionType.Update)]
-            [HttpPut("{id}/permissions")]
+            [Permission(Resource.Role, PermissionAction.Update)]
+            [HttpPatch("{id}/permissions")]
             public async Task<ActionResult> UpdateRolePermissions(
-                Guid id,
+                int id,
                 [FromBody] UpdateRolePermissionsDto request,
                 CancellationToken cancellationToken)
             {
-                await _roleService.UpdatePermissionsAsync(id.ToString(), request.Permissions, cancellationToken);
+                await _roleService.UpdatePermissionsAsync(id, request.Permissions, cancellationToken);
                 return NoContent();
             }
 

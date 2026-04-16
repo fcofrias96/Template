@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Template.Application.Configuration;
-using Template.Security.Entities;
+using Template.Domain.Entities.V1;
 using Template.Security.Seeds;
 
 namespace Template.Security.Configurations.V1
@@ -9,10 +9,10 @@ namespace Template.Security.Configurations.V1
     {
         public override void Configure(EntityTypeBuilder<Permission> builder)
         {
-            builder.HasIndex(p => new { p.ResourceId, p.ActionTypeId })
+            builder.HasIndex(p => new { p.ResourceId, p.ActionId })
                 .IsUnique();
 
-            builder.Property(p => p.ActionTypeId)
+            builder.Property(p => p.ActionId)
                 .IsRequired();
 
             builder.HasMany(p => p.RolePermissions)

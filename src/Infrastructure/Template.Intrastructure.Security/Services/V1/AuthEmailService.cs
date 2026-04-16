@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Models.DTOs.V1.Emails;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Entities;
 using Template.Security.Settings;
@@ -18,7 +19,7 @@ public class AuthEmailService : IAuthEmailService
         _jwtSettings = jwtSettings.Value;
     }
 
-    public async Task SendConfirmationEmailAsync(User user, string confirmationLink, CancellationToken cancellationToken)
+    public async Task SendConfirmationEmailAsync(ApplicationUser user, string confirmationLink, CancellationToken cancellationToken)
     {
         var tokenDuration = _jwtSettings.EmailConfirmationTokenDurationInHours;
         string duration = $"{tokenDuration} hour{(tokenDuration >= 2 ? "s" : "")}";
@@ -45,7 +46,7 @@ public class AuthEmailService : IAuthEmailService
     }
 
     public async Task SendChangeEmailNotificationAsync(
-        User user,
+        ApplicationUser user,
         string newEmail,
         string changeEmailLink,
         CancellationToken cancellationToken)
@@ -76,7 +77,7 @@ public class AuthEmailService : IAuthEmailService
     }
 
     public async Task SendForgotPasswordEmailAsync(
-        User user,
+        ApplicationUser user,
         string resetPasswordUrl,
         CancellationToken cancellationToken)
     {

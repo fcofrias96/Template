@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Template.Application.Constants;
 using Template.Application.Extensions;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Contracts.Services.V1;
@@ -69,7 +70,7 @@ namespace Template.Security
             var jwtSettings = new JwtSettings();
             configuration.Bind("JwtSettings", jwtSettings);
 
-            services.AddIdentity<User, Role>(options =>
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
@@ -81,9 +82,9 @@ namespace Template.Security
                 options.Tokens.ChangeEmailTokenProvider = TokenProviders.ChangeEmail;
             }).AddEntityFrameworkStores<SecurityDbContext>()
               .AddDefaultTokenProviders()
-              .AddTokenProvider<EmailConfirmationTokenProvider<User>>(TokenProviders.EmailConfirmation)
-              .AddTokenProvider<PasswordResetTokenProvider<User>>(TokenProviders.PasswordReset)
-              .AddTokenProvider<ChangeEmailTokenProvider<User>>(TokenProviders.ChangeEmail);
+              .AddTokenProvider<EmailConfirmationTokenProvider<ApplicationUser>>(TokenProviders.EmailConfirmation)
+              .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>(TokenProviders.PasswordReset)
+              .AddTokenProvider<ChangeEmailTokenProvider<ApplicationUser>>(TokenProviders.ChangeEmail);
 
             services.Configure<EmailConfirmationTokenProviderOptions>(options =>
             {
@@ -103,6 +104,13 @@ namespace Template.Security
             #endregion Identity
 
             #region Dependency injection
+
+            //services.Scan(scan => scan
+            //    .FromAssemblyOf<AssemblyMarker>()
+            //    .AddClasses(c => c.Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Repository")))
+            //    .AsImplementedInterfaces()
+            //    .WithScopedLifetime()
+            //)
 
             // Repositories
             services.AddScoped<IActionRepository, ActionRepository>();

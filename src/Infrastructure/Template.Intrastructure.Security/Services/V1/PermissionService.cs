@@ -4,9 +4,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Template.Application.Contracts.Services.V1;
 using Template.Application.Services.Base;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
-using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
@@ -29,7 +29,7 @@ namespace Template.Security.Services.V1
             _cache = cache;
         }
 
-        public async Task<bool> HasPermissionAsync(string userId, int resourceId, int actionId, CancellationToken cancellationToken)
+        public async Task<bool> HasPermissionAsync(int userId, int resourceId, int actionId, CancellationToken cancellationToken)
         {
             var cacheKey = BuildPermissionsCacheKey(userId);
 
@@ -62,11 +62,12 @@ namespace Template.Security.Services.V1
             return role.ToHashSet();
         }
 
-        private static string GetUserIdFromClaims(ClaimsPrincipal user)
+        private static int GetUserIdFromClaims(ClaimsPrincipal user)
         {
-            return user.FindFirstValue("UserId") ?? string.Empty;
+            var userIdClaim = user.FindFirstValue("UserId");
+            return int.TryParse(userIdClaim, out var userId) ? userId : 0;
         }
 
-        public static string BuildPermissionsCacheKey(string userId) => $"permissions:user{userId}";
+        public static string BuildPermissionsCacheKey(int userId) => $"permissions:user{userId}";
     }
 }

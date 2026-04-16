@@ -181,10 +181,10 @@ namespace Template.Application.Utilities
                 // evita Convert.ChangeType para DTO
             }
 
-            if (nonNullable == typeof(Guid))
+            if (nonNullable == typeof(int))
             {
-                if (value is Guid g) return WrapNullable(g, targetType);
-                if (value is string sg && Guid.TryParse(sg, out var parsed)) return WrapNullable(parsed, targetType);
+                if (value is int g) return WrapNullable(g, targetType);
+                if (value is string sg && int.TryParse(sg, out var parsed)) return WrapNullable(parsed, targetType);
             }
 
             // Para DateTime/numéricos/strings usa Convert con cultura invariante

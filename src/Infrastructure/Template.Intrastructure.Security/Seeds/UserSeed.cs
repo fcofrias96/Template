@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Seeds
 {
     public static class UserSeed
     {
-        private static PasswordHasher<User> Hasher = new PasswordHasher<User>();
+        private static PasswordHasher<ApplicationUser> Hasher = new PasswordHasher<ApplicationUser>();
 
-        public static List<User> Data { get; } = new List<User>
+        public static List<ApplicationUser> Data { get; } = new List<ApplicationUser>
         {
-             new User
+             new ApplicationUser
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = 1,
                 FirstName = "John",
                 LastName = "Doe",
                 UserName = "johnDoe",
@@ -19,13 +20,12 @@ namespace Template.Security.Seeds
                 Email = "johnDoe@gmail.com",
                 NormalizedEmail = "JOHNDOE@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
-                RefreshToken = "",
-                IsDeleted = false
+                PasswordHash = Hasher.HashPassword(new ApplicationUser(),"123Pa$$word"),
+                RefreshToken = ""
             },
-             new User
+             new ApplicationUser
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = 2,
                 FirstName = "John",
                 LastName = "James",
                 UserName = "johnJames",
@@ -33,9 +33,8 @@ namespace Template.Security.Seeds
                 Email = "johnJames@gmail.com",
                 NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                 EmailConfirmed = true,
-                PasswordHash = Hasher.HashPassword(new User(),"123Pa$$word"),
-                RefreshToken = "",
-                IsDeleted = false
+                PasswordHash = Hasher.HashPassword(new ApplicationUser(),"123Pa$$word"),
+                RefreshToken = ""
             }
         };
     }

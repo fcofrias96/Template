@@ -22,6 +22,10 @@ namespace Template.Application.Configuration
 
             builder.Property(x => x.IsDeleted)
                    .HasDefaultValue(false);
+            
+            builder.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
 
             builder.HasQueryFilter(x => !x.IsDeleted);
         }

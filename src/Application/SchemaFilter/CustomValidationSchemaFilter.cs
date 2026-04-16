@@ -21,11 +21,11 @@ namespace Template.Application.SchemaFilter
                     AppendDescription(schema, dateRangeDescription);
                 }
 
-                // GuidListFormatAttribute
-                if (attributes.Any(a => a is GuidListFormatAttribute))
+                // intListFormatAttribute
+                if (attributes.Any(a => a is intListFormatAttribute))
                 {
-                    var guidListDescription = "El formato aceptado es una lista de GUIDs separados por comas. Puede anteponer '!' para excluir los registros que coincidan.";
-                    AppendDescription(schema, guidListDescription);
+                    var intListDescription = "El formato aceptado es una lista de ints separados por comas. Puede anteponer '!' para excluir los registros que coincidan.";
+                    AppendDescription(schema, intListDescription);
                 }
 
                 // NumberListFormatAttribute

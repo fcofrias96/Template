@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Template.Security.Contracts.Services;
 
-public class CurrentUserService : ICurrentUserService
+namespace Template.Security.Services.V1
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    public class CurrentUserService : ICurrentUserService
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-        => _httpContextAccessor = httpContextAccessor;
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+            => _httpContextAccessor = httpContextAccessor;
 
-    public string? UserId =>
-        _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+        public int? UserId =>
+            int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value, out var userId) ? userId : (int?)null;
+    }
 }

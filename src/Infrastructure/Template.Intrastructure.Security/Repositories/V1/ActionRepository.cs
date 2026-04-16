@@ -2,11 +2,11 @@
 using Template.Application.Repository;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
-using ActionType = Template.Security.Entities.ActionType;
+using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
 
 namespace Template.Security.Repositories.V1
 {
-    public class ActionRepository : BaseRepository<ActionType>, IActionRepository
+    public class ActionRepository : BaseRepository<PermissionAction>, IActionRepository
     {
         public ActionRepository(SecurityDbContext securityDb, IConfigurationProvider configurationProvider) : base(securityDb, configurationProvider)
         {

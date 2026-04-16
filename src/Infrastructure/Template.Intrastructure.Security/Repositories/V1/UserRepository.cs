@@ -8,19 +8,20 @@ using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Repository;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : BaseRepository<ApplicationUser>, IUserRepository
     {
         private readonly SecurityDbContext _dbContext;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UserRepository(
-            UserManager<User> userManager,
+            UserManager<ApplicationUser> userManager,
             SecurityDbContext dbContext,
             IConfigurationProvider configurationProvider
             ): base(dbContext, configurationProvider)
@@ -31,7 +32,7 @@ namespace Template.Security.Repositories.V1
         }
 
       
-        public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<RoleListDto>> GetRolesAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.Id == userId)
@@ -39,7 +40,7 @@ namespace Template.Security.Repositories.V1
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken)
+        public async Task<UserDetailDto?> GetUserDetailAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.Id == userId)
@@ -68,7 +69,7 @@ namespace Template.Security.Repositories.V1
                             Permissions = g.Select(rp => new PermissionListDto
                             {
                                 Id = rp.PermissionId,
-                                Name = rp.Permission.ActionType.Name
+                                Name = rp.Permission.Action.Name
                             }).ToArray()
                         })
                         .ToArray()
@@ -77,12 +78,12 @@ namespace Template.Security.Repositories.V1
         }
 
 
-        public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
             return await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
         }
 
-        public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
+        public async Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
                 .Where(u => u.Id == userId)
@@ -96,7 +97,7 @@ namespace Template.Security.Repositories.V1
                         Permissions = g.Select(rp => new PermissionListDto
                         {
                             Id = rp.PermissionId,
-                            Name = rp.Permission.ActionType.Name
+                            Name = rp.Permission.Action.Name
                         }).ToArray()
                     }))
                 .ToArrayAsync(cancellationToken);

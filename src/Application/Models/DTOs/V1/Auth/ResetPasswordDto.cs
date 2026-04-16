@@ -5,7 +5,7 @@ namespace Template.Application.Models.DTOs.V1.Auth
     public class ResetPasswordDto
     {
         [Required]
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         public string Token { get; set; }

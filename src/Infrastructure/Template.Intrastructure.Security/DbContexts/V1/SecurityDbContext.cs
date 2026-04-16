@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Template.Domain.Entities.V1;
 using Template.Security.Configurations.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.DbContexts.V1
 {
-    public class SecurityDbContext : IdentityDbContext<User, Role, string>
+    public class SecurityDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         public SecurityDbContext(DbContextOptions<SecurityDbContext> options) : base(options)
         {
@@ -17,12 +18,12 @@ namespace Template.Security.DbContexts.V1
         public DbSet<Resource> Resources { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
 
-        public new DbSet<UserRole> UserRoles { get; set; }
+        public new DbSet<ApplicationUserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<IdentityUserRole<string>>(entity => { entity.ToTable("UserRoles"); });
+            builder.Entity<IdentityUserRole<int>>(entity => { entity.ToTable("UserRoles"); });
 
             builder.ApplyConfiguration(new ActionConfiguration());
             builder.ApplyConfiguration(new MenuItemConfiguration());
@@ -35,9 +36,9 @@ namespace Template.Security.DbContexts.V1
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new UserRoleConfiguration());
 
-            builder.Entity<IdentityUserLogin<string>>(entity => entity.ToTable("UserLogins"));
-            builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserTokens"));
-            builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaims"));
+            builder.Entity<IdentityUserLogin<int>>(entity => entity.ToTable("UserLogins"));
+            builder.Entity<IdentityUserToken<int>>(entity => entity.ToTable("UserTokens"));
+            builder.Entity<IdentityUserClaim<int>>(entity => entity.ToTable("UserClaims"));
         }
     }
 }

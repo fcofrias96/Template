@@ -1,6 +1,6 @@
 ﻿using Template.Application.Attributes;
 using Template.Application.Utilities;
-using Template.Security.Entities;
+using Template.Domain.Entities.V1;
 
 namespace Template.Security.Dtos.Resources
 {

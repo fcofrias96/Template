@@ -7,6 +7,8 @@
         DateTimeOffset CreatedAt { get; set; }
         string? LastModifiedBy { get; set; }
         DateTimeOffset? LastModifiedAt { get; set; }
-        bool IsDeleted { get; set; }
+        bool IsDeleted { get; }
+        byte[] RowVersion { get; }
+        void MarkDeleted();
     }
 }

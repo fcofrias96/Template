@@ -3,7 +3,7 @@
 namespace Template.Application.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-    public class GuidListFormatAttribute : ValidationAttribute
+    public class intListFormatAttribute : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
@@ -22,9 +22,9 @@ namespace Template.Application.Attributes
             {
                 string trimmedItem = items[i].Trim();
 
-                if (!Guid.TryParse(trimmedItem, out _))
+                if (!int.TryParse(trimmedItem, out _))
                 {
-                    return new ValidationResult($"El elemento '{trimmedItem}' no es un GUID válido.");
+                    return new ValidationResult($"El elemento '{trimmedItem}' no es un int válido.");
                 }
             }
 

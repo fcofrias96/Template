@@ -6,6 +6,7 @@ using Template.Application.Contracts.Services.V1;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Dtos.RolePermission;
@@ -14,7 +15,7 @@ using Template.Security.Entities;
 namespace Template.Security.Services.V1
 {
 
-    public class RoleService : BaseService<Role>, IRoleService
+    public class RoleService : BaseService<ApplicationRole>, IRoleService
     {
         private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly IUserRoleRepository _userRoleRepository;
@@ -42,7 +43,7 @@ namespace Template.Security.Services.V1
             return base.GetByIdProjectedAsync<string, TDestination>(idString, cancellationToken);
         }
 
-        public  async Task<ApiResponse<IReadOnlyList<RolePermissionDto>>> GetPermissionsAsync(string roleId, CancellationToken cancellationToken)
+        public  async Task<ApiResponse<IReadOnlyList<RolePermissionDto>>> GetPermissionsAsync(int roleId, CancellationToken cancellationToken)
         {
             var permissions = await _rolePermissionRepository.GetPermissionsByRoleIdAsync(roleId, cancellationToken);
 
@@ -55,7 +56,7 @@ namespace Template.Security.Services.V1
             TSource source,
             CancellationToken cancellationToken)
         {
-            if (source is RoleUpdateDto roleUpdateDTO && id is string roleId)
+            if (source is RoleUpdateDto roleUpdateDTO && id is int roleId)
             {
                 // 1. Actualizar permisos del rol
                 await _rolePermissionRepository.UpdateAsync(roleId, roleUpdateDTO.Permissions, cancellationToken);
@@ -67,7 +68,7 @@ namespace Template.Security.Services.V1
             await base.UpdateAsync(id, source, cancellationToken);
         }
 
-        public async Task UpdatePermissionsAsync(string roleId, IEnumerable<int> permissionIds, CancellationToken cancellationToken)
+        public async Task UpdatePermissionsAsync(int roleId, IEnumerable<int> permissionIds, CancellationToken cancellationToken)
         {
             var idsArray = permissionIds?
                 .Distinct()
@@ -80,7 +81,7 @@ namespace Template.Security.Services.V1
 
 
         private async Task InvalidatePermissionsCacheForRoleAsync(
-            string roleId,
+            int roleId,
             CancellationToken cancellationToken)
         {
             var userIds = await _userRoleRepository.GetUserIdsByRoleIdAsync(roleId, cancellationToken);

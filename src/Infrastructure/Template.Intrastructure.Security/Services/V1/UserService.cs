@@ -12,6 +12,7 @@ using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
 using Template.Application.Services.Base;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.DbContexts.V1;
@@ -19,11 +20,11 @@ using Template.Security.Entities;
 
 namespace Template.Security.Services.V1
 {
-    public class UserService : BaseService<User>,  IUserService
+    public class UserService : BaseService<ApplicationUser>,  IUserService
     {
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly ICacheService _cache;
@@ -33,7 +34,7 @@ namespace Template.Security.Services.V1
             IEmailService emailService,
             IHttpContextAccessor httpContext,
             IResourceService moduleService,
-            UserManager<User> userManager,
+            UserManager<ApplicationUser> userManager,
             ICacheService memoryCache,
             IUserRoleRepository userRoleRepository,
             ICacheService cache
@@ -47,28 +48,26 @@ namespace Template.Security.Services.V1
             _cache = cache;
         }
 
-        public async Task DeleteAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task DeleteAsync(int userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await GetUser(userId);
-            user.IsDeleted = true;
+            user.MarkDeleted();
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(int userId, CancellationToken cancellationToken)
         {
-            var parsedId = ParseToString(userId);
-
-            var roles = await _userRepository.GetRolesAsync(parsedId, cancellationToken);
+            var roles = await _userRepository.GetRolesAsync(userId, cancellationToken);
             return new ApiResponse<IReadOnlyList<RoleListDto>>(roles);
         }
 
-        public async Task<User?> GetUserByRefreshToken(string refreshToken, CancellationToken cancellationToken)
+        public async Task<ApplicationUser?> GetUserByRefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
             return await _userRepository.GetUserByRefreshTokenAsync(refreshToken, cancellationToken);
         }
 
-        public async Task UpdateAsync(Guid userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
+        public async Task UpdateAsync(int userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContext?.HttpContext?.GetUserId();
 
@@ -87,9 +86,9 @@ namespace Template.Security.Services.V1
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<UserDetailDto> GetUserDetailAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<UserDetailDto> GetUserDetailAsync(int userId, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserDetailAsync(userId.ToString(), cancellationToken);
+            var user = await _userRepository.GetUserDetailAsync(userId, cancellationToken);
             if (user == null)
             {
                 throw new NotFoundException("User", userId);
@@ -97,23 +96,21 @@ namespace Template.Security.Services.V1
             return user;
         }
 
-        public async Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken)
+        public async Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken)
         {
             return await _userRepository.GetResourcesAsync(userId, cancellationToken);
         }
 
-        public async Task UpdateUserRolesAsync(Guid userId, IEnumerable<string> roleIds, CancellationToken cancellationToken)
+        public async Task UpdateUserRolesAsync(int userId, IEnumerable<int> roleIds, CancellationToken cancellationToken)
         {
-            var userIdString = userId.ToString();
+            await _userRoleRepository.UpdateUserRolesAsync(userId, roleIds, cancellationToken);
 
-            await _userRoleRepository.UpdateUserRolesAsync(userIdString, roleIds, cancellationToken);
-
-            _cache.Remove(PermissionService.BuildPermissionsCacheKey(userIdString));
+            _cache.Remove(PermissionService.BuildPermissionsCacheKey(userId));
         }
 
         #region Private Methods
 
-        private async Task<User> GetUser(Guid userId)
+        private async Task<ApplicationUser> GetUser(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
@@ -122,11 +119,6 @@ namespace Template.Security.Services.V1
             }
 
             return user;
-        }
-
-        private static string ParseToString<TKey>(TKey id)
-        {
-            return id?.ToString() ?? string.Empty;
         }
 
         #endregion Private Methods

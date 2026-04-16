@@ -2,10 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Template.Application.Repository;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Repositories.V1;
 using Template.Security.DbContexts.V1;
 using Template.Security.Dtos.UserPermission;
-using Template.Security.Entities;
 
 namespace Template.Security.Repositories.V1
 {
@@ -18,7 +18,7 @@ namespace Template.Security.Repositories.V1
             _dbContext = securityDb;
         }
 
-        public async Task<IReadOnlyList<int>> GetUserPermissionIdsAsync(string userId, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<int>> GetUserPermissionIdsAsync(int userId, CancellationToken cancellationToken)
         { 
             return await _dbContext.UserRoles
                 .Where(ur => ur.UserId == userId)
@@ -27,14 +27,14 @@ namespace Template.Security.Repositories.V1
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<UserPermissionDto>> GetUserPermissionsAsync(string userId, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<UserPermissionDto>> GetUserPermissionsAsync(int userId, CancellationToken cancellationToken)
         {
             return await _dbContext.RolePermissions
                 .Where(rp => rp.Role.UserRoles.Any(ur => ur.UserId == userId))
                 .Select(rp => new UserPermissionDto
                 {
-                    ResourceId = rp.Permission.Resource.Id,
-                    ActionId = rp.Permission.ActionType.Id
+                    ResourceId = rp.Permission.ResourceId,
+                    ActionId = rp.Permission.ActionId
                 })
                 .ToListAsync();
         }

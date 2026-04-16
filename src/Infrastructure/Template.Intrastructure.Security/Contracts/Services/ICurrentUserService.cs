@@ -1,4 +1,7 @@
-﻿public interface ICurrentUserService
+﻿namespace Template.Security.Contracts.Services
 {
-    string? UserId { get; }
+    public interface ICurrentUserService
+    {
+        int? UserId { get; }
+    }
 }

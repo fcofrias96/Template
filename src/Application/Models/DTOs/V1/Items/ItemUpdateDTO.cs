@@ -5,7 +5,7 @@ namespace Template.Application.Models.DTOs.V1.Items
     public class ItemUpdateDto
     {
         [Required]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }

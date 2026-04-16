@@ -1,21 +1,22 @@
 ﻿using Template.Application.Constants;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Seeds
 {
     public static class RoleSeed
     {
-        public static List<Role> Data { get; } = new List<Role>
+        public static List<ApplicationRole> Data { get; } = new List<ApplicationRole>
         {
-            new Role
+            new ApplicationRole
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = 1,
                 Name = Roles.Admin,
                 NormalizedName = Roles.Admin.ToUpper()
             },
-            new Role
+            new ApplicationRole
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = 2,
                 Name = Roles.User,
                 NormalizedName = Roles.User.ToUpper()
             }

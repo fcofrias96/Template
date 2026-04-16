@@ -4,6 +4,7 @@ using Template.Api.Controllers.Common;
 using Template.Application.Enums;
 using Template.Application.Models.DTOs;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services.V1;
 
 namespace Template.Api.Controllers.Security
@@ -20,7 +21,7 @@ namespace Template.Api.Controllers.Security
             _actionService = actionService;
         }
 
-        [Permission(Resources.Action, ActionType.Read)]
+        [Permission(Resource.Action, PermissionAction.Read)]
         [HttpGet("catalog")]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<Catalog>>>> GetActions(CancellationToken cancellationToken)
         {

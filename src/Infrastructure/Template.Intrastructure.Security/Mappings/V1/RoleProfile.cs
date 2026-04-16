@@ -3,6 +3,7 @@ using Template.Application.Models.DTOs;
 using Template.Application.Models.DTOs.V1.Permissions;
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Mappings.V1
@@ -11,10 +12,10 @@ namespace Template.Security.Mappings.V1
     {
         public RoleProfile()
         {
-            CreateMap<Role, RoleListDto>();
-            CreateMap<Role, Catalog>();
+            CreateMap<ApplicationRole, RoleListDto>();
+            CreateMap<ApplicationRole, Catalog>();
             ;
-            CreateMap<Role, RoleDetailDto>()
+            CreateMap<ApplicationRole, RoleDetailDto>()
             .ForMember(dest => dest.Resources, opt =>
                 opt.MapFrom(src => src.RolePermissions
                     .GroupBy(rp => rp.Permission.Resource)
@@ -39,8 +40,8 @@ namespace Template.Security.Mappings.V1
                     Id = p.Key.Id,
                     Name = p.Key.Name
                 }).ToArray()));
-            CreateMap<RoleCreateDto, Role>();
-            CreateMap<RoleUpdateDto, Role>();
+            CreateMap<RoleCreateDto, ApplicationRole>();
+            CreateMap<RoleUpdateDto, ApplicationRole>();
         }
     }
 }

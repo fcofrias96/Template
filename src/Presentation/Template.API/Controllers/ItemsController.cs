@@ -30,23 +30,23 @@ namespace Template.Api.Controllers
 
         #region Actions
 
-        [Permission(Resources.Item, ActionType.Delete)]
+        [Permission(Resource.Item, PermissionAction.Delete)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             await _itemServiceAsync.PermanentDeleteAsync(id, cancellationToken);
             return NoContent();
         }
 
-        [Permission(Resources.Item, ActionType.Read)]
+        [Permission(Resource.Item, PermissionAction.Read)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _itemServiceAsync.GetByIdProjectedAsync<Guid, ItemDetailDto>(id, cancellationToken);
+            var response = await _itemServiceAsync.GetByIdProjectedAsync<int, ItemDetailDto>(id, cancellationToken);
             return Ok(response);
         }
 
-        [Permission(Resources.Item, ActionType.Read)]
+        [Permission(Resource.Item, PermissionAction.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
@@ -55,7 +55,7 @@ namespace Template.Api.Controllers
             return Ok(response);
         }
 
-        [Permission(Resources.Item, ActionType.Create)]
+        [Permission(Resource.Item, PermissionAction.Create)]
         [HttpPost]
         public async Task<ActionResult<ItemDetailDto>> CreateAsync([FromBody] ItemCreateDto itemCreateDTO, CancellationToken cancellationToken)
         {
@@ -63,15 +63,15 @@ namespace Template.Api.Controllers
             return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
         }
 
-        [Permission(Resources.Item, ActionType.Update)]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] ItemUpdateDto itemUpdateDTO, CancellationToken cancellationToken)
+        [Permission(Resource.Item, PermissionAction.Update)]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateAsync(int id, [FromBody] ItemUpdateDto itemUpdateDTO, CancellationToken cancellationToken)
         {
             await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO, cancellationToken);
             return NoContent();
         }
 
-        [Permission(Resources.Item, ActionType.Export)]
+        [Permission(Resource.Item, PermissionAction.Export)]
         [HttpGet("export/docx")]
         public async Task<FileResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
@@ -80,7 +80,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.DOC, "Items.docx");
         }
 
-        [Permission(Resources.Item, ActionType.Export)]
+        [Permission(Resource.Item, PermissionAction.Export)]
         [HttpGet("export/pdf")]
         public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
@@ -89,7 +89,7 @@ namespace Template.Api.Controllers
             return File(file, FileContentType.PDF, "Items.pdf");
         }
 
-        [Permission(Resources.Item, ActionType.Export)]
+        [Permission(Resource.Item, PermissionAction.Export)]
         [HttpGet("export/csv")]
         public async Task<FileResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {

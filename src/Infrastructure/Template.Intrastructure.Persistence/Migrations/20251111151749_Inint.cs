@@ -34,7 +34,7 @@ namespace Template.Persistence.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<int>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Name = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Price = table.Column<decimal>(type: "DECIMAL(13,2)", nullable: false),
                     Description = table.Column<string>(type: "VARCHAR(100)", nullable: false),

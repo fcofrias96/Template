@@ -12,8 +12,8 @@ using Template.Security.DbContexts.V1;
 namespace Template.Security.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20251129232513_Initial")]
-    partial class Initial
+    [Migration("20260102180755_RowVersion")]
+    partial class RowVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,6 +172,12 @@ namespace Template.Security.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.ToTable("ActionType");
@@ -182,35 +188,40 @@ namespace Template.Security.Migrations
                             Id = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Create"
+                            Name = "Create",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Read"
+                            Name = "Read",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Update"
+                            Name = "Update",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Delete"
+                            Name = "Delete",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Export"
+                            Name = "Export",
+                            RowVersion = new byte[0]
                         });
                 });
 
@@ -258,6 +269,12 @@ namespace Template.Security.Migrations
                     b.Property<int?>("PermissionId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -285,6 +302,7 @@ namespace Template.Security.Migrations
                             Icon = "dashboard-icon",
                             IsDeleted = false,
                             Order = 1,
+                            RowVersion = new byte[0],
                             Title = "Dashboard",
                             Url = "/dashboard"
                         },
@@ -297,6 +315,7 @@ namespace Template.Security.Migrations
                             Order = 2,
                             ParentId = 6,
                             PermissionId = 2,
+                            RowVersion = new byte[0],
                             Title = "Usuarios",
                             Url = "/usuarios"
                         },
@@ -309,6 +328,7 @@ namespace Template.Security.Migrations
                             Order = 1,
                             ParentId = 6,
                             PermissionId = 12,
+                            RowVersion = new byte[0],
                             Title = "Roles",
                             Url = "/roles"
                         },
@@ -320,6 +340,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 3,
                             PermissionId = 23,
+                            RowVersion = new byte[0],
                             Title = "Categorías",
                             Url = "/categorias"
                         },
@@ -331,6 +352,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 2,
                             PermissionId = 28,
+                            RowVersion = new byte[0],
                             Title = "Productos",
                             Url = "/productos"
                         },
@@ -342,6 +364,7 @@ namespace Template.Security.Migrations
                             IsDeleted = false,
                             Order = 4,
                             PermissionId = 32,
+                            RowVersion = new byte[0],
                             Title = "Configuración",
                             Url = "/configuracion"
                         },
@@ -354,6 +377,7 @@ namespace Template.Security.Migrations
                             Order = 3,
                             ParentId = 6,
                             PermissionId = 17,
+                            RowVersion = new byte[0],
                             Title = "Permisos",
                             Url = "/permisos"
                         },
@@ -366,6 +390,7 @@ namespace Template.Security.Migrations
                             Order = 4,
                             ParentId = 6,
                             PermissionId = 7,
+                            RowVersion = new byte[0],
                             Title = "Recursos",
                             Url = "/recursos"
                         });
@@ -414,6 +439,12 @@ namespace Template.Security.Migrations
                     b.Property<int>("ResourceId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ActionTypeId");
@@ -432,7 +463,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating users",
                             IsDeleted = false,
                             Name = "Create User",
-                            ResourceId = 1
+                            ResourceId = 1,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -442,7 +474,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading user details",
                             IsDeleted = false,
                             Name = "Read User",
-                            ResourceId = 1
+                            ResourceId = 1,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -452,7 +485,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating users",
                             IsDeleted = false,
                             Name = "Update User",
-                            ResourceId = 1
+                            ResourceId = 1,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -462,7 +496,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting users",
                             IsDeleted = false,
                             Name = "Delete User",
-                            ResourceId = 1
+                            ResourceId = 1,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -472,7 +507,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting user data",
                             IsDeleted = false,
                             Name = "Export User",
-                            ResourceId = 1
+                            ResourceId = 1,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -482,7 +518,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating resources",
                             IsDeleted = false,
                             Name = "Create Resource",
-                            ResourceId = 3
+                            ResourceId = 3,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -492,7 +529,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading resources",
                             IsDeleted = false,
                             Name = "Read Resource",
-                            ResourceId = 3
+                            ResourceId = 3,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -502,7 +540,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating resources",
                             IsDeleted = false,
                             Name = "Update Resource",
-                            ResourceId = 3
+                            ResourceId = 3,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -512,7 +551,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting resources",
                             IsDeleted = false,
                             Name = "Delete Resource",
-                            ResourceId = 3
+                            ResourceId = 3,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -522,7 +562,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting resource data",
                             IsDeleted = false,
                             Name = "Export Resource",
-                            ResourceId = 3
+                            ResourceId = 3,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -532,7 +573,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating roles",
                             IsDeleted = false,
                             Name = "Create Role",
-                            ResourceId = 2
+                            ResourceId = 2,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -542,7 +584,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading roles",
                             IsDeleted = false,
                             Name = "Read Role",
-                            ResourceId = 2
+                            ResourceId = 2,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -552,7 +595,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating roles",
                             IsDeleted = false,
                             Name = "Update Role",
-                            ResourceId = 2
+                            ResourceId = 2,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -562,7 +606,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting roles",
                             IsDeleted = false,
                             Name = "Delete Role",
-                            ResourceId = 2
+                            ResourceId = 2,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -572,7 +617,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting role data",
                             IsDeleted = false,
                             Name = "Export Role",
-                            ResourceId = 2
+                            ResourceId = 2,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -582,7 +628,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating permissions",
                             IsDeleted = false,
                             Name = "Create Permission",
-                            ResourceId = 4
+                            ResourceId = 4,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -592,7 +639,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading permissions",
                             IsDeleted = false,
                             Name = "Read Permission",
-                            ResourceId = 4
+                            ResourceId = 4,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -602,7 +650,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating permissions",
                             IsDeleted = false,
                             Name = "Update Permission",
-                            ResourceId = 4
+                            ResourceId = 4,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -612,7 +661,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting permissions",
                             IsDeleted = false,
                             Name = "Delete Permission",
-                            ResourceId = 4
+                            ResourceId = 4,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -622,7 +672,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting permission data",
                             IsDeleted = false,
                             Name = "Export Permission",
-                            ResourceId = 4
+                            ResourceId = 4,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -632,7 +683,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading actions",
                             IsDeleted = false,
                             Name = "Read Action",
-                            ResourceId = 5
+                            ResourceId = 5,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -642,7 +694,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating categories",
                             IsDeleted = false,
                             Name = "Create Category",
-                            ResourceId = 7
+                            ResourceId = 7,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -652,7 +705,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading categories",
                             IsDeleted = false,
                             Name = "Read Category",
-                            ResourceId = 7
+                            ResourceId = 7,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -662,7 +716,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating categories",
                             IsDeleted = false,
                             Name = "Update Category",
-                            ResourceId = 7
+                            ResourceId = 7,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -672,7 +727,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting categories",
                             IsDeleted = false,
                             Name = "Delete Category",
-                            ResourceId = 7
+                            ResourceId = 7,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -682,7 +738,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting category data",
                             IsDeleted = false,
                             Name = "Export Category",
-                            ResourceId = 7
+                            ResourceId = 7,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -692,7 +749,8 @@ namespace Template.Security.Migrations
                             Description = "Allows creating items",
                             IsDeleted = false,
                             Name = "Create Item",
-                            ResourceId = 8
+                            ResourceId = 8,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -702,7 +760,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading items",
                             IsDeleted = false,
                             Name = "Read Item",
-                            ResourceId = 8
+                            ResourceId = 8,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -712,7 +771,8 @@ namespace Template.Security.Migrations
                             Description = "Allows updating items",
                             IsDeleted = false,
                             Name = "Update Item",
-                            ResourceId = 8
+                            ResourceId = 8,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -722,7 +782,8 @@ namespace Template.Security.Migrations
                             Description = "Allows deleting items",
                             IsDeleted = false,
                             Name = "Delete Item",
-                            ResourceId = 8
+                            ResourceId = 8,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -732,7 +793,8 @@ namespace Template.Security.Migrations
                             Description = "Allows exporting item data",
                             IsDeleted = false,
                             Name = "Export Item",
-                            ResourceId = 8
+                            ResourceId = 8,
+                            RowVersion = new byte[0]
                         },
                         new
                         {
@@ -742,7 +804,8 @@ namespace Template.Security.Migrations
                             Description = "Allows reading configuration settings",
                             IsDeleted = false,
                             Name = "Read Configuration",
-                            ResourceId = 6
+                            ResourceId = 6,
+                            RowVersion = new byte[0]
                         });
                 });
 
@@ -780,6 +843,12 @@ namespace Template.Security.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.ToTable("Resources");
@@ -790,56 +859,64 @@ namespace Template.Security.Migrations
                             Id = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "User"
+                            Name = "User",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 2,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Role"
+                            Name = "Role",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Resource"
+                            Name = "Resource",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Permission"
+                            Name = "Permission",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Action"
+                            Name = "Action",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 6,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Configuration"
+                            Name = "Configuration",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 7,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Category"
+                            Name = "Category",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
                             Id = 8,
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
-                            Name = "Item"
+                            Name = "Item",
+                            RowVersion = new byte[0]
                         });
                 });
 
@@ -882,6 +959,12 @@ namespace Template.Security.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -894,19 +977,21 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "22a31205-9e97-485f-8dcc-513352384901",
+                            Id = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            NormalizedName = "ADMIN",
+                            RowVersion = new byte[0]
                         },
                         new
                         {
-                            Id = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
+                            Id = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "User",
-                            NormalizedName = "USER"
+                            NormalizedName = "USER",
+                            RowVersion = new byte[0]
                         });
                 });
 
@@ -927,172 +1012,172 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
+                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c",
+                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5",
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 1
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 2
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 3
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 4
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 5
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 6
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 7
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 8
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 9
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 10
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 11
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 12
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 13
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 14
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 15
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 16
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 17
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 18
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 19
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 20
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 21
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 22
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 23
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 24
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 25
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 26
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 27
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 28
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 29
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 30
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 31
                         },
                         new
                         {
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7",
                             PermissionId = 32
                         });
                 });
@@ -1178,6 +1263,12 @@ namespace Template.Security.Migrations
                     b.Property<DateTimeOffset>("RefreshTokenExpiryTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -1206,9 +1297,9 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
+                            Id = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3432c31d-5276-4a80-a675-9f7d56ee1810",
+                            ConcurrencyStamp = "12f9c0c6-c864-4025-9268-23e98335035f",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -1219,19 +1310,20 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMnvYGx7apqE6gUvoKQVp7GmsGHkJ59LR5VbNqjLHKulpi83Nsr3IVEMAFmHgE4itg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECHjisV3uePVjpXlULWu4rFkernhh4qdnv+lj3RXIF+or3Ja92qzw4AnDKnM+F9LDw==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "89d7a504-fcea-4781-8ee3-a48098529efb",
+                            RowVersion = new byte[0],
+                            SecurityStamp = "65229fa6-1e0d-4fc7-bf0c-68ffa5d6f682",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
                         new
                         {
-                            Id = "04999930-0310-4099-b60b-c30d2270b399",
+                            Id = "0656fa2e-2388-44b4-8c21-53741e9d2f16",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f6a89674-d3bc-4032-a775-00da2899a534",
+                            ConcurrencyStamp = "6096b751-9389-442c-8a08-8d7d4e73b88f",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -1242,11 +1334,12 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAmWpUOv8Ew8Fx+Nk692gsmt6LY3H9irWtgQr+WpIVv1gCTwHeUFhzKGAd+J8Dgfaw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKNdTIDLmFtHkT4EormRGlLvfWuxCnLp/9ML5QRZkUkIc//c9zCsgQmsuJFXRjuZLA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "ba5a478d-5f26-45b8-91b1-beb39bc0f240",
+                            RowVersion = new byte[0],
+                            SecurityStamp = "357f8d79-2298-4fa2-a5ab-bdf04c91c0e4",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });
@@ -1267,18 +1360,18 @@ namespace Template.Security.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
-                            RoleId = "22a31205-9e97-485f-8dcc-513352384901"
+                            UserId = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
+                            RoleId = "88ab3e6c-524d-494f-b48c-64647ba82bc7"
                         },
                         new
                         {
-                            UserId = "fae98e51-b062-4769-acf4-f7f7e581bdd3",
-                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c"
+                            UserId = "c447db6b-08f1-4c9d-adfd-ca11e2852d97",
+                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5"
                         },
                         new
                         {
-                            UserId = "04999930-0310-4099-b60b-c30d2270b399",
-                            RoleId = "390b8dd1-657d-409d-a1f8-e543e2d6db6c"
+                            UserId = "0656fa2e-2388-44b4-8c21-53741e9d2f16",
+                            RoleId = "31fffcda-fd94-49d5-98d1-158aa3a35be5"
                         });
                 });
 

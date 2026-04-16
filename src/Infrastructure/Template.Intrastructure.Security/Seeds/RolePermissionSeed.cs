@@ -1,4 +1,5 @@
 ﻿using Template.Application.Constants;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Seeds

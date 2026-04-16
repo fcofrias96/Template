@@ -96,7 +96,7 @@ namespace Template.Persistence.Migrations
 
             modelBuilder.Entity("Template.Domain.Entities.V1.Item", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");

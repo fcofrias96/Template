@@ -1,6 +1,4 @@
-﻿using ActionType = Template.Application.Enums.ActionType;
-
-namespace Template.Application.Models
+﻿namespace Template.Application.Models
 {
     public class AuditEntry
     {
@@ -9,7 +7,7 @@ namespace Template.Application.Models
         public Dictionary<string, object?> KeyValues { get; } = new Dictionary<string, object?>();
         public Dictionary<string, object?> OldValues { get; } = new Dictionary<string, object?>();
         public Dictionary<string, object?> NewValues { get; } = new Dictionary<string, object?>();
-        public ActionType Action { get; set; }
+        public int Action { get; set; }
         public List<string> ChangedColumns { get; } = new List<string>();
     }
 }

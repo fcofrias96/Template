@@ -12,10 +12,10 @@ namespace Template.Api.Attributes
         private readonly int _resourceId;
         private readonly int _actionId;
 
-        public PermissionAttribute(Resources resource, ActionType action)
+        public PermissionAttribute(int resource, int action)
         {
-            _resourceId = resource.ToInt();
-            _actionId = action.ToInt();
+            _resourceId = resource;
+            _actionId = action;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -30,7 +30,7 @@ namespace Template.Api.Attributes
                 return;
             }
 
-            string userId = userIdClaim.Value;
+            int userId =  int.Parse(userIdClaim.Value);
 
             var hasPermission = await permissionService!.HasPermissionAsync(userId, _resourceId, _actionId, httpContext.RequestAborted);
 

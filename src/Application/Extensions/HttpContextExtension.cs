@@ -11,11 +11,11 @@ namespace Template.Application.Extensions
             return httpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "default";
         }
 
-        public static Guid GetUserId(this HttpContext httpContext)
+        public static int GetUserId(this HttpContext httpContext)
         {
             var userId = httpContext?.User.FindFirstValue("userId") ?? string.Empty;
 
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
             {
                 throw new SecurityTokenException("You are unauthenticated.");
             }

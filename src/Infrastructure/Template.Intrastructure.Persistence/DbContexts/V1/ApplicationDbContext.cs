@@ -5,7 +5,6 @@ using Template.Application.Models;
 using Template.Domain.Contracts;
 using Template.Domain.Entities.V1;
 using Template.Persistence.Configuration.V1;
-using ActionType = Template.Application.Enums.ActionType;
 using Category = Template.Domain.Entities.V1.Category;
 
 namespace Template.Persistence.DbContexts.V1
@@ -102,12 +101,12 @@ namespace Template.Persistence.DbContexts.V1
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            auditEntry.Action = ActionType.Create;
+                            auditEntry.Action = PermissionAction.Create;
                             auditEntry.NewValues[propertyName] = property.CurrentValue;
                             break;
 
                         case EntityState.Deleted:
-                            auditEntry.Action = ActionType.Delete;
+                            auditEntry.Action = PermissionAction.Delete;
                             auditEntry.OldValues[propertyName] = property.OriginalValue;
                             break;
 
@@ -116,7 +115,7 @@ namespace Template.Persistence.DbContexts.V1
                                 property.OriginalValue?.ToString() != property.CurrentValue?.ToString())
                             {
                                 auditEntry.ChangedColumns.Add(propertyName);
-                                auditEntry.Action = ActionType.Update;
+                                auditEntry.Action = PermissionAction.Update;
                                 auditEntry.OldValues[propertyName] = property.OriginalValue;
                                 auditEntry.NewValues[propertyName] = property.CurrentValue;
                             }

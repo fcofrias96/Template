@@ -11,6 +11,6 @@ namespace Template.Application.Models.DTOs.V1.Auth
         public string NewEmail { get; set; }
 
         [Required]
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
     }
 }

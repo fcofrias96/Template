@@ -1,7 +1,6 @@
 ﻿using Template.Application.Enums;
 using Template.Application.Extensions;
-using Template.Security.Entities;
-using ActionType = Template.Application.Enums.ActionType;
+using Template.Domain.Entities.V1;
 
 namespace Template.Security.Seeds
 {
@@ -14,40 +13,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 1,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.User.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.User,
                 Name          = "Create User",
                 Description   = "Allows creating users"
             },
             new Permission
             {
                 Id            = 2,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.User.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.User,
                 Name          = "Read User",
                 Description   = "Allows reading user details"
             },
             new Permission
             {
                 Id            = 3,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.User.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.User,
                 Name          = "Update User",
                 Description   = "Allows updating users"
             },
             new Permission
             {
                 Id            = 4,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.User.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.User,
                 Name          = "Delete User",
                 Description   = "Allows deleting users"
             },
             new Permission
             {
                 Id            = 5,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.User.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.User,
                 Name          = "Export User",
                 Description   = "Allows exporting user data"
             },
@@ -59,40 +58,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 6,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.Resource.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.ResourceItem,
                 Name          = "Create Resource",
                 Description   = "Allows creating resources"
             },
             new Permission
             {
                 Id            = 7,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Resource.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.ResourceItem,
                 Name          = "Read Resource",
                 Description   = "Allows reading resources"
             },
             new Permission
             {
                 Id            = 8,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.Resource.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.ResourceItem,
                 Name          = "Update Resource",
                 Description   = "Allows updating resources"
             },
             new Permission
             {
                 Id            = 9,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.Resource.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.ResourceItem,
                 Name          = "Delete Resource",
                 Description   = "Allows deleting resources"
             },
             new Permission
             {
                 Id            = 10,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.Resource.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.ResourceItem,
                 Name          = "Export Resource",
                 Description   = "Allows exporting resource data"
             },
@@ -104,40 +103,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 11,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.Role.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.Role,
                 Name          = "Create Role",
                 Description   = "Allows creating roles"
             },
             new Permission
             {
                 Id            = 12,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Role.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Role,
                 Name          = "Read Role",
                 Description   = "Allows reading roles"
             },
             new Permission
             {
                 Id            = 13,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.Role.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.Role,
                 Name          = "Update Role",
                 Description   = "Allows updating roles"
             },
             new Permission
             {
                 Id            = 14,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.Role.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.Role,
                 Name          = "Delete Role",
                 Description   = "Allows deleting roles"
             },
             new Permission
             {
                 Id            = 15,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.Role.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.Role,
                 Name          = "Export Role",
                 Description   = "Allows exporting role data"
             },
@@ -149,40 +148,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 16,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.Permission.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.Permission,
                 Name          = "Create Permission",
                 Description   = "Allows creating permissions"
             },
             new Permission
             {
                 Id            = 17,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Permission.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Permission,
                 Name          = "Read Permission",
                 Description   = "Allows reading permissions"
             },
             new Permission
             {
                 Id            = 18,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.Permission.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.Permission,
                 Name          = "Update Permission",
                 Description   = "Allows updating permissions"
             },
             new Permission
             {
                 Id            = 19,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.Permission.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.Permission,
                 Name          = "Delete Permission",
                 Description   = "Allows deleting permissions"
             },
             new Permission
             {
                 Id            = 20,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.Permission.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.Permission,
                 Name          = "Export Permission",
                 Description   = "Allows exporting permission data"
             },
@@ -194,8 +193,8 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 21,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Action.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Action,
                 Name          = "Read Action",
                 Description   = "Allows reading actions"
             },
@@ -207,40 +206,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 22,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.Category.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.Category,
                 Name          = "Create Category",
                 Description   = "Allows creating categories"
             },
             new Permission
             {
                 Id            = 23,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Category.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Category,
                 Name          = "Read Category",
                 Description   = "Allows reading categories"
             },
             new Permission
             {
                 Id            = 24,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.Category.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.Category,
                 Name          = "Update Category",
                 Description   = "Allows updating categories"
             },
             new Permission
             {
                 Id            = 25,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.Category.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.Category,
                 Name          = "Delete Category",
                 Description   = "Allows deleting categories"
             },
             new Permission
             {
                 Id            = 26,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.Category.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.Category,
                 Name          = "Export Category",
                 Description   = "Allows exporting category data"
             },
@@ -252,40 +251,40 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 27,
-                ActionTypeId  = ActionType.Create.ToInt(),
-                ResourceId    = Resources.Item.ToInt(),
+                ActionId  = PermissionAction.Create,
+                ResourceId    = Resource.Item,
                 Name          = "Create Item",
                 Description   = "Allows creating items"
             },
             new Permission
             {
                 Id            = 28,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Item.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Item,
                 Name          = "Read Item",
                 Description   = "Allows reading items"
             },
             new Permission
             {
                 Id            = 29,
-                ActionTypeId  = ActionType.Update.ToInt(),
-                ResourceId    = Resources.Item.ToInt(),
+                ActionId  = PermissionAction.Update,
+                ResourceId    = Resource.Item,
                 Name          = "Update Item",
                 Description   = "Allows updating items"
             },
             new Permission
             {
                 Id            = 30,
-                ActionTypeId  = ActionType.Delete.ToInt(),
-                ResourceId    = Resources.Item.ToInt(),
+                ActionId  = PermissionAction.Delete,
+                ResourceId    = Resource.Item,
                 Name          = "Delete Item",
                 Description   = "Allows deleting items"
             },
             new Permission
             {
                 Id            = 31,
-                ActionTypeId  = ActionType.Export.ToInt(),
-                ResourceId    = Resources.Item.ToInt(),
+                ActionId  = PermissionAction.Export,
+                ResourceId    = Resource.Item,
                 Name          = "Export Item",
                 Description   = "Allows exporting item data"
             },
@@ -297,8 +296,8 @@ namespace Template.Security.Seeds
             new Permission
             {
                 Id            = 32,
-                ActionTypeId  = ActionType.Read.ToInt(),
-                ResourceId    = Resources.Configuration.ToInt(),
+                ActionId  = PermissionAction.Read,
+                ResourceId    = Resource.Configuration,
                 Name          = "Read Configuration",
                 Description   = "Allows reading configuration settings"
             }

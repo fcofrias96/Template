@@ -4,15 +4,10 @@
     {
         public string Name { get; set; }
 
-        public Guid Id
-        {
-            get
-            {
-                return Guid.NewGuid();
-            }
-        }
+        public int Id { get; set; }
 
-        public string NormalizedName
+
+		public string NormalizedName
         {
             get
             {

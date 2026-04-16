@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Template.Security.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class RowVersion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,7 +24,8 @@ namespace Template.Security.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +43,8 @@ namespace Template.Security.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,6 +61,7 @@ namespace Template.Security.Migrations
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -84,6 +87,7 @@ namespace Template.Security.Migrations
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -118,7 +122,8 @@ namespace Template.Security.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -260,7 +265,8 @@ namespace Template.Security.Migrations
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(30)", nullable: true),
                     LastModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -339,8 +345,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "LastModifiedAt", "LastModifiedBy", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "22a31205-9e97-485f-8dcc-513352384901", null, null, null, "Admin", "ADMIN" },
-                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", null, null, null, "User", "USER" }
+                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", null, null, null, "User", "USER" },
+                    { "88ab3e6c-524d-494f-b48c-64647ba82bc7", null, null, null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -348,8 +354,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsTokenRevoked", "LastModifiedAt", "LastModifiedBy", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TokenRevokedTime", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "04999930-0310-4099-b60b-c30d2270b399", 0, "f6a89674-d3bc-4032-a775-00da2899a534", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEAmWpUOv8Ew8Fx+Nk692gsmt6LY3H9irWtgQr+WpIVv1gCTwHeUFhzKGAd+J8Dgfaw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "ba5a478d-5f26-45b8-91b1-beb39bc0f240", null, false, "johnJames" },
-                    { "fae98e51-b062-4769-acf4-f7f7e581bdd3", 0, "3432c31d-5276-4a80-a675-9f7d56ee1810", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEMnvYGx7apqE6gUvoKQVp7GmsGHkJ59LR5VbNqjLHKulpi83Nsr3IVEMAFmHgE4itg==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "89d7a504-fcea-4781-8ee3-a48098529efb", null, false, "johnDoe" }
+                    { "0656fa2e-2388-44b4-8c21-53741e9d2f16", 0, "6096b751-9389-442c-8a08-8d7d4e73b88f", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEKNdTIDLmFtHkT4EormRGlLvfWuxCnLp/9ML5QRZkUkIc//c9zCsgQmsuJFXRjuZLA==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "357f8d79-2298-4fa2-a5ab-bdf04c91c0e4", null, false, "johnJames" },
+                    { "c447db6b-08f1-4c9d-adfd-ca11e2852d97", 0, "12f9c0c6-c864-4025-9268-23e98335035f", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAECHjisV3uePVjpXlULWu4rFkernhh4qdnv+lj3RXIF+or3Ja92qzw4AnDKnM+F9LDw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "65229fa6-1e0d-4fc7-bf0c-68ffa5d6f682", null, false, "johnDoe" }
                 });
 
             migrationBuilder.InsertData(
@@ -396,9 +402,9 @@ namespace Template.Security.Migrations
                 columns: new[] { "RoleId", "UserId", "Discriminator" },
                 values: new object[,]
                 {
-                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", "04999930-0310-4099-b60b-c30d2270b399", "UserRole" },
-                    { "22a31205-9e97-485f-8dcc-513352384901", "fae98e51-b062-4769-acf4-f7f7e581bdd3", "UserRole" },
-                    { "390b8dd1-657d-409d-a1f8-e543e2d6db6c", "fae98e51-b062-4769-acf4-f7f7e581bdd3", "UserRole" }
+                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", "0656fa2e-2388-44b4-8c21-53741e9d2f16", "UserRole" },
+                    { "31fffcda-fd94-49d5-98d1-158aa3a35be5", "c447db6b-08f1-4c9d-adfd-ca11e2852d97", "UserRole" },
+                    { "88ab3e6c-524d-494f-b48c-64647ba82bc7", "c447db6b-08f1-4c9d-adfd-ca11e2852d97", "UserRole" }
                 });
 
             migrationBuilder.InsertData(
@@ -416,40 +422,40 @@ namespace Template.Security.Migrations
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
-                    { 1, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 2, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 3, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 4, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 5, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 6, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 7, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 8, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 9, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 10, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 11, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 12, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 13, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 14, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 15, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 16, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 17, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 18, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 19, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 20, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 21, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 22, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 23, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 24, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 25, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 26, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 27, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 28, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 29, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 30, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 31, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 32, "22a31205-9e97-485f-8dcc-513352384901" },
-                    { 23, "390b8dd1-657d-409d-a1f8-e543e2d6db6c" },
-                    { 28, "390b8dd1-657d-409d-a1f8-e543e2d6db6c" }
+                    { 23, "31fffcda-fd94-49d5-98d1-158aa3a35be5" },
+                    { 28, "31fffcda-fd94-49d5-98d1-158aa3a35be5" },
+                    { 1, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 2, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 3, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 4, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 5, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 6, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 7, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 8, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 9, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 10, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 11, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 12, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 13, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 14, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 15, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 16, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 17, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 18, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 19, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 20, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 21, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 22, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 23, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 24, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 25, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 26, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 27, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 28, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 29, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 30, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 31, "88ab3e6c-524d-494f-b48c-64647ba82bc7" },
+                    { 32, "88ab3e6c-524d-494f-b48c-64647ba82bc7" }
                 });
 
             migrationBuilder.InsertData(

@@ -5,7 +5,7 @@ namespace Template.Application.Models.DTOs.V1.Users
     public class UserUpdateDto
     {
         [Required]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string FirstName { get; set; }

@@ -10,6 +10,7 @@ using Template.Application.Models.DTOs.V1.Auth;
 using Template.Application.Models.DTOs.V1.Token;
 using Template.Application.Models.DTOs.V1.Users;
 using Template.Application.Models.Wrappers;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Contracts.Services.V1;
 using Template.Security.Entities;
@@ -19,8 +20,8 @@ namespace Template.Security.Services.V1
 {
     public class AuthService : IAuthService
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserService _userServiceAsync;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IAuthLinkService _authLinkService;
@@ -30,8 +31,8 @@ namespace Template.Security.Services.V1
 
         public AuthService(
             IOptions<JwtSettings> jwtSettings,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IUserService userServiceAsync,
             IJwtTokenService jwtTokenService,
             IAuthLinkService authLinkService,
@@ -52,12 +53,12 @@ namespace Template.Security.Services.V1
         {
             var currentUserId = _currentUserService.UserId;
 
-            if (currentUserId != changeEmailDto.UserId.ToString())
+            if (currentUserId != changeEmailDto.UserId)
             {
                 throw new ForbiddenException();
             }
 
-            var user = await FindUserByIdAsync(changeEmailDto.UserId.ToString(), cancellationToken);
+            var user = await FindUserByIdAsync(changeEmailDto.UserId, cancellationToken);
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, changeEmailDto.CurrentPassword);
             if (!passwordValid)
@@ -78,7 +79,7 @@ namespace Template.Security.Services.V1
 
         public async Task<ApiResponse> ConfirmChangeEmailAsync(ConfirmChangeEmailDto confirmChangeEmailDto, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(confirmChangeEmailDto.UserId.ToString(), cancellationToken);
+            var user = await FindUserByIdAsync(confirmChangeEmailDto.UserId, cancellationToken);
 
             if (user.Email == confirmChangeEmailDto.NewEmail)
             {
@@ -132,7 +133,7 @@ namespace Template.Security.Services.V1
                 throw new BadRequestException($"The email address '{userCreateDto.Email}' is already registered. Please use a different email address.");
             }
 
-            var user = new User
+            var user = new ApplicationUser
             {
                 Email = userCreateDto.Email,
                 FirstName = userCreateDto.FirstName,
@@ -183,8 +184,10 @@ namespace Template.Security.Services.V1
 
         public async Task<ApiResponse> LogoutAsync(CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.UserId ?? string.Empty;
-            await RevokeTokenAsync(userId, cancellationToken);
+            var userId = _currentUserService.UserId;
+            ArgumentNullException.ThrowIfNull(userId);
+
+            await RevokeTokenAsync((int) userId, cancellationToken);
             return new ApiResponse("Logged out successfully");
         }
 
@@ -309,7 +312,7 @@ namespace Template.Security.Services.V1
 
         public async Task<ApiResponse> ResetPasswordAsync(ResetPasswordDto model, CancellationToken cancellationToken)
         {
-            var user = await FindUserByIdAsync(model.UserId.ToString(), cancellationToken);
+            var user = await FindUserByIdAsync(model.UserId, cancellationToken);
             var token = Encoding.UTF8.GetString(Convert.FromBase64String(model.Token));
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -320,7 +323,7 @@ namespace Template.Security.Services.V1
             return new ApiResponse($"Password Reset Successful for {user.UserName}.");
         }
 
-        public async Task RevokeTokenAsync(string userId, CancellationToken cancellationToken)
+        public async Task RevokeTokenAsync(int userId, CancellationToken cancellationToken)
         {
             var user = await FindUserByIdAsync(userId, cancellationToken);
 
@@ -333,7 +336,7 @@ namespace Template.Security.Services.V1
 
         // ---------- Helpers privados ----------
 
-        private async Task<User> FindUserByEmailAsync(string email, CancellationToken cancellationToken)
+        private async Task<ApplicationUser> FindUserByEmailAsync(string email, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var user = await _userManager.FindByEmailAsync(email);
@@ -345,10 +348,10 @@ namespace Template.Security.Services.V1
             return user;
         }
 
-        private async Task<User> FindUserByIdAsync(string userId, CancellationToken cancellationToken)
+        private async Task<ApplicationUser> FindUserByIdAsync(int userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user is null)
             {
                 throw new NotFoundException("User", userId);

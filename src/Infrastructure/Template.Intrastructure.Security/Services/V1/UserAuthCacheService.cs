@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Template.Application.Contracts.Services.V1;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Entities;
 
 public class UserAuthCacheService : IUserAuthCacheService
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ICacheService _cache;
     private readonly TimeSpan _authCacheTtl = TimeSpan.FromHours(1);
 
-    public UserAuthCacheService(UserManager<User> userManager, ICacheService cache)
+    public UserAuthCacheService(UserManager<ApplicationUser> userManager, ICacheService cache)
     {
         _userManager = userManager;
         _cache = cache;
     }
 
-    public async Task<UserAuthCacheEntry> GetUserAuthDataAsync(User user, CancellationToken cancellationToken)
+    public async Task<UserAuthCacheEntry> GetUserAuthDataAsync(ApplicationUser user, CancellationToken cancellationToken)
     {
         var cacheKey = $"auth:user:{user.Id}";
         var cached = _cache.Get<UserAuthCacheEntry>(cacheKey);

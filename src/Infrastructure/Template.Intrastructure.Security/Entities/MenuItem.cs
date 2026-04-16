@@ -1,6 +1,6 @@
 ﻿using Template.Domain.Common;
 
-namespace Template.Security.Entities
+namespace Template.Domain.Entities.V1
 {
     public class MenuItem : EntityBase<int>
     {

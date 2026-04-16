@@ -3,7 +3,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Security.Entities
 {
-    public class User : IdentityUser, IEntityBase
+    public class ApplicationUser : IdentityUser<int>, IEntityBase
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -20,9 +20,16 @@ namespace Template.Security.Entities
         object IEntityBase.Id
         {
             get => Id;
-            set => Id = (string)value;
+            set => Id = (int)value;
         }
 
-        public ICollection<UserRole> UserRoles { get; set; } = [];
+        public ICollection<ApplicationUserRole> UserRoles { get; set; } = [];
+
+        public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+        public void MarkDeleted()
+        {
+            if (IsDeleted) return;
+            IsDeleted = true;
+        }
     }
 }

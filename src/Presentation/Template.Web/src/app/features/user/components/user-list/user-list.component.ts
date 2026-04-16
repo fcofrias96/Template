@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './user-list.component.scss',
 })
 export class UserListComponent implements OnInit, OnDestroy {
-  users$: Observable<PagedCollection<User>>;
+  users$: Observable<PagedCollection<ApplicationUser>>;
   columns: TableColumn[];
   itemsPerPage = 15;
   unsubscribe$: Subject<void> = new Subject<void>();
@@ -76,11 +76,11 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   private getUsers(
     searchParams: URLSearchParams | null = null
-  ): Observable<PagedCollection<User>> {
+  ): Observable<PagedCollection<ApplicationUser>> {
     if (!searchParams) {
       searchParams = new URLSearchParams(`limit=${this.itemsPerPage}`);
     }
-    return this.userService.getPagedList<User>(searchParams);
+    return this.userService.getPagedList<ApplicationUser>(searchParams);
   }
 
   handleFilter(searchParams: URLSearchParams) {

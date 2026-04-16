@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Template.Application.Models.DTOs;
-using ActionType = Template.Security.Entities.ActionType;
+using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
 
 namespace Template.Security.Mappings.V1
 {
@@ -8,7 +8,7 @@ namespace Template.Security.Mappings.V1
     {
         public ActionProfile()
         {
-            CreateMap<ActionType, Catalog>();
+            CreateMap<PermissionAction, Catalog>();
         }
     }
 }

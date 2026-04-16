@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Template.Domain.Entities.V1;
 using Template.Security.Contracts.Services;
 using Template.Security.Entities;
 using Template.Security.Settings;
@@ -26,7 +27,7 @@ public class JwtTokenService : IJwtTokenService
     }
 
     public async Task<(JwtSecurityToken Token, IReadOnlyList<string> Roles)> GenerateTokenAsync(
-        User user,
+        ApplicationUser user,
         CancellationToken cancellationToken = default)
     {
         var authData = await _userAuthCacheService.GetUserAuthDataAsync(user, cancellationToken);
@@ -40,7 +41,7 @@ public class JwtTokenService : IJwtTokenService
             new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("userId", user.Id)
+            new Claim("userId", user.Id.ToString())
         };
 
         claims.AddRange(authData.Claims);

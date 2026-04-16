@@ -1,9 +1,13 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
-public interface IJwtTokenService
+namespace Template.Security.Contracts.Services
 {
-    Task<(JwtSecurityToken Token, IReadOnlyList<string> Roles)> GenerateTokenAsync(
-        User user,
-        CancellationToken cancellationToken = default);
+    public interface IJwtTokenService
+    {
+        Task<(JwtSecurityToken Token, IReadOnlyList<string> Roles)> GenerateTokenAsync(
+            ApplicationUser user,
+            CancellationToken cancellationToken = default);
+    }
 }

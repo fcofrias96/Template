@@ -46,7 +46,7 @@ namespace Template.Application.Services.Base
         public async Task SoftDeleteAsync<TKey>(TKey id, CancellationToken cancellationToken)
         {
             var entity = await GetByIdAsync(id, cancellationToken);
-            entity.IsDeleted = true;
+            entity.MarkDeleted();
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
             _cache.Remove(BuildListKey());
         }

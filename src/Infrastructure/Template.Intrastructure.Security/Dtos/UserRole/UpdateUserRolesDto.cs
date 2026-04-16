@@ -2,7 +2,7 @@
 {
     public sealed class UpdateUserRolesDto
     {
-        public IReadOnlyList<string> RoleIds { get; init; } = Array.Empty<string>();
+        public IReadOnlyList<int> RoleIds { get; init; } = Array.Empty<int>();
     }
 
 }

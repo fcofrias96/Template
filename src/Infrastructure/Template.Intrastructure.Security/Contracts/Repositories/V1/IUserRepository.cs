@@ -2,18 +2,19 @@
 using Template.Application.Models.DTOs.V1.Resources;
 using Template.Application.Models.DTOs.V1.Roles;
 using Template.Application.Models.DTOs.V1.Users;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 
 namespace Template.Security.Contracts.Repositories.V1
 {
-    public interface IUserRepository : IBaseRepository<User>
+    public interface IUserRepository : IBaseRepository<ApplicationUser>
     {
-        Task<User?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
+        Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 
-        Task<IReadOnlyList<RoleListDto>> GetRolesAsync(string userId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<RoleListDto>> GetRolesAsync(int userId, CancellationToken cancellationToken);
 
-        Task<UserDetailDto?> GetUserDetailAsync(string userId, CancellationToken cancellationToken);
+        Task<UserDetailDto?> GetUserDetailAsync(int userId, CancellationToken cancellationToken);
 
-        Task<ResourcePermissionDto[]> GetResourcesAsync(string userId, CancellationToken cancellationToken);
+        Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken);
     }
 }

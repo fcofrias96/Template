@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.Domain.Entities.V1;
 using Template.Security.Entities;
 using Template.Security.Seeds;
 

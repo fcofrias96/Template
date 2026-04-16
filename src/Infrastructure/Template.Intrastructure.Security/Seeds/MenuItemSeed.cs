@@ -1,4 +1,4 @@
-﻿using Template.Security.Entities;
+﻿using Template.Domain.Entities.V1;
 
 namespace Template.Security.Seeds
 {

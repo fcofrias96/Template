@@ -1,9 +1,9 @@
 ﻿using Template.Application.Contracts.Services.Base;
-using ActionType = Template.Security.Entities.ActionType;
+using PermissionAction = Template.Domain.Entities.V1.PermissionAction;
 
 namespace Template.Security.Contracts.Services.V1
 {
-    public interface IActionService : IReadService<ActionType>
+    public interface IActionService : IReadService<PermissionAction>
     {
     }
 }

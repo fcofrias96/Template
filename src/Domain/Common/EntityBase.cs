@@ -9,8 +9,15 @@ namespace Template.Domain.Common
         public DateTimeOffset CreatedAt { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTimeOffset? LastModifiedAt { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; private set; }
 
         object IEntityBase.Id { get => Id; set => Id = (TKey)value; }
+
+        public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+        public void MarkDeleted()
+        {
+            if (IsDeleted) return;
+            IsDeleted = true;
+        }
     }
 }
