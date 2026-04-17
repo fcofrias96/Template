@@ -16,5 +16,7 @@ namespace Template.Security.Contracts.Repositories.V1
         Task<UserDetailDto?> GetDetailAsync(int userId, CancellationToken cancellationToken);
 
         Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken);
+
+        Task<int?> GetIdByPublicIdAsync(Guid publicId, CancellationToken cancellationToken);
     }
 }

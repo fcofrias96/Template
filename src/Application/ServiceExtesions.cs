@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
 using Template.Application.Caching;
+using Template.Application.Contracts;
 using Template.Application.Contracts.Caching;
 using Template.Application.Contracts.Etag;
 using Template.Application.Contracts.Repositories.Base;

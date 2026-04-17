@@ -30,7 +30,7 @@ namespace Template.Api.Middlewares
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
                     ["TraceId"] = context.TraceIdentifier,
-                    ["UserName"] = context.GetUserName()
+                    ["UserName"] = context.GetUserId()
                 }))
                 {
                     _logger.LogWarning(ex, "Request cancelled by the client.");
@@ -129,7 +129,7 @@ namespace Template.Api.Middlewares
                 using (_logger.BeginScope(new Dictionary<string, object>
                 {
                     ["TraceId"] = context.TraceIdentifier,
-                    ["UserName"] = context.GetUserName(),
+                    ["UserId"] = context.GetUserId(),
                     ["ClientIP"] = clientIP?.ToString() ?? "Unknown",
                     ["RequestMethod"] = request.Method,
                     ["RequestPath"] = request.Path,

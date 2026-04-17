@@ -12,7 +12,7 @@ namespace Template.Persistence.DbContexts.V1
 {
     public class ApplicationDbContext : DbContext
     {
-        private readonly string _userName = "default";
+        private readonly string _userId = "default";
         private readonly AuditDbContext _auditDbContext;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
@@ -20,7 +20,7 @@ namespace Template.Persistence.DbContexts.V1
             AuditDbContext auditDbContext
             ) : base(options)
         {
-            _userName = httpContext!.HttpContext!.GetUserName();
+            _userId = httpContext!.HttpContext!.GetUserId();
             _auditDbContext = auditDbContext;
         }
 
@@ -65,19 +65,19 @@ namespace Template.Persistence.DbContexts.V1
 
                 var auditEntry = new AuditEntry();
                 auditEntry.TableName = entry.Entity.GetType().Name;
-                auditEntry.UserName = _userName;
+                auditEntry.UserName = _userId;
 
                 #region SetAuditInfo
 
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedBy = _userName;
+                        entry.Entity.CreatedBy = _userId;
                         entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
                         break;
 
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedBy = _userName;
+                        entry.Entity.LastModifiedBy = _userId;
                         entry.Entity.LastModifiedAt = DateTimeOffset.UtcNow;
                         break;
 

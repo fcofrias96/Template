@@ -108,6 +108,7 @@ namespace Template.Security.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -377,8 +378,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "LastModifiedAt", "LastModifiedBy", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { 1, "586d148c-453b-445a-9da4-2362097ade76", null, null, "Admin", "ADMIN" },
-                    { 2, "59646e52-7a37-40f7-ab07-39c27ee86c5f", null, null, "User", "USER" }
+                    { 1, "25e55735-ea3c-4629-b38c-186bfda2b55f", null, null, "Admin", "ADMIN" },
+                    { 2, "59b48076-1728-4950-906e-2ad771426187", null, null, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -386,8 +387,8 @@ namespace Template.Security.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsTokenRevoked", "LastModifiedAt", "LastModifiedBy", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TokenRevokedTime", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "7a94a976-70e2-425d-ab9f-390e522e89e8", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEMS1U/rCmbhpgg8HvI4UhkjqH8+Eq3smL5YxtO/olevHfbo9ZJJLCUf2mRkRoETpOQ==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "ad73f6ef-fc82-4228-bb7d-dbe7eba7bc33", null, false, "johnDoe" },
-                    { 2, 0, "26e9d865-6df9-462b-a7c0-5506755c8268", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEOox2RBueDbn3dfWN/H/bune6V6N+I427OE2bEuRUVUjyfGbZ7JPaZQD34mN3EZMAQ==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "0330f0b7-f6eb-4cd5-a28e-ec871ba9da01", null, false, "johnJames" }
+                    { 1, 0, "43db21b7-65de-4a63-b590-7e62426bfa3d", "johnDoe@gmail.com", true, "John", false, null, null, "Doe", false, null, "JOHNDOE@GMAIL.COM", "JOHNDOE", "AQAAAAIAAYagAAAAEFlQu281Bgwp5hkA1oYzb0mCGaWMSz6JJU+rT2pOzeZ3asCZrI/9SspJAbbaZbfspw==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "dba4e100-c6a5-4347-a8f7-104b3f1a4c82", null, false, "johnDoe" },
+                    { 2, 0, "7f65b8a2-0316-44f8-b2b4-b8efa76472ad", "johnJames@gmail.com", true, "John", false, null, null, "James", false, null, "JOHNJAMES@GMAIL.COM", "JOHNJAMES", "AQAAAAIAAYagAAAAEHBhQ9znMor32ttZFltR1yJzQ21eLuw8iaFwtuGYv73Sxp7dneZ0vrpIz14r9tmG1w==", null, false, "", new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "00e2b65f-6e16-4149-8fa1-79d8104345af", null, false, "johnJames" }
                 });
 
             migrationBuilder.InsertData(
@@ -565,6 +566,12 @@ namespace Template.Security.Migrations
                 name: "EmailIndex",
                 table: "Users",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_PublicId",
+                table: "Users",
+                column: "PublicId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

@@ -194,7 +194,7 @@ namespace Template.Security
                         context.Response.ContentType = "application/json";
 
                         string pathRequest = context.HttpContext.Request.Path;
-                        string userName = context.HttpContext.GetUserName();
+                        string userName = context.HttpContext.GetUserId();
 
                         var problemDetails = new ProblemDetails
                         {

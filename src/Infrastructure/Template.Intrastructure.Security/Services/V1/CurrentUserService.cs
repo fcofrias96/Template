@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Template.Security.Contracts.Services;
 
 namespace Template.Security.Services.V1
@@ -11,6 +13,6 @@ namespace Template.Security.Services.V1
             => _httpContextAccessor = httpContextAccessor;
 
         public int? UserId =>
-            int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value, out var userId) ? userId : (int?)null;
+            int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var userId) ? userId : (int?)null;
     }
 }

@@ -31,21 +31,7 @@ public class JwtTokenService : IJwtTokenService
         CancellationToken cancellationToken = default)
     {
         var authData = await _userAuthCacheService.GetUserAuthDataAsync(user, cancellationToken);
-
-        var roleClaims = authData.Roles
-            .Select(r => new Claim("roles", r))
-            .ToList();
-
-        var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("userId", user.Id.ToString())
-        };
-
-        claims.AddRange(authData.Claims);
-        claims.AddRange(roleClaims);
+        var claims = user.GenerateClaims();
 
         var jwtSecurityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,

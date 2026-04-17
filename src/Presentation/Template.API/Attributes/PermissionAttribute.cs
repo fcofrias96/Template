@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Template.Application.Enums;
 using Template.Application.Extensions;
 using Template.Security.Contracts.Services.V1;
@@ -23,16 +25,15 @@ namespace Template.Api.Attributes
             var httpContext = context.HttpContext;
             var permissionService = httpContext.RequestServices.GetService<IPermissionService>();
 
-            var userIdClaim = httpContext.User.FindFirst("userId");
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
                 context.Result = new UnauthorizedResult();
                 return;
             }
 
-            int userId =  int.Parse(userIdClaim.Value);
 
-            var hasPermission = await permissionService!.HasPermissionAsync(userId, _resourceId, _actionId, httpContext.RequestAborted);
+            var hasPermission = await permissionService!.HasPermissionAsync(userIdClaim.Value, _resourceId, _actionId, httpContext.RequestAborted);
 
             if (!hasPermission)
             {

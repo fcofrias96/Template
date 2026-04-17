@@ -99,5 +99,14 @@ namespace Template.Security.Repositories.V1
                     }))
                 .ToArrayAsync(cancellationToken);
         }
+
+        public async Task<int?> GetIdByPublicIdAsync(Guid publicId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users
+                .AsNoTracking()
+                .Where(u => u.PublicId == publicId && !u.IsDeleted)
+                .Select(u =>u.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

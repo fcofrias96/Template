@@ -6,21 +6,9 @@ namespace Template.Application.Extensions
 {
     public static class HttpContextExtension
     {
-        public static string GetUserName(this HttpContext httpContext)
+        public static string GetUserId(this HttpContext httpContext)
         {
             return httpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "default";
-        }
-
-        public static int GetUserId(this HttpContext httpContext)
-        {
-            var userId = httpContext?.User.FindFirstValue("userId") ?? string.Empty;
-
-            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
-            {
-                throw new SecurityTokenException("You are unauthenticated.");
-            }
-
-            return parsedUserId;
         }
     }
 }

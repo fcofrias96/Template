@@ -12,7 +12,7 @@ using Template.Security.DbContexts.V1;
 namespace Template.Security.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20260416224602_Inital")]
+    [Migration("20260417011430_Inital")]
     partial class Inital
     {
         /// <inheritdoc />
@@ -240,7 +240,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "586d148c-453b-445a-9da4-2362097ade76",
+                            ConcurrencyStamp = "25e55735-ea3c-4629-b38c-186bfda2b55f",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "Admin",
@@ -250,7 +250,7 @@ namespace Template.Security.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "59646e52-7a37-40f7-ab07-39c27ee86c5f",
+                            ConcurrencyStamp = "59b48076-1728-4950-906e-2ad771426187",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             IsDeleted = false,
                             Name = "User",
@@ -337,6 +337,11 @@ namespace Template.Security.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<Guid>("PublicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
@@ -372,6 +377,9 @@ namespace Template.Security.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PublicId")
+                        .IsUnique();
+
                     b.ToTable("Users", (string)null);
 
                     b.HasData(
@@ -379,7 +387,7 @@ namespace Template.Security.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7a94a976-70e2-425d-ab9f-390e522e89e8",
+                            ConcurrencyStamp = "43db21b7-65de-4a63-b590-7e62426bfa3d",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnDoe@gmail.com",
                             EmailConfirmed = true,
@@ -390,12 +398,13 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNDOE@GMAIL.COM",
                             NormalizedUserName = "JOHNDOE",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMS1U/rCmbhpgg8HvI4UhkjqH8+Eq3smL5YxtO/olevHfbo9ZJJLCUf2mRkRoETpOQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFlQu281Bgwp5hkA1oYzb0mCGaWMSz6JJU+rT2pOzeZ3asCZrI/9SspJAbbaZbfspw==",
                             PhoneNumberConfirmed = false,
+                            PublicId = new Guid("00000000-0000-0000-0000-000000000000"),
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             RowVersion = new byte[0],
-                            SecurityStamp = "ad73f6ef-fc82-4228-bb7d-dbe7eba7bc33",
+                            SecurityStamp = "dba4e100-c6a5-4347-a8f7-104b3f1a4c82",
                             TwoFactorEnabled = false,
                             UserName = "johnDoe"
                         },
@@ -403,7 +412,7 @@ namespace Template.Security.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "26e9d865-6df9-462b-a7c0-5506755c8268",
+                            ConcurrencyStamp = "7f65b8a2-0316-44f8-b2b4-b8efa76472ad",
                             CreatedAt = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "johnJames@gmail.com",
                             EmailConfirmed = true,
@@ -414,12 +423,13 @@ namespace Template.Security.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "JOHNJAMES@GMAIL.COM",
                             NormalizedUserName = "JOHNJAMES",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOox2RBueDbn3dfWN/H/bune6V6N+I427OE2bEuRUVUjyfGbZ7JPaZQD34mN3EZMAQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHBhQ9znMor32ttZFltR1yJzQ21eLuw8iaFwtuGYv73Sxp7dneZ0vrpIz14r9tmG1w==",
                             PhoneNumberConfirmed = false,
+                            PublicId = new Guid("00000000-0000-0000-0000-000000000000"),
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             RowVersion = new byte[0],
-                            SecurityStamp = "0330f0b7-f6eb-4cd5-a28e-ec871ba9da01",
+                            SecurityStamp = "00e2b65f-6e16-4149-8fa1-79d8104345af",
                             TwoFactorEnabled = false,
                             UserName = "johnJames"
                         });

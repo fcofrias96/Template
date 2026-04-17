@@ -12,7 +12,7 @@ using Template.Persistence.DbContexts;
 namespace Template.Persistence.Migrations.AuditDb
 {
     [DbContext(typeof(AuditDbContext))]
-    [Migration("20260416221642_Inital")]
+    [Migration("20260417011647_Inital")]
     partial class Inital
     {
         /// <inheritdoc />
