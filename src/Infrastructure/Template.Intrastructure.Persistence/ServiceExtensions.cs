@@ -1,15 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Template.Application.Contracts;
-using Template.Application.Contracts.Repositories.Base;
-using Template.Application.Services;
-using Template.Domain.Entities.V1;
-using Template.Persistence.Contracts.Repositories.V1;
-using Template.Persistence.Contracts.Services;
+using Template.Application.Extensions;
 using Template.Persistence.DbContexts;
 using Template.Persistence.DbContexts.V1;
 using Template.Persistence.OptionActions;
-using Template.Persistence.Repositories.V1;
 using Template.Persistence.Services.V1;
 
 namespace Template.Persistence
@@ -22,13 +17,13 @@ namespace Template.Persistence
 
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
-                services.AddDbContext<ApplicationDbContext>(DbContextAction.InMemoryOptions);
-                services.AddDbContext<AuditDbContext>(DbContextAction.AuditInMemoryOptions);
+                services.AddDbContext<ApplicationDbContext>(DbContextAction.InMemoryOptions)
+                        .AddDbContext<AuditDbContext>(DbContextAction.AuditInMemoryOptions);
             }
             else
             {
-                services.AddDbContext<ApplicationDbContext>(DbContextAction.DbOptions(configuration));
-                services.AddDbContext<AuditDbContext>(DbContextAction.AuditDbOptions(configuration));
+                services.AddDbContext<ApplicationDbContext>(DbContextAction.DbOptions(configuration))
+                        .AddDbContext<AuditDbContext>(DbContextAction.AuditDbOptions(configuration));
             }
 
             #endregion DbContext
@@ -38,17 +33,12 @@ namespace Template.Persistence
 
 
             //Repositories
-            services.AddScoped<IItemRepository, ItemRepository>();
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddRepositoriesImplementingBaseRepository(typeof(ServiceExtensions).Assembly);
 
-            // Map IBaseRepository<TEntity> to the concrete repository implementations so BaseServiceDeps<TEntity> resolves correctly
-            services.AddScoped<IBaseRepository<Item>>(sp => sp.GetRequiredService<IItemRepository>());
-            services.AddScoped<IBaseRepository<Category>>(sp => sp.GetRequiredService<ICategoryRepository>());
-
+           
             //Services
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IItemService, ItemService>();
-            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddServicesImplementingBaseService(typeof(ServiceExtensions).Assembly)
+                    .AddScoped<IUnitOfWork, UnitOfWork>();
 
             #endregion Dependency Injection
         }

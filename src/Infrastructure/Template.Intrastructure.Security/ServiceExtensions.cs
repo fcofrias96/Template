@@ -108,37 +108,24 @@ namespace Template.Security
             #region Dependency injection
 
             // Repositories
-            services.AddScoped<IActionRepository, ActionRepository>();
-            services.AddScoped<IPermissionRepository, PermissionRepository>();
-            services.AddScoped<IResourceRepository, ResourceRepository>();
-            services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
-            // Map IBaseRepository<TEntity> to the concrete repository implementations so BaseServiceDeps<TEntity> resolves correctly
-            services.AddScoped<IBaseRepository<ApplicationRole>>(sp => sp.GetRequiredService<IRoleRepository>());
-            services.AddScoped<IBaseRepository<ApplicationUser>>(sp => sp.GetRequiredService<IUserRepository>());
-            services.AddScoped<IBaseRepository<Permission>>(sp => sp.GetRequiredService<IPermissionRepository>());
-            services.AddScoped<IBaseRepository<PermissionAction>>(sp => sp.GetRequiredService<IActionRepository>());
-            services.AddScoped<IBaseRepository<Resource>>(sp => sp.GetRequiredService<IResourceRepository>());
+            services.AddRepositoriesImplementingBaseRepository(typeof(ServiceExtensions).Assembly)
+                    .AddScoped<IRolePermissionRepository, RolePermissionRepository>()
+                    .AddScoped<IUserRoleRepository, UserRoleRepository>();
 
             //Services
-            services.AddScoped<IActionService, ActionService>();
-            services.AddScoped<IAuthEmailService, AuthEmailService>();
-            services.AddScoped<IAuthLinkService, AuthLinkService>();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IMenuCacheInvalidator, MenuCacheInvalidator>();
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IPermissionCacheInvalidator, PermissionCacheInvalidator>();
-            services.AddScoped<IPermissionService, PermissionService>();
-            services.AddScoped<IResourceService, ResourceService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IUserAuthCacheInvalidator, UserAuthCacheInvalidator>();
-            services.AddScoped<IUserAuthCacheService, UserAuthCacheService>();
-            services.AddScoped<IUserService, UserService>();
+
+            services.AddServicesImplementingBaseService(typeof(ServiceExtensions).Assembly)            
+                    .AddScoped<IAuthEmailService, AuthEmailService>()
+                    .AddScoped<IAuthLinkService, AuthLinkService>()
+                    .AddScoped<IAuthService, AuthService>()
+                    .AddScoped<ICurrentUserService, CurrentUserService>()
+                    .AddScoped<IJwtTokenService, JwtTokenService>()
+                    .AddScoped<IMenuCacheInvalidator, MenuCacheInvalidator>()
+                    .AddScoped<IMenuService, MenuService>()
+                    .AddScoped<IPermissionCacheInvalidator, PermissionCacheInvalidator>()
+                    .AddScoped<IUserAuthCacheInvalidator, UserAuthCacheInvalidator>()
+                    .AddScoped<IUserAuthCacheService, UserAuthCacheService>();
 
             #endregion Dependency injection
 

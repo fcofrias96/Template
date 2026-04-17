@@ -116,7 +116,7 @@ namespace Template.Application.Services.Base
                     var titleParagraph = new Paragraph(title)
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFontSize(18)
-                        .SetBold();
+                        .SimulateBold();
                     document.Add(titleParagraph);
 
                     document.Add(new Paragraph("\n"));

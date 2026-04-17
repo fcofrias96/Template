@@ -20,7 +20,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Services.Base
 {
-    public class BaseService<TEntity> : ExportService<TEntity>, IBaseService<TEntity>
+    public abstract class BaseService<TEntity> : ExportService<TEntity>, IBaseService<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly ICacheService _cache;

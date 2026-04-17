@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Template.Application.Contracts;
 using Template.Persistence.DbContexts.V1;
 
-namespace Template.Application.Services
+namespace Template.Persistence.Services.V1
 {
     public sealed class UnitOfWork : IUnitOfWork
     {

@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Template.Application.Attributes;
 using AllowedValuesAttribute = Template.Application.Attributes.AllowedValuesAttribute;
@@ -8,7 +7,19 @@ namespace Template.Application.SchemaFilter
 {
     public class CustomValidationSchemaFilter : ISchemaFilter
     {
-        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+        private static void AppendDescription(IOpenApiSchema schema, string description)
+        {
+            if (!string.IsNullOrEmpty(schema.Description))
+            {
+                schema.Description += " " + description;
+            }
+            else
+            {
+                schema.Description = description;
+            }
+        }
+
+        public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
         {
             if (context.MemberInfo != null)
             {
@@ -48,25 +59,19 @@ namespace Template.Application.SchemaFilter
                 var allowedValuesAttribute = attributes.OfType<AllowedValuesAttribute>().FirstOrDefault();
                 if (allowedValuesAttribute != null)
                 {
-                    // Set the enum values in the schema to show a catalog in Swagger UI
-                    schema.Enum = allowedValuesAttribute.AllowedValues
+                    // IOpenApiSchema.Enum is read-only in Microsoft.OpenApi v1.0+ (JsonNode-based).
+                    // Expose the allowed values via the description instead of attempting to assign Enum.
+                    var allowed = allowedValuesAttribute.AllowedValues
                         .Where(v => v is not null)
-                        .Select(value => new OpenApiString((string)value))
-                        .Cast<IOpenApiAny>()
-                        .ToList();
-                }
-            }
-        }
+                        .Select(v => v!.ToString())
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                        .ToArray();
 
-        private static void AppendDescription(OpenApiSchema schema, string description)
-        {
-            if (!string.IsNullOrEmpty(schema.Description))
-            {
-                schema.Description += " " + description;
-            }
-            else
-            {
-                schema.Description = description;
+                    if (allowed.Length > 0)
+                    {
+                        AppendDescription(schema, $"Valores permitidos: {string.Join(", ", allowed)}.");
+                    }
+                }
             }
         }
     }

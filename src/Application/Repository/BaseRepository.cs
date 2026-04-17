@@ -7,7 +7,7 @@ using Template.Domain.Contracts;
 
 namespace Template.Application.Repository
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity>
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : class, IEntityBase
     {
         private readonly DbContext _dbContext;
