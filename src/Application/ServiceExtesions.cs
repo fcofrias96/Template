@@ -49,7 +49,7 @@ namespace Template.Application
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
             services.AddMemoryCache();
-
+            services.AddHealthChecks();
             services.AddMvc(options => options.SuppressAsyncSuffixInActionNames = false);
 
             services.AddSwaggerGen(SwaggerGen.Options);

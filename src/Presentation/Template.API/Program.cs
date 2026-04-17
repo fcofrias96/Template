@@ -1,3 +1,4 @@
+using Prometheus;
 using Serilog;
 using Template.Api.Middlewares;
 using Template.Application;
@@ -12,14 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddApplicationLayer(configuration);
-builder.Services.AddIdentityInfrastructure(configuration);
+builder.Services.AddSecurityInfrastructure(configuration);
 builder.Services.AddPersistenceInfrastructure(configuration);
 builder.Services.AddInfrastructureEmail(configuration);
 builder.AddMonitoringInfrastructure(configuration);
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -45,7 +46,8 @@ app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapHealthChecks("/health");
+ 
 try
 {
     Log.Information("Starting API");

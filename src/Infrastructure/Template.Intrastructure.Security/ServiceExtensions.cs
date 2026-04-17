@@ -30,7 +30,7 @@ namespace Template.Security
 {
     public static class ServiceExtensions
     {
-        public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddSecurityInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             #region DbContext
 
