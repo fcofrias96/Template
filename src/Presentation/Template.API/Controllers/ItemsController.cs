@@ -65,11 +65,20 @@ namespace Template.Api.Controllers
 
         [Permission(Resource.Item, PermissionAction.Update)]
         [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchAsync(int id, [FromBody] ItemPatchDto itemPatchDTO, CancellationToken cancellationToken)
+        {
+            await _itemServiceAsync.PatchAsync(id, itemPatchDTO, cancellationToken);
+            return NoContent();
+        }
+
+        [Permission(Resource.Item, PermissionAction.Update)]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] ItemUpdateDto itemUpdateDTO, CancellationToken cancellationToken)
         {
             await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO, cancellationToken);
             return NoContent();
         }
+
 
         [Permission(Resource.Item, PermissionAction.Export)]
         [HttpGet("export/docx")]

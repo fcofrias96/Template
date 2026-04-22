@@ -64,6 +64,14 @@ namespace Template.Api.Controllers
 
         [Permission(Resource.Category, PermissionAction.Update)]
         [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchCategoryAsync(int id, [FromBody] CategoryPatchDto categoryPatchDTO, CancellationToken cancellationToken)
+        {
+            await _categoryServiceAsync.PatchAsync(id, categoryPatchDTO, cancellationToken);
+            return NoContent();
+        }
+
+        [Permission(Resource.Category, PermissionAction.Update)]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO, CancellationToken cancellationToken)
         {
             await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);

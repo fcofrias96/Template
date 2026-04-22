@@ -12,4 +12,5 @@
             Func<CancellationToken, Task<TResult>> operation,
             CancellationToken cancellationToken = default);
     }
+
 }

@@ -61,7 +61,7 @@ namespace Template.Api.Controllers.Security
             }
 
             [Permission(Resource.Role, PermissionAction.Update)]
-            [HttpPatch("{id}")]
+            [HttpPut("{id}")]
             public async Task<ActionResult> UpdateRole(
                 int id,
                 [FromBody] RoleUpdateDto roleUpdateDTO,

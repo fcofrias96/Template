@@ -60,7 +60,7 @@ namespace Template.Api.Controllers.Security
         }
 
         [Permission(Resource.ResourceItem, PermissionAction.Update)]
-        [HttpPatch("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateResource(int id, [FromBody] ResourceUpdateDto resourceUpdateDTO, CancellationToken cancellationToken)
         {
             await _resourceService.UpdateAsync(id, resourceUpdateDTO, cancellationToken);

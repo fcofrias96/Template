@@ -1,21 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Template.Application.Contracts;
 
 namespace Template.Application.Models.DTOs.V1.Items
 {
-    public class ItemUpdateDto
+    public sealed class ItemUpdateDto : IUpdateDto
     {
         [Required]
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; init; } = null!;
 
         [Range(1, int.MaxValue)]
-        public int CategoryId { get; set; }
+        public int CategoryId { get; init; }
 
-        public decimal Price { get; set; }
+        [Range(0, double.MaxValue)]
+        public decimal Price { get; init; }
 
         [Required]
-        public string Description { get; set; }
+        public string Description { get; init; } = null!;
     }
 }

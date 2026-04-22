@@ -1,4 +1,3 @@
-using Prometheus;
 using Serilog;
 using Template.Api.Middlewares;
 using Template.Application;

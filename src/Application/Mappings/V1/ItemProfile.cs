@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Template.Application.Extensions;
 using Template.Application.Models.DTOs.V1.Items;
 using Template.Domain.Entities.V1;
 
@@ -15,7 +16,8 @@ namespace Template.Application.Mappings.V1
             CreateMap<Item, ItemListDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<ItemCreateDto, Item>();
-            CreateMap<ItemUpdateDto, Item>();
+            CreateMap<ItemUpdateDto, Item>().ApplyUpdateConvention();
+            CreateMap<ItemPatchDto, Item>().ApplyPatchConvention();
         }
     }
 }

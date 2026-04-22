@@ -1,8 +1,10 @@
-﻿namespace Template.Application.Models.DTOs.V1.Roles
+﻿using Template.Application.Contracts;
+
+namespace Template.Application.Models.DTOs.V1.Roles
 {
-    public record RoleUpdateDto
+    public record RoleUpdateDto: IUpdateDto
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string NormalizedName
         {

@@ -43,7 +43,7 @@ namespace Template.Security.Services.V1
         }
 
 
-        public override async Task UpdateAsync< TSource>(
+        public override async Task PatchAsync< TSource>(
             int id,
             TSource source,
             CancellationToken cancellationToken)
@@ -57,7 +57,7 @@ namespace Template.Security.Services.V1
                 await InvalidatePermissionsCacheForRoleAsync(roleId, cancellationToken);
             }
 
-            await base.UpdateAsync(id, source, cancellationToken);
+            await base.PatchAsync(id, source, cancellationToken);
         }
 
         public async Task UpdatePermissionsAsync(int roleId, IEnumerable<int> permissionIds, CancellationToken cancellationToken)

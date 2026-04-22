@@ -1,8 +1,14 @@
-﻿namespace Template.Application.Models.DTOs.V1.Categories
+﻿using ServiceStack.DataAnnotations;
+using Template.Application.Contracts;
+
+namespace Template.Application.Models.DTOs.V1.Categories
 {
-    public class CategoryUpdateDto
+    public sealed class CategoryUpdateDto : IUpdateDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        [Range(1, int.MaxValue)]
+        public int Id { get; init; }
+
+        [Required]
+        public required string Name { get; init; }
     }
 }

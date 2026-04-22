@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using ServiceStack.Model;
 using System.Reflection;
 using Template.Application.Caching;
 using Template.Application.Caching.Contexts;
@@ -144,23 +145,56 @@ namespace Template.Application.Services.Base
             return entity;
         }
 
-        public virtual async Task UpdateAsync<TSource>(int id, TSource source, CancellationToken cancellationToken)
+
+        protected virtual async Task<TEntity> GetValidatedEntityForUpdateAsync<TSource>(
+            int id,
+            TSource source,
+            CancellationToken cancellationToken)
+            where TSource : class, IHasId
         {
-            var propertyInfo = typeof(TSource).GetProperty("Id", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            if (propertyInfo == null)
-                throw new BadRequestException("The entity does not have an Id property");
+            ArgumentNullException.ThrowIfNull(source);
 
-            var sourceId = propertyInfo.GetValue(source);
+            if (id <= 0)
+            {
+                throw new BadRequestException("The request id must be greater than zero.");
+            }
 
-            if (!EqualityComparer<int?>.Default.Equals(id, (int?)sourceId))
-                throw new BadRequestException("Invalid Id used in request");
+            if (source.Id != id)
+            {
+                throw new BadRequestException("The route id does not match the payload id.");
+            }
 
-            var entity = await GetByIdAsync(id, cancellationToken);
+            return await GetByIdAsync(id, cancellationToken);
+        }
+
+        public virtual async Task UpdateAsync<TSource>(
+            int id,
+            TSource source,
+            CancellationToken cancellationToken)
+            where TSource : class, IHasId
+        {
+            var entity = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+
             _mapper.Map(source, entity);
 
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
             await InvalidateAfterWriteAsync(entity, cancellationToken);
         }
+
+        public virtual async Task PatchAsync<TSource>(
+            int id,
+            TSource source,
+            CancellationToken cancellationToken)
+            where TSource : class, IHasId
+        {
+            var entity = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+
+            _mapper.Map(source, entity);
+
+            await _repositoryAsync.UpdateAsync(entity, cancellationToken);
+            await InvalidateAfterWriteAsync(entity, cancellationToken);
+        }
+
 
         public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TDestination>(int id, CancellationToken cancellationToken)
         {
@@ -299,17 +333,6 @@ namespace Template.Application.Services.Base
         }
 
 
-        private static string BuildStableEtagFromObject<TDestination>(string entityName, int id, TDestination obj)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(obj, new System.Text.Json.JsonSerializerOptions
-            {
-                WriteIndented = false
-            });
-
-            var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(json));
-            var shortHash = Convert.ToHexString(bytes).Substring(0, 16);
-            return $"\"{entityName}:{id}:{shortHash}\"";
-        }
 
         // =========================
         // Pagination (no cache)
