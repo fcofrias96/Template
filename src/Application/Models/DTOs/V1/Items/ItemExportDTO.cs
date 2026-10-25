@@ -1,9 +1,22 @@
-﻿using Template.Application.Attributes;
+﻿using System.Linq.Expressions;
+using Template.Application.Attributes;
+using Template.Application.Contracts.Mapping;
+using Template.Domain.Entities.V1;
 
 namespace Template.Application.Models.DTOs.V1.Items
 {
-    public class ItemExportDto
+    public class ItemExportDto: IProjection<Item, ItemExportDto>
     {
+        public static Expression<Func<Item, ItemExportDto>> Projection => iten=> new ItemExportDto
+        {
+            Name = iten.Name,
+            Category = iten.Category.Name,
+            Price = iten.Price,
+            Description = iten.Description,
+            Active = !iten.IsDeleted,
+            CreatedAt = iten.CreatedAt
+        };
+
         [DisplayName("Nombre")]
         public string Name { get; set; }
 

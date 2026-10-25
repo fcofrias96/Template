@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Template.Application.Contracts;
 using Template.Application.Contracts.Repositories.Base;
@@ -11,82 +10,125 @@ namespace Template.Application.Repository
         where TEntity : class, IEntityBase
     {
         private readonly DbContext _dbContext;
-
-        private readonly IConfigurationProvider _configurationProvider;
         private readonly DbSet<TEntity> _dbSet;
 
-        public BaseRepository(DbContext dbContext, IConfigurationProvider configurationProvider)
+        protected BaseRepository(DbContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _dbSet = dbContext.Set<TEntity>();
-            _configurationProvider = configurationProvider;
         }
 
         public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            ArgumentNullException.ThrowIfNull(entity);
+
+            await _dbSet.AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task HardDeletesAsync(TEntity entity, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(entity);
+
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(
+            Expression<Func<TEntity, TDestination>> projection,
+            CancellationToken cancellationToken)
         {
-            return await _dbSet.AsNoTracking()
-                              .ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync(cancellationToken);
+            ArgumentNullException.ThrowIfNull(projection);
+
+            return await _dbSet
+                .AsNoTracking()
+                .Select(projection)
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<TDestination>> GetProjectedAsync<TDestination>(
+            ISpecification<TEntity> spec,
+            Expression<Func<TEntity, TDestination>> projection,
+            CancellationToken cancellationToken)
         {
-            var query = _dbSet.AsQueryable().AsNoTracking();
-            query = ApplySpecification(query, spec, false);
+            ArgumentNullException.ThrowIfNull(spec);
+            ArgumentNullException.ThrowIfNull(projection);
 
-            return await query.ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync(cancellationToken);
-        }
+            var query = _dbSet
+                .AsQueryable()
+                .AsNoTracking();
 
-        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
-        {
-            var query = _dbSet.AsQueryable().AsNoTracking();
-            query = ApplySpecification(query, spec);
-
-            return await query.ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync(cancellationToken);
-        }
-
-        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(ISpecification<TEntity> spec, CancellationToken cancellationToken)
-        {
-            var query = _dbSet.AsQueryable().AsNoTracking();
             query = ApplySpecification(query, spec, applyPagination: false);
 
-            return await query.ProjectTo<TDestination>(_configurationProvider)
-                              .ToListAsync(cancellationToken);
+            return await query
+                .Select(projection)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<TDestination>> GetProjectedPaginatedAsync<TDestination>(
+            ISpecification<TEntity> spec,
+            Expression<Func<TEntity, TDestination>> projection,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(spec);
+            ArgumentNullException.ThrowIfNull(projection);
+
+            var query = _dbSet
+                .AsQueryable()
+                .AsNoTracking();
+
+            query = ApplySpecification(query, spec);
+
+            return await query
+                .Select(projection)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<TDestination>> GetProjectedForExportAsync<TDestination>(
+            ISpecification<TEntity> spec,
+            Expression<Func<TEntity, TDestination>> projection,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(spec);
+            ArgumentNullException.ThrowIfNull(projection);
+
+            var query = _dbSet
+                .AsQueryable()
+                .AsNoTracking();
+
+            query = ApplySpecification(query, spec, applyPagination: false);
+
+            return await query
+                .Select(projection)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _dbSet.FindAsync(new object?[] { id, cancellationToken }, cancellationToken: cancellationToken);
+            return await _dbSet.FindAsync(new object?[] { id }, cancellationToken);
         }
 
-        public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(int id, CancellationToken cancellationToken)
+        public async Task<TDestination?> GetByIdProjectedAsync<TDestination>(
+            int id,
+            Expression<Func<TEntity, TDestination>> projection,
+            CancellationToken cancellationToken)
         {
-            var query = _dbSet.AsQueryable().AsNoTracking();
+            ArgumentNullException.ThrowIfNull(projection);
 
-            return await query.Where(x => x.Id.Equals(id))
-                              .ProjectTo<TDestination>(_configurationProvider)
-                              .FirstOrDefaultAsync(cancellationToken);
+            return await _dbSet
+                .AsNoTracking()
+                .Where(entity => entity.Id == id)
+                .Select(projection)
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<int> GetTotalCountAsync(ISpecification<TEntity> spec, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(spec);
+
             var query = _dbSet.AsQueryable();
 
-            if (spec.Criteria != null)
+            if (spec.Criteria is not null)
             {
                 query = query.Where(spec.Criteria);
             }
@@ -96,18 +138,24 @@ namespace Template.Application.Repository
 
         public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(entity);
+
             _dbSet.Update(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        private static IQueryable<TEntity> ApplySpecification(IQueryable<TEntity> query, ISpecification<TEntity> spec, bool applyPagination = true, bool applySorting = true)
+        private static IQueryable<TEntity> ApplySpecification(
+            IQueryable<TEntity> query,
+            ISpecification<TEntity> spec,
+            bool applyPagination = true,
+            bool applySorting = true)
         {
-            if (spec.Criteria != null)
+            if (spec.Criteria is not null)
             {
                 query = query.Where(spec.Criteria);
             }
 
-            if (applySorting)
+            if (applySorting && spec.SortBy is not null)
             {
                 query = spec.IsDescending
                     ? query.OrderByDescending(spec.SortBy)
@@ -122,30 +170,42 @@ namespace Template.Application.Repository
             return query;
         }
 
-        public async Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(ISpecification<TEntity>? spec = default, CancellationToken cancellationToken = default)
+        public async Task<(DateTimeOffset LastModifiedAt, int Count)> GetListMetadataAsync(
+            ISpecification<TEntity>? spec = default,
+            CancellationToken cancellationToken = default)
         {
             var query = _dbSet.AsQueryable();
-            if (spec is not null) query = ApplySpecification(query, spec, false);
 
-            var lastModified = await query.MaxAsync(e => e.LastModifiedAt, cancellationToken) ?? DateTimeOffset.MinValue;
+            if (spec is not null)
+            {
+                query = ApplySpecification(query, spec, applyPagination: false);
+            }
+
+            var lastModifiedAt = await query.MaxAsync(entity => entity.LastModifiedAt, cancellationToken)
+                ?? DateTimeOffset.MinValue;
+
             var count = await query.CountAsync(cancellationToken);
 
-            return (lastModified, count);
+            return (lastModifiedAt, count);
         }
 
         public async Task<byte[]?> GetRowVersionAsync(int id, CancellationToken cancellationToken)
         {
-            return await _dbSet.AsNoTracking()
-                .Where(e => e.Id.Equals(id))
-                .Select(e => e.RowVersion)
+            return await _dbSet
+                .AsNoTracking()
+                .Where(entity => entity.Id == id)
+                .Select(entity => entity.RowVersion)
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
         public async Task SoftDeleteAsync(TEntity entity, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(entity);
+
             var entry = _dbContext.Entry(entity);
             entry.State = EntityState.Modified;
-            entry.Property(p => p.IsDeleted).CurrentValue = true;
+            entry.Property(property => property.IsDeleted).CurrentValue = true;
+
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }

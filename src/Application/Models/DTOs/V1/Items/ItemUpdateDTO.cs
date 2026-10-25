@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Template.Application.Contracts;
+using Template.Application.Contracts.Mapping;
+using Template.Domain.Entities.V1;
 
 namespace Template.Application.Models.DTOs.V1.Items
 {
-    public sealed class ItemUpdateDto : IUpdateDto
+    public sealed class ItemUpdateDto : IUpdateMapTo<Item>
     {
         [Required]
         public int Id { get; init; }
@@ -19,5 +21,15 @@ namespace Template.Application.Models.DTOs.V1.Items
 
         [Required]
         public string Description { get; init; } = null!;
+
+        public void ApplyTo(Item entity)
+        {
+            ArgumentNullException.ThrowIfNull(entity);
+
+            entity.Name = Name;
+            entity.CategoryId = CategoryId;
+            entity.Price = Price;
+            entity.Description = Description;
+        }
     }
 }

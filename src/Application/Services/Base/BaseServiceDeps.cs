@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Template.Application.Contracts.Caching;
 using Template.Application.Contracts.Etag;
 using Template.Application.Contracts.Repositories.Base;
@@ -13,7 +12,6 @@ namespace Template.Application.Services.Base
         ICacheNamespaceVersion CacheNs,
         ICacheKeyFactory CacheKeyFactory,
         ICachePolicyRegistry Policies,
-        IMapper Mapper,
         IBaseRepository<TEntity> Repository,
         IHttpContextAccessor Http,
         IEtagCacheExecutor EtagCache,

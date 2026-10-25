@@ -7,7 +7,7 @@ namespace Template.Application.Contracts.Services.Base
         ICreateService<TEntity>,
         IDeleteService,
         IReadService<TEntity>,
-        IUpdateService
+        IUpdateService<TEntity>
         where TEntity : class, IEntityBase
 
     {
