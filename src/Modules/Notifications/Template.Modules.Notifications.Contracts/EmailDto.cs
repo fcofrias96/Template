@@ -1,0 +1,9 @@
+namespace Template.Modules.Notifications.Contracts
+{
+    public class EmailDto
+    {
+        public string Body { get; set; }
+        public string Subject { get; set; }
+        public string To { get; set; }
+    }
+}

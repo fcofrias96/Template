@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Public surface of the Catalog module. Other modules may reference ONLY this project. -->
+
+</Project>

@@ -1,38 +1,30 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <!-- Host / composition root of the modular monolith: it only wires modules and cross-cutting building blocks. -->
 
     <PropertyGroup>
-      <TargetFramework>net10.0</TargetFramework>
-      <ImplicitUsings>enable</ImplicitUsings>
-      <Nullable>enable</Nullable>
       <OutputType>Exe</OutputType>
-
     </PropertyGroup>
-
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.6">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        <TreatAsUsed>true</TreatAsUsed>
       </PackageReference>
+      <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.1.7" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.7" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
     </ItemGroup>
 
-
     <ItemGroup>
-      <ProjectReference Include="..\..\Application\Template.Application.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\Template.Infrastructure.Monitoring\Template.Monitoring.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Email\Template.Email.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Persistence\Template.Persistence.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\Template.Intrastructure.Security\Template.Security.csproj" />
+      <ProjectReference Include="..\..\BuildingBlocks\Template.BuildingBlocks.Infrastructure\Template.BuildingBlocks.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\BuildingBlocks\Template.BuildingBlocks.Monitoring\Template.BuildingBlocks.Monitoring.csproj" />
+      <ProjectReference Include="..\..\BuildingBlocks\Template.BuildingBlocks.Web\Template.BuildingBlocks.Web.csproj" />
+      <ProjectReference Include="..\..\Modules\Catalog\Template.Modules.Catalog.Api\Template.Modules.Catalog.Api.csproj" />
+      <ProjectReference Include="..\..\Modules\Identity\Template.Modules.Identity.Api\Template.Modules.Identity.Api.csproj" />
+      <ProjectReference Include="..\..\Modules\Notifications\Template.Modules.Notifications.Infrastructure\Template.Modules.Notifications.Infrastructure.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Properties\PublishProfiles\" />
-    </ItemGroup>
-
-
-  
-  </Project>
-  
+</Project>

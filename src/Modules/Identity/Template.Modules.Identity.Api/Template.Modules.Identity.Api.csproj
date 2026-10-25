@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Module entry point: controllers + AddIdentityModule(). The host references only this project. -->
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Template.BuildingBlocks.Web\Template.BuildingBlocks.Web.csproj" />
+    <ProjectReference Include="..\Template.Modules.Identity.Infrastructure\Template.Modules.Identity.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

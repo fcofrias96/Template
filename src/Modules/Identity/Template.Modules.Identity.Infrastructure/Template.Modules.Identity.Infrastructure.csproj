@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <UserSecretsId>ce00ab18-9928-4cd2-a132-aef2bd296028</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Template.BuildingBlocks.Infrastructure\Template.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\Template.Modules.Identity.Application\Template.Modules.Identity.Application.csproj" />
+  </ItemGroup>
+
+</Project>

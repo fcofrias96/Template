@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Module entry point: controllers + AddCatalogModule(). The host references only this project. -->
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Template.BuildingBlocks.Web\Template.BuildingBlocks.Web.csproj" />
+    <ProjectReference Include="..\..\Identity\Template.Modules.Identity.Contracts\Template.Modules.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\Template.Modules.Catalog.Contracts\Template.Modules.Catalog.Contracts.csproj" />
+    <ProjectReference Include="..\Template.Modules.Catalog.Infrastructure\Template.Modules.Catalog.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,110 @@
+using Microsoft.AspNetCore.Mvc;
+using Template.Modules.Identity.Contracts.Authorization;
+using Template.BuildingBlocks.Application.Constants;
+using Template.Modules.Catalog.Application.Dtos.Items;
+using Template.BuildingBlocks.Application.Models.Specification;
+
+using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.Modules.Catalog.Domain.Entities;
+using Template.Modules.Catalog.Application.Contracts.Services;
+
+namespace Template.Modules.Catalog.Api.Controllers
+{
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    [ApiVersion("1.0")]
+    public class ItemsController : ControllerBase
+    {
+        #region Private Variable
+
+        private readonly IItemService _itemServiceAsync;
+
+        #endregion Private Variable
+
+        public ItemsController(IItemService itemServiceAsync)
+        {
+            _itemServiceAsync = itemServiceAsync;
+        }
+
+        #region Actions
+
+        [Permission(PermissionResources.Item, PermissionActions.Delete)]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
+        {
+            await _itemServiceAsync.PermanentDeleteAsync(id, cancellationToken);
+            return NoContent();
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Read)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            var response = await _itemServiceAsync.GetByIdProjectedAsync<ItemDetailDto>(id, cancellationToken);
+            return Ok(response);
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Read)]
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        {
+            var specification = new Specification<Item>(request);
+            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto>(specification, cancellationToken);
+            return Ok(response);
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Create)]
+        [HttpPost]
+        public async Task<ActionResult<ItemDetailDto>> CreateAsync([FromBody] ItemCreateDto itemCreateDTO, CancellationToken cancellationToken)
+        {
+            var item = await _itemServiceAsync.CreateAsync<ItemCreateDto>(itemCreateDTO, cancellationToken);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = item.Id }, item);
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Update)]
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchAsync(int id, [FromBody] ItemPatchDto itemPatchDTO, CancellationToken cancellationToken)
+        {
+            await _itemServiceAsync.PatchAsync(id, itemPatchDTO, cancellationToken);
+            return NoContent();
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Update)]
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateAsync(int id, [FromBody] ItemUpdateDto itemUpdateDTO, CancellationToken cancellationToken)
+        {
+            await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO, cancellationToken);
+            return NoContent();
+        }
+
+
+        [Permission(PermissionResources.Item, PermissionActions.Export)]
+        [HttpGet("export/docx")]
+        public async Task<FileResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        {
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToDocxAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
+            return File(file, FileContentType.DOC, "Items.docx");
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Export)]
+        [HttpGet("export/pdf")]
+        public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        {
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
+            return File(file, FileContentType.PDF, "Items.pdf");
+        }
+
+        [Permission(PermissionResources.Item, PermissionActions.Export)]
+        [HttpGet("export/csv")]
+        public async Task<FileResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        {
+            var specification = new Specification<Item>(request);
+            var file = await _itemServiceAsync.ExportToCSVAsync<ItemExportDto>("Artículos", specification, cancellationToken);
+            return File(file, FileContentType.CSV, "Items.csv");
+        }
+
+        #endregion Actions
+    }
+}

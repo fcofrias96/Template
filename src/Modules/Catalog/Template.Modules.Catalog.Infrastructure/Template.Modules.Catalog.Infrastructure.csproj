@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Template.BuildingBlocks.Infrastructure\Template.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\Template.Modules.Catalog.Application\Template.Modules.Catalog.Application.csproj" />
+  </ItemGroup>
+
+</Project>

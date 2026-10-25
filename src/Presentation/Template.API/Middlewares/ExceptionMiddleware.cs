@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Template.Application.Enums;
-using Template.Application.Exceptions;
-using Template.Application.Extensions;
+using Template.BuildingBlocks.Application.Enums;
+using Template.BuildingBlocks.Application.Exceptions;
+using Template.BuildingBlocks.Application.Extensions;
 
 namespace Template.Api.Middlewares
 {

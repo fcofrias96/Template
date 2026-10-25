@@ -1,21 +1,25 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
+using Template.Api;
 using Template.Api.Middlewares;
-using Template.Application;
-using Template.Email;
-using Template.Monitoring;
-using Template.Monitoring.Middlewares;
-using Template.Persistence;
-using Template.Security;
+using Template.BuildingBlocks.Monitoring;
+using Template.BuildingBlocks.Monitoring.Middlewares;
+using Template.Modules.Catalog.Api;
+using Template.Modules.Identity.Api;
+using Template.Modules.Notifications.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddApplicationLayer(configuration);
-builder.Services.AddSecurityInfrastructure(configuration);
-builder.Services.AddPersistenceInfrastructure(configuration);
-builder.Services.AddInfrastructureEmail(configuration);
+// Host services and cross-cutting building blocks
+builder.Services.AddApiServices(configuration);
 builder.AddMonitoringInfrastructure(configuration);
+
+// Modules
+builder.Services.AddIdentityModule(configuration);
+builder.Services.AddCatalogModule(configuration);
+builder.Services.AddNotificationsModule(configuration);
 
 
 var app = builder.Build();
@@ -45,7 +49,9 @@ app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+// Readiness: every module's database must be reachable. Liveness: the process answers (no dependencies).
 app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
  
 try
 {

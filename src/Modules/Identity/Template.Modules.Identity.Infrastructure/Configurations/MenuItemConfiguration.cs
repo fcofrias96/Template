@@ -1,0 +1,41 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Template.BuildingBlocks.Infrastructure.Persistence;
+using Template.Modules.Identity.Domain.Entities;
+using Template.Modules.Identity.Infrastructure.Seeds;
+
+namespace Template.Modules.Identity.Infrastructure.Configurations
+{
+    public class MenuItemConfiguration : EntityBaseConfiguration<MenuItem>
+    {
+        public override void Configure(EntityTypeBuilder<MenuItem> builder)
+        {
+            builder.HasIndex(x => new { x.ParentId, x.Order })
+                .IsUnique();
+
+            builder.HasOne(e => e.Parent)
+            .WithMany(e => e.Children)
+            .HasForeignKey(e => e.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(e => e.Url)
+                .IsRequired(false)
+                .HasMaxLength(200);
+
+            builder.Property(e => e.Icon)
+                .HasMaxLength(100);
+
+            builder.HasOne(e => e.Permission)
+                .WithMany()
+                .HasForeignKey(e => e.PermissionId);
+
+            builder.HasData(MenuItemSeed.Data);
+
+            base.Configure(builder);
+        }
+    }
+}

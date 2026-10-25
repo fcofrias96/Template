@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- HTTP helpers shared by the module Api projects (controller registration, ETag results).
+       Host-only setup (Swagger, API versioning options, CORS, ...) lives in Template.Api. -->
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- [ApiVersion] on module controllers. -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Template.BuildingBlocks.Application\Template.BuildingBlocks.Application.csproj" />
+  </ItemGroup>
+
+</Project>
