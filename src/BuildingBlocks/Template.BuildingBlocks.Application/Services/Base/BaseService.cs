@@ -6,10 +6,11 @@ using Template.BuildingBlocks.Application.Contracts;
 using Template.BuildingBlocks.Application.Contracts.Mapping;
 using Template.BuildingBlocks.Application.Contracts.Repositories.Base;
 using Template.BuildingBlocks.Application.Contracts.Services.Base;
-using Template.BuildingBlocks.Application.Exceptions;
+using Template.BuildingBlocks.Application.Errors;
 using Template.BuildingBlocks.Application.Models.Wrappers;
 using Template.BuildingBlocks.Application.Utilities;
 using Template.SharedKernel.Domain;
+using Template.SharedKernel.Results;
 
 namespace Template.BuildingBlocks.Application.Services.Base
 {
@@ -73,35 +74,51 @@ namespace Template.BuildingBlocks.Application.Services.Base
             return entity;
         }
 
-        public async Task SoftDeleteAsync(int id, CancellationToken cancellationToken)
+        public async Task<Result> SoftDeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var entity = await GetByIdAsync(id, cancellationToken);
+            var entityResult = await GetByIdAsync(id, cancellationToken);
+            if (entityResult.IsFailure)
+            {
+                return entityResult.Error;
+            }
+
+            var entity = entityResult.Value;
 
             await _repositoryAsync.SoftDeleteAsync(entity, cancellationToken);
             await InvalidateAfterWriteAsync(entity, cancellationToken);
+
+            return Result.Success();
         }
 
-        public virtual async Task PermanentDeleteAsync(int id, CancellationToken cancellationToken)
+        public virtual async Task<Result> PermanentDeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var entity = await GetByIdAsync(id, cancellationToken);
+            var entityResult = await GetByIdAsync(id, cancellationToken);
+            if (entityResult.IsFailure)
+            {
+                return entityResult.Error;
+            }
+
+            var entity = entityResult.Value;
 
             await _repositoryAsync.HardDeletesAsync(entity, cancellationToken);
             await InvalidateAfterWriteAsync(entity, cancellationToken);
+
+            return Result.Success();
         }
 
-        public async Task<TEntity> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<Result<TEntity>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             var entity = await _repositoryAsync.GetByIdAsync(id, cancellationToken);
 
             if (entity is null)
             {
-                throw new NotFoundException(typeof(TEntity).Name, id);
+                return EntityErrors.NotFound(EntityName, id);
             }
 
-            return entity;
+            return Result.Success(entity);
         }
 
-        protected virtual async Task<TEntity> GetValidatedEntityForUpdateAsync<TSource>(
+        protected virtual async Task<Result<TEntity>> GetValidatedEntityForUpdateAsync<TSource>(
             int id,
             TSource source,
             CancellationToken cancellationToken)
@@ -111,46 +128,62 @@ namespace Template.BuildingBlocks.Application.Services.Base
 
             if (id <= 0)
             {
-                throw new BadRequestException("The request id must be greater than zero.");
+                return EntityErrors.InvalidId;
             }
 
             if (source.Id != id)
             {
-                throw new BadRequestException("The route id does not match the payload id.");
+                return EntityErrors.IdMismatch;
             }
 
             return await GetByIdAsync(id, cancellationToken);
         }
 
-        public virtual async Task UpdateAsync<TSource>(
+        public virtual async Task<Result> UpdateAsync<TSource>(
             int id,
             TSource source,
             CancellationToken cancellationToken)
             where TSource : class, IHasId, IUpdateMapTo<TEntity>
         {
-            var entity = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+            var entityResult = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+            if (entityResult.IsFailure)
+            {
+                return entityResult.Error;
+            }
+
+            var entity = entityResult.Value;
 
             source.ApplyTo(entity);
 
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
             await InvalidateAfterWriteAsync(entity, cancellationToken);
+
+            return Result.Success();
         }
 
-        public virtual async Task PatchAsync<TSource>(
+        public virtual async Task<Result> PatchAsync<TSource>(
             int id,
             TSource source,
             CancellationToken cancellationToken)
             where TSource : class, IHasId, IUpdateMapTo<TEntity>
         {
-            var entity = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+            var entityResult = await GetValidatedEntityForUpdateAsync(id, source, cancellationToken);
+            if (entityResult.IsFailure)
+            {
+                return entityResult.Error;
+            }
+
+            var entity = entityResult.Value;
 
             source.ApplyTo(entity);
 
             await _repositoryAsync.UpdateAsync(entity, cancellationToken);
             await InvalidateAfterWriteAsync(entity, cancellationToken);
+
+            return Result.Success();
         }
 
-        public virtual async Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TDestination>(
+        public virtual async Task<Result<TDestination>> GetByIdProjectedAsync<TDestination>(
             int id,
             CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>
@@ -162,10 +195,10 @@ namespace Template.BuildingBlocks.Application.Services.Base
 
             if (mappedEntity is null)
             {
-                throw new NotFoundException(typeof(TEntity).Name, id);
+                return EntityErrors.NotFound(EntityName, id);
             }
 
-            return new ApiResponse<TDestination>(mappedEntity);
+            return Result.Success(mappedEntity);
         }
 
         public async Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(
@@ -221,29 +254,18 @@ namespace Template.BuildingBlocks.Application.Services.Base
                 cancellationToken);
         }
 
-        public virtual async Task<EtagResult<TDestination>> GetByIdProjectedWithEtagAsync<TDestination>(
+        public virtual async Task<Result<EtagResult<TDestination>>> GetByIdProjectedWithEtagAsync<TDestination>(
             int id,
             CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return await GetWithEtagAsync(
+            var etagResult = await GetWithEtagAsync<TDestination>(
                 ItemKey<TDestination>(id),
                 ListDataTtl,
                 ItemRegion(id),
-                getEtag: async ct =>
-                {
-                    var rowVersion = await _repositoryAsync.GetRowVersionAsync(id, ct);
-
-                    if (rowVersion is null || rowVersion.Length == 0)
-                    {
-                        throw new NotFoundException(typeof(TEntity).Name, id);
-                    }
-
-                    return BuildRowVersionEtag(EntityName, id, rowVersion);
-                },
-                getData: async ct =>
+                loadEntry: async ct =>
                 {
                     var dto = await _repositoryAsync.GetByIdProjectedAsync(
                         id,
@@ -252,38 +274,39 @@ namespace Template.BuildingBlocks.Application.Services.Base
 
                     if (dto is null)
                     {
-                        throw new NotFoundException(typeof(TEntity).Name, id);
+                        return null;
                     }
 
-                    return dto;
+                    var rowVersion = await _repositoryAsync.GetRowVersionAsync(id, ct);
+
+                    if (rowVersion is null || rowVersion.Length == 0)
+                    {
+                        return null;
+                    }
+
+                    return new EtagEntry<TDestination>(dto, BuildRowVersionEtag(EntityName, id, rowVersion));
                 },
                 cancellationToken);
+
+            if (etagResult is not { } found)
+            {
+                return EntityErrors.NotFound(EntityName, id);
+            }
+
+            return Result.Success(found);
         }
 
-        public virtual async Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination>(
+        public virtual async Task<Result<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination>(
             ISpecification<TEntity> specification,
             CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>
         {
             ArgumentNullException.ThrowIfNull(specification);
 
-            if (specification.Take <= 0)
+            var totalResult = await GetValidatedTotalAsync(specification, cancellationToken);
+            if (totalResult.IsFailure)
             {
-                throw new BadRequestException("The 'limit' value must be greater than zero.");
-            }
-
-            if (specification.Skip % specification.Take != 0)
-            {
-                throw new BadRequestException(
-                    $"The 'offset' value ({specification.Skip}) must be either zero or a multiple of the 'limit' value ({specification.Take}).");
-            }
-
-            var total = await _repositoryAsync.GetTotalCountAsync(specification, cancellationToken);
-
-            if (total < specification.Skip)
-            {
-                throw new BadRequestException(
-                    $"The 'offset' value must be either zero or less than or equal to 'total' value ({total}) and a multiple of the 'limit' value ({specification.Take}).");
+                return totalResult.Error;
             }
 
             var items = await _repositoryAsync.GetProjectedPaginatedAsync(
@@ -291,27 +314,10 @@ namespace Template.BuildingBlocks.Application.Services.Base
                 TDestination.Projection,
                 cancellationToken);
 
-            var href = _httpContext.HttpContext?.Request.GetEncodedUrl()
-                ?? throw new InvalidOperationException("Current HTTP request is not available.");
-
-            var next = UrlUtile.GetNextURL(href, specification.Take, specification.Skip, total);
-            var prev = UrlUtile.GetPrevURL(href, specification.Take, specification.Skip);
-
-            var pagedCollection = new PagedCollection<TDestination>
-            {
-                HRef = href,
-                Elements = items,
-                Limit = specification.Take,
-                Next = next,
-                Offset = specification.Skip,
-                Prev = prev,
-                Total = total
-            };
-
-            return new ApiResponse<PagedCollection<TDestination>>(pagedCollection);
+            return Result.Success(BuildPagedCollection(specification, items, totalResult.Value));
         }
 
-        public virtual async Task<EtagResult<PagedCollection<TDestination>>> GetProjectedPaginatedWithEtagAsync<TDestination>(
+        public virtual async Task<Result<EtagResult<PagedCollection<TDestination>>>> GetProjectedPaginatedWithEtagAsync<TDestination>(
             ISpecification<TEntity> specification,
             string scopeName,
             int? scopeId = default,
@@ -322,26 +328,15 @@ namespace Template.BuildingBlocks.Application.Services.Base
         {
             ArgumentNullException.ThrowIfNull(specification);
 
-            if (specification.Take <= 0)
+            var totalResult = await GetValidatedTotalAsync(specification, cancellationToken);
+            if (totalResult.IsFailure)
             {
-                throw new BadRequestException("The 'limit' value must be greater than zero.");
+                return totalResult.Error;
             }
 
-            if (specification.Skip % specification.Take != 0)
-            {
-                throw new BadRequestException(
-                    $"The 'offset' value ({specification.Skip}) must be either zero or a multiple of the 'limit' value ({specification.Take}).");
-            }
+            var total = totalResult.Value;
 
-            var total = await _repositoryAsync.GetTotalCountAsync(specification, cancellationToken);
-
-            if (total < specification.Skip)
-            {
-                throw new BadRequestException(
-                    $"The 'offset' value must be either zero or less than or equal to 'total' value ({total}) and a multiple of the 'limit' value ({specification.Take}).");
-            }
-
-            return await GetWithEtagAsync(
+            var etagResult = await GetWithEtagAsync(
                 PageKey<TDestination>(scopeName, scopeId, specification.Skip, specification.Take, sort, filterSignature),
                 PageDataTtl,
                 EntityRegion,
@@ -357,24 +352,11 @@ namespace Template.BuildingBlocks.Application.Services.Base
                         TDestination.Projection,
                         ct);
 
-                    var href = _httpContext.HttpContext?.Request.GetEncodedUrl()
-                        ?? throw new InvalidOperationException("Current HTTP request is not available.");
-
-                    var next = UrlUtile.GetNextURL(href, specification.Take, specification.Skip, total);
-                    var prev = UrlUtile.GetPrevURL(href, specification.Take, specification.Skip);
-
-                    return new PagedCollection<TDestination>
-                    {
-                        HRef = href,
-                        Elements = items,
-                        Limit = specification.Take,
-                        Next = next,
-                        Offset = specification.Skip,
-                        Prev = prev,
-                        Total = total
-                    };
+                    return BuildPagedCollection(specification, items, total);
                 },
                 cancellationToken);
+
+            return Result.Success(etagResult);
         }
 
         protected virtual Task InvalidateAfterWriteAsync(TEntity entity, CancellationToken cancellationToken)
@@ -383,6 +365,58 @@ namespace Template.BuildingBlocks.Application.Services.Base
             InvalidateItem(entity.Id);
             return Task.CompletedTask;
         }
+
+        #region Pagination
+
+        /// <summary>
+        /// Validates the paging window of the specification and returns the total number of matching rows.
+        /// </summary>
+        private async Task<Result<int>> GetValidatedTotalAsync(
+            ISpecification<TEntity> specification,
+            CancellationToken cancellationToken)
+        {
+            if (specification.Take <= 0)
+            {
+                return PaginationErrors.InvalidLimit;
+            }
+
+            if (specification.Skip % specification.Take != 0)
+            {
+                return PaginationErrors.OffsetNotMultipleOfLimit(specification.Skip, specification.Take);
+            }
+
+            var total = await _repositoryAsync.GetTotalCountAsync(specification, cancellationToken);
+
+            if (total < specification.Skip)
+            {
+                return PaginationErrors.OffsetOutOfRange(total, specification.Take);
+            }
+
+            return Result.Success(total);
+        }
+
+        private PagedCollection<TDestination> BuildPagedCollection<TDestination>(
+            ISpecification<TEntity> specification,
+            IReadOnlyList<TDestination> items,
+            int total)
+        {
+            // Programming/hosting error, not a client one: these services only run inside an HTTP request.
+            var href = _httpContext.HttpContext?.Request.GetEncodedUrl()
+                ?? throw new InvalidOperationException("Current HTTP request is not available.");
+
+            return new PagedCollection<TDestination>
+            {
+                HRef = href,
+                Elements = items,
+                Limit = specification.Take,
+                Next = UrlUtile.GetNextURL(href, specification.Take, specification.Skip, total),
+                Offset = specification.Skip,
+                Prev = UrlUtile.GetPrevURL(href, specification.Take, specification.Skip),
+                Total = total
+            };
+        }
+
+        #endregion Pagination
 
         #region ETag
 
@@ -396,8 +430,7 @@ namespace Template.BuildingBlocks.Application.Services.Base
         }
 
         /// <summary>
-        /// Caches the data together with its ETag, writes the ETag response header and reports "not modified"
-        /// when it matches the request's If-None-Match header.
+        /// ETag-aware read of data that always exists (lists and pages).
         /// </summary>
         private async Task<EtagResult<T>> GetWithEtagAsync<T>(
             string key,
@@ -407,12 +440,39 @@ namespace Template.BuildingBlocks.Application.Services.Base
             Func<CancellationToken, Task<T>> getData,
             CancellationToken cancellationToken)
         {
+            var result = await GetWithEtagAsync<T>(
+                key,
+                ttl,
+                region,
+                loadEntry: async ct => new EtagEntry<T>(await getData(ct), await getEtag(ct)),
+                cancellationToken);
+
+            return result!.Value;
+        }
+
+        /// <summary>
+        /// Caches the data together with its ETag, writes the ETag response header and reports "not modified"
+        /// when it matches the request's If-None-Match header. Returns null when <paramref name="loadEntry"/>
+        /// finds nothing; a null entry is never served from the cache, so a missing row is looked up again next time.
+        /// </summary>
+        private async Task<EtagResult<T>?> GetWithEtagAsync<T>(
+            string key,
+            TimeSpan ttl,
+            string region,
+            Func<CancellationToken, Task<EtagEntry<T>?>> loadEntry,
+            CancellationToken cancellationToken)
+        {
             var entry = await _cache.GetOrCreateAsync(
                 key,
                 ttl,
-                async ct => new EtagEntry<T>(await getData(ct), await getEtag(ct)),
+                loadEntry,
                 region,
                 cancellationToken);
+
+            if (entry is null)
+            {
+                return null;
+            }
 
             var httpContext = _httpContext.HttpContext;
             var clientEtag = httpContext?.Request.Headers.IfNoneMatch.FirstOrDefault();

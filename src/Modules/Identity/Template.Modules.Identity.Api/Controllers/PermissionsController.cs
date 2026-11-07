@@ -28,17 +28,17 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<PermissionListDto>>>> GetPermissions([FromQuery] PermissionQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Permission>(request);
-            var permissions = await _permissionService.GetProjectedPaginatedAsync<PermissionListDto>(specification, cancellationToken);
-            return Ok(permissions);
+            var result = await Specification<Permission>.Create(request)
+                .BindAsync(specification => _permissionService.GetProjectedPaginatedAsync<PermissionListDto>(specification, cancellationToken));
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.Permission, PermissionActions.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<PermissionDetailDto>>> GetPermission(int id, CancellationToken cancellationToken)
         {
-            var permission = await _permissionService.GetByIdProjectedAsync<PermissionDetailDto>(id, cancellationToken);
-            return Ok(permission);
+            var result = await _permissionService.GetByIdProjectedAsync<PermissionDetailDto>(id, cancellationToken);
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.Permission, PermissionActions.Create)]
@@ -54,16 +54,16 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> UpdatePermission(int id, [FromBody] PermissionUpdateDto permissionUpdateDTO, CancellationToken cancellationToken)
         {
-            await _permissionService.UpdateAsync(id, permissionUpdateDTO, cancellationToken);
-            return NoContent();
+            var result = await _permissionService.UpdateAsync(id, permissionUpdateDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Permission, PermissionActions.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePermission(int id, CancellationToken cancellationToken)
         {
-            await _permissionService.SoftDeleteAsync(id, cancellationToken);
-            return NoContent();
+            var result = await _permissionService.SoftDeleteAsync(id, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Permission, PermissionActions.Read)]

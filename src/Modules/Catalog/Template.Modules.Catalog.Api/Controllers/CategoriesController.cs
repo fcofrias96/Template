@@ -39,41 +39,41 @@ namespace Template.Modules.Catalog.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategoryAsync(int id, CancellationToken cancellationToken)
         {
-            await _categoryServiceAsync.SoftDeleteAsync(id, cancellationToken);
-            return NoContent();
+            var result = await _categoryServiceAsync.SoftDeleteAsync(id, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Category, PermissionActions.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryListDto>>>> GetProjectedPaginatedAsync([FromQuery] CategoryQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Category>(request);
-            var response = await _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto>(specification, cancellationToken);
-            return Ok(response);
-		}
+            var result = await Specification<Category>.Create(request)
+                .BindAsync(specification => _categoryServiceAsync.GetProjectedPaginatedAsync<CategoryListDto>(specification, cancellationToken));
+            return result.ToOk();
+        }
 
         [Permission(PermissionResources.Category, PermissionActions.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<CategoryDetailDto>>> GetCategoryAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _categoryServiceAsync.GetByIdProjectedAsync<CategoryDetailDto>(id, cancellationToken);
-            return Ok(response);
+            var result = await _categoryServiceAsync.GetByIdProjectedAsync<CategoryDetailDto>(id, cancellationToken);
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.Category, PermissionActions.Update)]
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchCategoryAsync(int id, [FromBody] CategoryPatchDto categoryPatchDTO, CancellationToken cancellationToken)
         {
-            await _categoryServiceAsync.PatchAsync(id, categoryPatchDTO, cancellationToken);
-            return NoContent();
+            var result = await _categoryServiceAsync.PatchAsync(id, categoryPatchDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Category, PermissionActions.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateDto categoryUpdateDTO, CancellationToken cancellationToken)
         {
-            await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);
-            return NoContent();
+            var result = await _categoryServiceAsync.UpdateAsync(id, categoryUpdateDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.ResourceItem, PermissionActions.Read)]

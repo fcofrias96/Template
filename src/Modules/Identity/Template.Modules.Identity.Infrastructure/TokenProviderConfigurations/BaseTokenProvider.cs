@@ -1,8 +1,8 @@
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Template.Modules.Identity.Infrastructure.TokenProviderConfigurations
 {
@@ -19,60 +19,83 @@ namespace Template.Modules.Identity.Infrastructure.TokenProviderConfigurations
             _options = options.Value;
         }
 
+        /// <summary>
+        /// Returns false for any invalid token (expired, tampered, wrong user or purpose), as the
+        /// <see cref="IUserTwoFactorTokenProvider{TUser}"/> contract expects; <see cref="UserManager{TUser}"/>
+        /// then reports it as a failed <see cref="IdentityResult"/>.
+        /// </summary>
         public override async Task<bool> ValidateAsync(string purpose, string token, UserManager<TUser> manager, TUser user)
         {
-            var unprotectedData = Protector.Unprotect(Convert.FromBase64String(token));
+            byte[] unprotectedData;
+            try
+            {
+                unprotectedData = Protector.Unprotect(Convert.FromBase64String(token));
+            }
+            catch (Exception ex) when (ex is FormatException or CryptographicException)
+            {
+                _logger.LogWarning("The token could not be decoded.");
+                return false;
+            }
+
             var ms = new MemoryStream(unprotectedData);
             using (var reader = new BinaryReader(ms))
             {
-                var creationTime = new DateTimeOffset(reader.ReadInt64(), TimeSpan.Zero);
-                var expirationTime = creationTime + _options.TokenLifespan;
-                if (expirationTime < DateTimeOffset.UtcNow)
+                try
                 {
-                    _logger.LogWarning("The token has expired.");
-                    throw new SecurityTokenException("The token has expired.");
-                }
-
-                var userId = reader.ReadString();
-                var actualUserId = await manager.GetUserIdAsync(user);
-                if (userId != actualUserId)
-                {
-                    _logger.LogWarning("User IDs do not match.");
-                    throw new SecurityTokenException("Invalid token.");
-                }
-
-                var purp = reader.ReadString();
-                if (!string.Equals(purp, purpose))
-                {
-                    _logger.LogWarning("Token purpose mismatch: expected {ExpectedPurpose}, actual {ActualPurpose}.", purpose, purp);
-                    throw new SecurityTokenException("Invalid token.");
-                }
-
-                var stamp = reader.ReadString();
-                if (reader.PeekChar() != -1)
-                {
-                    _logger.LogWarning("Unexpected end of input.");
-                    throw new SecurityTokenException("Invalid token.");
-                }
-
-                if (manager.SupportsUserSecurityStamp)
-                {
-                    var isEqualsSecurityStamp = stamp == await manager.GetSecurityStampAsync(user);
-                    if (!isEqualsSecurityStamp)
+                    var creationTime = new DateTimeOffset(reader.ReadInt64(), TimeSpan.Zero);
+                    var expirationTime = creationTime + _options.TokenLifespan;
+                    if (expirationTime < DateTimeOffset.UtcNow)
                     {
-                        _logger.LogWarning("Security stamp mismatch.");
+                        _logger.LogWarning("The token has expired.");
+                        return false;
                     }
 
-                    return isEqualsSecurityStamp;
-                }
+                    var userId = reader.ReadString();
+                    var actualUserId = await manager.GetUserIdAsync(user);
+                    if (userId != actualUserId)
+                    {
+                        _logger.LogWarning("User IDs do not match.");
+                        return false;
+                    }
 
-                var stampIsEmpty = stamp == "";
-                if (!stampIsEmpty)
+                    var purp = reader.ReadString();
+                    if (!string.Equals(purp, purpose))
+                    {
+                        _logger.LogWarning("Token purpose mismatch: expected {ExpectedPurpose}, actual {ActualPurpose}.", purpose, purp);
+                        return false;
+                    }
+
+                    var stamp = reader.ReadString();
+                    if (reader.PeekChar() != -1)
+                    {
+                        _logger.LogWarning("Unexpected end of input.");
+                        return false;
+                    }
+
+                    if (manager.SupportsUserSecurityStamp)
+                    {
+                        var isEqualsSecurityStamp = stamp == await manager.GetSecurityStampAsync(user);
+                        if (!isEqualsSecurityStamp)
+                        {
+                            _logger.LogWarning("Security stamp mismatch.");
+                        }
+
+                        return isEqualsSecurityStamp;
+                    }
+
+                    var stampIsEmpty = stamp == "";
+                    if (!stampIsEmpty)
+                    {
+                        _logger.LogWarning("Security stamp is not empty.");
+                    }
+
+                    return stampIsEmpty;
+                }
+                catch (EndOfStreamException)
                 {
-                    _logger.LogWarning("Security stamp is not empty.");
+                    _logger.LogWarning("The token payload is truncated.");
+                    return false;
                 }
-
-                return stampIsEmpty;
             }
         }
     }

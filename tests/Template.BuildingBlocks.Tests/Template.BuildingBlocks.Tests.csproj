@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BuildingBlocks\Template.BuildingBlocks.Infrastructure\Template.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\Template.BuildingBlocks.Web\Template.BuildingBlocks.Web.csproj" />
   </ItemGroup>
 
 </Project>

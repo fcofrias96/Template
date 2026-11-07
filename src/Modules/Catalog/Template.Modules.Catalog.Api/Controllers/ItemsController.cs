@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Modules.Identity.Contracts.Authorization;
 using Template.BuildingBlocks.Application.Constants;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Catalog.Application.Dtos.Items;
 using Template.BuildingBlocks.Application.Models.Specification;
 
@@ -32,25 +33,25 @@ namespace Template.Modules.Catalog.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            await _itemServiceAsync.PermanentDeleteAsync(id, cancellationToken);
-            return NoContent();
+            var result = await _itemServiceAsync.PermanentDeleteAsync(id, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Read)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ItemDetailDto>>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var response = await _itemServiceAsync.GetByIdProjectedAsync<ItemDetailDto>(id, cancellationToken);
-            return Ok(response);
+            var result = await _itemServiceAsync.GetByIdProjectedAsync<ItemDetailDto>(id, cancellationToken);
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Read)]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<PagedCollection<ItemListDto>>>> GetAllAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Item>(request);
-            var response = await _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto>(specification, cancellationToken);
-            return Ok(response);
+            var result = await Specification<Item>.Create(request)
+                .BindAsync(specification => _itemServiceAsync.GetProjectedPaginatedAsync<ItemListDto>(specification, cancellationToken));
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Create)]
@@ -65,44 +66,44 @@ namespace Template.Modules.Catalog.Api.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> PatchAsync(int id, [FromBody] ItemPatchDto itemPatchDTO, CancellationToken cancellationToken)
         {
-            await _itemServiceAsync.PatchAsync(id, itemPatchDTO, cancellationToken);
-            return NoContent();
+            var result = await _itemServiceAsync.PatchAsync(id, itemPatchDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Update)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(int id, [FromBody] ItemUpdateDto itemUpdateDTO, CancellationToken cancellationToken)
         {
-            await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO, cancellationToken);
-            return NoContent();
+            var result = await _itemServiceAsync.UpdateAsync(id, itemUpdateDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
 
         [Permission(PermissionResources.Item, PermissionActions.Export)]
         [HttpGet("export/docx")]
-        public async Task<FileResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult> ExportToDocxAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Item>(request);
-            var file = await _itemServiceAsync.ExportToDocxAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
-            return File(file, FileContentType.DOC, "Items.docx");
+            var result = await Specification<Item>.Create(request)
+                .MapAsync(specification => _itemServiceAsync.ExportToDocxAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken));
+            return result.Match(file => File(file, FileContentType.DOC, "Items.docx"));
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Export)]
         [HttpGet("export/pdf")]
-        public async Task<FileResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult> ExportToPdfAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Item>(request);
-            var file = await _itemServiceAsync.ExportToPdfAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken);
-            return File(file, FileContentType.PDF, "Items.pdf");
+            var result = await Specification<Item>.Create(request)
+                .MapAsync(specification => _itemServiceAsync.ExportToPdfAsync<ItemExportDto>("Lista de Artículos", specification, cancellationToken));
+            return result.Match(file => File(file, FileContentType.PDF, "Items.pdf"));
         }
 
         [Permission(PermissionResources.Item, PermissionActions.Export)]
         [HttpGet("export/csv")]
-        public async Task<FileResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
+        public async Task<ActionResult> ExportToCSVAsync([FromQuery] ItemQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Item>(request);
-            var file = await _itemServiceAsync.ExportToCSVAsync<ItemExportDto>("Artículos", specification, cancellationToken);
-            return File(file, FileContentType.CSV, "Items.csv");
+            var result = await Specification<Item>.Create(request)
+                .MapAsync(specification => _itemServiceAsync.ExportToCSVAsync<ItemExportDto>("Artículos", specification, cancellationToken));
+            return result.Match(file => File(file, FileContentType.CSV, "Items.csv"));
         }
 
         #endregion Actions

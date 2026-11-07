@@ -8,6 +8,7 @@ using Template.Modules.Identity.Application.Contracts.Repositories;
 using Template.Modules.Identity.Application.Contracts.Services;
 using Template.Modules.Identity.Application.Dtos.RolePermission;
 using Template.Modules.Identity.Domain.Entities;
+using Template.SharedKernel.Results;
 
 namespace Template.Modules.Identity.Application.Services
 {
@@ -31,7 +32,7 @@ namespace Template.Modules.Identity.Application.Services
             _cache = cache;
         }
 
-        public override Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TDestination>(
+        public override Task<Result<TDestination>> GetByIdProjectedAsync<TDestination>(
             int id,
             CancellationToken cancellationToken)
         {
@@ -46,21 +47,28 @@ namespace Template.Modules.Identity.Application.Services
         }
 
 
-        public override async Task PatchAsync< TSource>(
+        public override async Task<Result> PatchAsync<TSource>(
             int id,
             TSource source,
             CancellationToken cancellationToken)
         {
-            if (source is RoleUpdateDto roleUpdateDTO && id is int roleId)
+            // Validate and update the role first, so a rejected request never touches its permissions.
+            var result = await base.PatchAsync(id, source, cancellationToken);
+            if (result.IsFailure)
             {
-                // 1. Actualizar permisos del rol
-                await _rolePermissionRepository.UpdateAsync(roleId, roleUpdateDTO.Permissions, cancellationToken);
-
-                // 2. Invalidar cache de todos los usuarios que tienen este rol
-                await InvalidatePermissionsCacheForRoleAsync(roleId, cancellationToken);
+                return result;
             }
 
-            await base.PatchAsync(id, source, cancellationToken);
+            if (source is RoleUpdateDto roleUpdateDTO)
+            {
+                // 1. Actualizar permisos del rol
+                await _rolePermissionRepository.UpdateAsync(id, roleUpdateDTO.Permissions, cancellationToken);
+
+                // 2. Invalidar cache de todos los usuarios que tienen este rol
+                await InvalidatePermissionsCacheForRoleAsync(id, cancellationToken);
+            }
+
+            return Result.Success();
         }
 
         public async Task UpdatePermissionsAsync(int roleId, IEnumerable<int> permissionIds, CancellationToken cancellationToken)

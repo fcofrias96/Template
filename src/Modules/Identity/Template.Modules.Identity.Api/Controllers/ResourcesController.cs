@@ -28,9 +28,9 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<ResourceListDto>>>> GetProjectedPaginatedAsync([FromQuery] ResourceQueryParameters request, CancellationToken cancellationToken)
         {
-            var specification = new Specification<Resource>(request);
-            var resources = await _resourceService.GetProjectedPaginatedAsync<ResourceListDto>(specification, cancellationToken);
-            return Ok(resources);
+            var result = await Specification<Resource>.Create(request)
+                .BindAsync(specification => _resourceService.GetProjectedPaginatedAsync<ResourceListDto>(specification, cancellationToken));
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.ResourceItem, PermissionActions.Read)]
@@ -45,8 +45,8 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ResourceDetailDto>>> GetResource(int id, CancellationToken cancellationToken)
         {
-            var resource = await _resourceService.GetByIdProjectedAsync<ResourceDetailDto>(id, cancellationToken);
-            return Ok(resource);
+            var result = await _resourceService.GetByIdProjectedAsync<ResourceDetailDto>(id, cancellationToken);
+            return result.ToOk();
         }
 
         [Permission(PermissionResources.ResourceItem, PermissionActions.Create)]
@@ -62,16 +62,16 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateResource(int id, [FromBody] ResourceUpdateDto resourceUpdateDTO, CancellationToken cancellationToken)
         {
-            await _resourceService.UpdateAsync(id, resourceUpdateDTO, cancellationToken);
-            return NoContent();
+            var result = await _resourceService.UpdateAsync(id, resourceUpdateDTO, cancellationToken);
+            return result.ToNoContent();
         }
 
         [Permission(PermissionResources.ResourceItem, PermissionActions.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteResource(int id, CancellationToken cancellationToken)
         {
-            await _resourceService.SoftDeleteAsync(id, cancellationToken);
-            return NoContent();
+            var result = await _resourceService.SoftDeleteAsync(id, cancellationToken);
+            return result.ToNoContent();
         }
     }
 }

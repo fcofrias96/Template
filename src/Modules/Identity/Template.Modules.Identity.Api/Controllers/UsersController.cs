@@ -4,6 +4,7 @@ using Template.Modules.Identity.Contracts.Authorization;
 using Template.Modules.Identity.Application.Dtos.Users;
 using Template.BuildingBlocks.Application.Models.Specification;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Identity.Application.Contracts.Services;
 using Template.Modules.Identity.Application.Dtos.UserRole;
 using Template.Modules.Identity.Domain.Entities;
@@ -26,8 +27,8 @@ namespace Template.Modules.Identity.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            await _userServiceAsync.DeleteAsync(id, cancellationToken);
-            return NoContent();
+            var result = await _userServiceAsync.DeleteAsync(id, cancellationToken);
+            return result.ToNoContent();
         }
 
         [HttpGet]
@@ -35,11 +36,10 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromQuery] UserQueryParameters request,
             CancellationToken cancellationToken)
         {
-            var specification = new Specification<ApplicationUser>(request);
-            var pagedUsersResult = await _userServiceAsync
-                .GetProjectedPaginatedAsync<UserListDto>(specification, cancellationToken);
+            var result = await Specification<ApplicationUser>.Create(request)
+                .BindAsync(specification => _userServiceAsync.GetProjectedPaginatedAsync<UserListDto>(specification, cancellationToken));
 
-            return Ok(pagedUsersResult);
+            return result.ToOk();
         }
 
         [HttpGet("{id}")]
@@ -47,8 +47,10 @@ namespace Template.Modules.Identity.Api.Controllers
             int id,
             CancellationToken cancellationToken)
         {
-            var user = await _userServiceAsync.GetDetailAsync(id, cancellationToken);
-            return Ok(user);
+            var result = await _userServiceAsync.GetDetailAsync(id, cancellationToken);
+
+            // Kept unwrapped (no ApiResponse envelope), as this endpoint returned it before.
+            return result.Match(user => Ok(user));
         }
 
         [HttpGet("{id}/roles")]
@@ -76,8 +78,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] UserUpdateDto userUpdateDTO,
             CancellationToken cancellationToken)
         {
-            await _userServiceAsync.UpdateAsync(id, userUpdateDTO, cancellationToken);
-            return NoContent();
+            var result = await _userServiceAsync.UpdateAsync(id, userUpdateDTO, cancellationToken);
+            return result.ToNoContent();
         }
     }
 }

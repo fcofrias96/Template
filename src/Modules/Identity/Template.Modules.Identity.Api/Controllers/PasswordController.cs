@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Modules.Identity.Application.Dtos.Auth;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Identity.Application.Contracts.Services;
 
 namespace Template.Modules.Identity.Api.Controllers
@@ -25,8 +26,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] ForgotPasswordDto forgotPasswordDTO,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ForgotPasswordAsync(forgotPasswordDTO, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ForgotPasswordAsync(forgotPasswordDTO, cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         [HttpPost("reset")]
@@ -37,8 +38,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] ResetPasswordDto resetPasswordDTO,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ResetPasswordAsync(resetPasswordDTO, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ResetPasswordAsync(resetPasswordDTO, cancellationToken);
+            return result.Match(response => Ok(response));
         }
     }
 }

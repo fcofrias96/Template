@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Modules.Identity.Application.Dtos.Auth;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Identity.Application.Contracts.Services;
 
 namespace Template.Modules.Identity.Api.Controllers
@@ -23,8 +24,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromQuery] ConfirmEmailDto confirmEmailDTO,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ConfirmEmailAsync(confirmEmailDTO, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ConfirmEmailAsync(confirmEmailDTO, cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         [HttpPost("resend-confirmation")]
@@ -32,8 +33,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] ResendConfirmationEmailDto resendConfirmationEmail,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ResendConfirmationEmailAsync(resendConfirmationEmail, cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         [Authorize]
@@ -42,8 +43,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] ChangeEmailDto changeEmailDto,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ChangeEmailAsync(changeEmailDto, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ChangeEmailAsync(changeEmailDto, cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         [HttpGet("confirm-change")]
@@ -51,8 +52,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromQuery] ConfirmChangeEmailDto confirmChangeEmailDto,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto, cancellationToken);
-            return Ok(response);
+            var result = await _authService.ConfirmChangeEmailAsync(confirmChangeEmailDto, cancellationToken);
+            return result.Match(response => Ok(response));
         }
     }
 }

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 using Template.BuildingBlocks.Application.Enums;
-using Template.BuildingBlocks.Application.Exceptions;
 using Template.BuildingBlocks.Application.Extensions;
 
 namespace Template.Api.Middlewares
@@ -18,7 +16,7 @@ namespace Template.Api.Middlewares
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken)
         {
             try
             {
@@ -40,7 +38,7 @@ namespace Template.Api.Middlewares
                 {
                     // 499 no está “oficial” en ASP.NET, pero es común para client closed request
                     context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
-                    await context.Response.WriteAsync("Request was cancelled.");
+                    await context.Response.WriteAsync("Request was cancelled.", cancellationToken);
                 }
 
                 return;
@@ -56,36 +54,10 @@ namespace Template.Api.Middlewares
 
                 #region StatusCode & Titles
 
+                // Expected business failures travel as Result/Error and are written by the controllers
+                // (see ResultExtensions). This middleware only handles what is genuinely exceptional.
                 switch (exception)
                 {
-                    case BadRequestException:
-                        statusCode = StatusCodes.Status400BadRequest;
-                        title = "Bad Request";
-                        message = exception.Message;
-                        errorCode = "BAD_REQUEST";
-                        break;
-
-                    case SecurityTokenException:
-                        statusCode = StatusCodes.Status401Unauthorized;
-                        title = "Unauthorized";
-                        message = "El token de autenticación no es válido o ha expirado.";
-                        errorCode = "UNAUTHORIZED";
-                        break;
-
-                    case ForbiddenException:
-                        statusCode = StatusCodes.Status403Forbidden;
-                        title = "Forbidden";
-                        message = "No tiene permiso para realizar esta acción.";
-                        errorCode = "FORBIDDEN";
-                        break;
-
-                    case NotFoundException:
-                        statusCode = StatusCodes.Status404NotFound;
-                        title = "Not Found";
-                        message = exception.Message;
-                        errorCode = "NOT_FOUND";
-                        break;
-
                     case SqlException sqlEx:
                         switch ((SqlErrorCodes)sqlEx.Number)
                         {
@@ -159,7 +131,7 @@ namespace Template.Api.Middlewares
                     context.Response.StatusCode = statusCode;
                     context.Response.ContentType = "application/problem+json";
 
-                    await context.Response.WriteAsJsonAsync(problem);
+                    await context.Response.WriteAsJsonAsync(problem, cancellationToken);
                 }
                 else
                 {

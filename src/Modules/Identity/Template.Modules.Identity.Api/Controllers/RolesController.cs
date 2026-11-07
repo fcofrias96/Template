@@ -33,9 +33,9 @@ namespace Template.Modules.Identity.Api.Controllers
                 [FromQuery] RoleQueryParameters request,
                 CancellationToken cancellationToken)
             {
-                var specification = new Specification<ApplicationRole>(request);
-                var roles = await _roleService.GetProjectedPaginatedAsync<RoleListDto>(specification, cancellationToken);
-                return Ok(roles);
+                var result = await Specification<ApplicationRole>.Create(request)
+                    .BindAsync(specification => _roleService.GetProjectedPaginatedAsync<RoleListDto>(specification, cancellationToken));
+                return result.ToOk();
             }
 
             [Permission(PermissionResources.Role, PermissionActions.Read)]
@@ -44,8 +44,8 @@ namespace Template.Modules.Identity.Api.Controllers
                 int id,
                 CancellationToken cancellationToken)
             {
-                var role = await _roleService.GetByIdProjectedAsync<RoleDetailDto>(id, cancellationToken);
-                return Ok(role);
+                var result = await _roleService.GetByIdProjectedAsync<RoleDetailDto>(id, cancellationToken);
+                return result.ToOk();
             }
 
             [Permission(PermissionResources.Role, PermissionActions.Create)]
@@ -65,16 +65,16 @@ namespace Template.Modules.Identity.Api.Controllers
                 [FromBody] RoleUpdateDto roleUpdateDTO,
                 CancellationToken cancellationToken)
             {
-                await _roleService.UpdateAsync(id, roleUpdateDTO, cancellationToken);
-                return NoContent();
+                var result = await _roleService.UpdateAsync(id, roleUpdateDTO, cancellationToken);
+                return result.ToNoContent();
             }
 
             [Permission(PermissionResources.Role, PermissionActions.Delete)]
             [HttpDelete("{id}")]
             public async Task<ActionResult> DeleteRole(int id, CancellationToken cancellationToken)
             {
-                await _roleService.SoftDeleteAsync(id, cancellationToken);
-                return NoContent();
+                var result = await _roleService.SoftDeleteAsync(id, cancellationToken);
+                return result.ToNoContent();
             }
 
             [Permission(PermissionResources.Role, PermissionActions.Read)]

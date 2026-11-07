@@ -1,14 +1,15 @@
 using Template.BuildingBlocks.Application.Caching.Models;
 using Template.BuildingBlocks.Application.Contracts.Mapping;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.SharedKernel.Results;
 
 namespace Template.BuildingBlocks.Application.Contracts.Services.Base
 {
     public interface IReadService<TEntity>
     {
-        Task<TEntity> GetByIdAsync(int id, CancellationToken cancellationToken);
+        Task<Result<TEntity>> GetByIdAsync(int id, CancellationToken cancellationToken);
 
-        Task<ApiResponse<TDestination>> GetByIdProjectedAsync<TDestination>(int id, CancellationToken cancellationToken)
+        Task<Result<TDestination>> GetByIdProjectedAsync<TDestination>(int id, CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>;
 
         Task<ApiResponse<IReadOnlyList<TDestination>>> GetProjectedAsync<TDestination>(CancellationToken cancellationToken)
@@ -24,15 +25,15 @@ namespace Template.BuildingBlocks.Application.Contracts.Services.Base
             CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>;
 
-        Task<EtagResult<TDestination>> GetByIdProjectedWithEtagAsync<TDestination>(int id, CancellationToken cancellationToken)
+        Task<Result<EtagResult<TDestination>>> GetByIdProjectedWithEtagAsync<TDestination>(int id, CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>;
 
-        Task<ApiResponse<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination>(
+        Task<Result<PagedCollection<TDestination>>> GetProjectedPaginatedAsync<TDestination>(
             ISpecification<TEntity> specification,
             CancellationToken cancellationToken)
             where TDestination : IProjection<TEntity, TDestination>;
 
-        Task<EtagResult<PagedCollection<TDestination>>> GetProjectedPaginatedWithEtagAsync<TDestination>(
+        Task<Result<EtagResult<PagedCollection<TDestination>>>> GetProjectedPaginatedWithEtagAsync<TDestination>(
             ISpecification<TEntity> specification,
             string scopeName,
             int? scopeId = default,

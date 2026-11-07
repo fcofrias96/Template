@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Template.Modules.Identity.Application.Dtos.Users;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Identity.Application.Contracts.Services;
 
 namespace Template.Modules.Identity.Api.Controllers
@@ -22,8 +23,8 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] UserCreateDto userCreateDTO,
             CancellationToken cancellationToken)
         {
-            var user = await _authService.CreateAsync(userCreateDTO, cancellationToken);
-            return Ok(user);
+            var result = await _authService.CreateAsync(userCreateDTO, cancellationToken);
+            return result.Match(response => Ok(response));
         }
     }
 }

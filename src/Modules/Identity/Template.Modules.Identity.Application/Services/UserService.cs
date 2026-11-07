@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Template.BuildingBlocks.Application.Caching;
 using Template.Modules.Identity.Application.Caching;
-using Template.BuildingBlocks.Application.Exceptions;
 using Template.Modules.Identity.Application.Dtos.Resources;
 using Template.Modules.Identity.Application.Dtos.Roles;
 using Template.Modules.Identity.Application.Dtos.Users;
@@ -10,7 +9,9 @@ using Template.BuildingBlocks.Application.Models.Wrappers;
 using Template.BuildingBlocks.Application.Services.Base;
 using Template.Modules.Identity.Application.Contracts.Repositories;
 using Template.Modules.Identity.Application.Contracts.Services;
+using Template.Modules.Identity.Application.Errors;
 using Template.Modules.Identity.Domain.Entities;
+using Template.SharedKernel.Results;
 
 namespace Template.Modules.Identity.Application.Services
 {
@@ -38,12 +39,17 @@ namespace Template.Modules.Identity.Application.Services
             _cache = cache;
         }
 
-        public async Task DeleteAsync(int userId, CancellationToken cancellationToken)
+        public async Task<Result> DeleteAsync(int userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var user = await GetUser(userId);
-            await _userRepository.SoftDeleteAsync(user, cancellationToken);
+            var userResult = await GetUserAsync(userId);
+            if (userResult.IsFailure)
+            {
+                return userResult.Error;
+            }
 
+            await _userRepository.SoftDeleteAsync(userResult.Value, cancellationToken);
+            return Result.Success();
         }
 
         public async Task<ApiResponse<IReadOnlyList<RoleListDto>>> GetRolesAsync(int userId, CancellationToken cancellationToken)
@@ -57,33 +63,47 @@ namespace Template.Modules.Identity.Application.Services
             return await _userRepository.GetByRefreshTokenAsync(refreshToken, cancellationToken);
         }
 
-        public async Task UpdateAsync(int userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
+        public async Task<Result> UpdateAsync(int userId, UserUpdateDto userUpdateDTO, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.UserId;
 
             if (userId != userUpdateDTO.Id)
             {
-                throw new BadRequestException("The provided user ID does not match the ID in the request data.");
+                return UserErrors.IdMismatch;
             }
 
             if (currentUserId != userUpdateDTO.Id)
             {
-                throw new ForbiddenException();
+                return UserErrors.Forbidden;
             }
 
-            var user = await GetUser(userId);
+            var userResult = await GetUserAsync(userId);
+            if (userResult.IsFailure)
+            {
+                return userResult.Error;
+            }
+
+            var user = userResult.Value;
             userUpdateDTO.ApplyTo(user);
-            await _userManager.UpdateAsync(user);
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return UserErrors.UpdateFailed(updateResult);
+            }
+
+            return Result.Success();
         }
 
-        public async Task<UserDetailDto> GetDetailAsync(int userId, CancellationToken cancellationToken)
+        public async Task<Result<UserDetailDto>> GetDetailAsync(int userId, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetDetailAsync(userId, cancellationToken);
-            if (user == null)
+            if (user is null)
             {
-                throw new NotFoundException("User", userId);
+                return UserErrors.NotFound(userId);
             }
-            return user;
+
+            return Result.Success(user);
         }
 
         public async Task<ResourcePermissionDto[]> GetResourcesAsync(int userId, CancellationToken cancellationToken)
@@ -103,15 +123,15 @@ namespace Template.Modules.Identity.Application.Services
 
         #region Private Methods
 
-        private async Task<ApplicationUser> GetUser(int userId)
+        private async Task<Result<ApplicationUser>> GetUserAsync(int userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
+            if (user is null)
             {
-                throw new NotFoundException("User", userId);
+                return UserErrors.NotFound(userId);
             }
 
-            return user;
+            return Result.Success(user);
         }
 
         #endregion Private Methods

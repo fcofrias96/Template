@@ -4,30 +4,59 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using Template.BuildingBlocks.Application.Contracts;
-using Template.BuildingBlocks.Application.Exceptions;
+using Template.BuildingBlocks.Application.Errors;
 using Template.BuildingBlocks.Application.Extensions;
 using Template.BuildingBlocks.Application.Utilities;
 using Template.SharedKernel.Domain;
+using Template.SharedKernel.Results;
 
 namespace Template.BuildingBlocks.Application.Models.Specification
 {
     /// <summary>
     /// Provides a base class for building query specifications for TEntity, including paging, sorting, and criteria.
+    /// Build it with <see cref="Create"/>: invalid client input (unknown sort field, unparsable filter value)
+    /// comes back as a failed <see cref="Result"/> instead of an exception.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity for which the specification is defined.</typeparam>
     public class Specification<TEntity> : ISpecification<TEntity> where TEntity : IEntityBase
     {
-        public Specification(IQueryParametersBase queryParametersBase, bool applyPagination = true)
+        private const string DefaultSortBy = "CreatedAt";
+
+        protected Specification()
         {
+        }
+
+        /// <summary>
+        /// Builds a specification from the query-string parameters of a request.
+        /// </summary>
+        public static Result<Specification<TEntity>> Create(IQueryParametersBase queryParametersBase, bool applyPagination = true)
+        {
+            ArgumentNullException.ThrowIfNull(queryParametersBase);
+
+            var specification = new Specification<TEntity>
+            {
+                IsDescending = queryParametersBase.IsDescending
+            };
+
             if (applyPagination)
             {
-                Skip = queryParametersBase.Offset;
-                Take = queryParametersBase.Limit;
+                specification.Skip = queryParametersBase.Offset;
+                specification.Take = queryParametersBase.Limit;
             }
 
-            IsDescending = queryParametersBase.IsDescending;
-            BuildCriteria(queryParametersBase.BuildFields());
-            ApplySortBy(queryParametersBase.SortBy ?? "CreatedAt");
+            var criteriaResult = specification.BuildCriteria(queryParametersBase.BuildFields());
+            if (criteriaResult.IsFailure)
+            {
+                return criteriaResult.Error;
+            }
+
+            var sortResult = specification.ApplySortBy(queryParametersBase.SortBy ?? DefaultSortBy);
+            if (sortResult.IsFailure)
+            {
+                return sortResult.Error;
+            }
+
+            return specification;
         }
 
         public Expression<Func<TEntity, bool>>? Criteria { get; protected set; }
@@ -51,24 +80,40 @@ namespace Template.BuildingBlocks.Application.Models.Specification
         /// Applies a sort by expression to the specification based on the property name.
         /// </summary>
         /// <param name="propertyName">The name of the property to sort by.</param>
-        public void ApplySortBy(string propertyName)
+        public Result ApplySortBy(string propertyName)
         {
             if (string.IsNullOrWhiteSpace(propertyName))
             {
-                throw new ArgumentException("Property name cannot be null or whitespace.", nameof(propertyName));
+                return QueryErrors.SortByRequired;
             }
 
             // Normaliza y resuelve a ruta final (incluyendo ".Name" si aplica)
-            var propertyPath = GetSortPropertyPath(propertyName);
+            var pathResult = GetSortPropertyPath(propertyName);
+            if (pathResult.IsFailure)
+            {
+                return pathResult.Error;
+            }
 
-            // Si ya la construimos antes, la reutilizamos
-            SortBy = SortExpressionCache.GetOrAdd(propertyPath, value =>
+            var propertyPath = pathResult.Value;
+
+            // Si ya la construimos antes, la reutilizamos. Solo se cachean rutas válidas.
+            if (!SortExpressionCache.TryGetValue(propertyPath, out var sortExpression))
             {
                 var parameter = Expression.Parameter(typeof(TEntity), "p");
-                var propertyExpression = GetNestedPropertyExpression(parameter, value);
-                var conversion = Expression.Convert(propertyExpression, typeof(object));
-                return Expression.Lambda<Func<TEntity, object>>(conversion, parameter);
-            });
+                var propertyResult = GetNestedPropertyExpression(parameter, propertyPath);
+                if (propertyResult.IsFailure)
+                {
+                    return propertyResult.Error;
+                }
+
+                var conversion = Expression.Convert(propertyResult.Value, typeof(object));
+                sortExpression = SortExpressionCache.GetOrAdd(
+                    propertyPath,
+                    Expression.Lambda<Func<TEntity, object>>(conversion, parameter));
+            }
+
+            SortBy = sortExpression;
+            return Result.Success();
         }
 
         /// <summary>
@@ -76,10 +121,10 @@ namespace Template.BuildingBlocks.Application.Models.Specification
         /// Si la propiedad es una navegación y no se especificó subpropiedad,
         /// por convención usa ".Name" si existe.
         /// </summary>
-        private static string GetSortPropertyPath(string propertyName)
+        private static Result<string> GetSortPropertyPath(string propertyName)
         {
-            // Si ya viene algo como "Category.Name", no tocamos nada
-            if (propertyName.Contains("."))
+            // Si ya viene algo como "Category.Name", no tocamos nada (se valida al construir la expresión)
+            if (propertyName.Contains('.'))
             {
                 return propertyName;
             }
@@ -90,8 +135,7 @@ namespace Template.BuildingBlocks.Application.Models.Specification
 
             if (directProperty is null)
             {
-                throw new BadRequestException(
-                    $"Property '{propertyName}' was not found on type '{typeof(TEntity).Name}'.");
+                return QueryErrors.UnknownProperty(propertyName, typeof(TEntity).Name);
             }
 
             // Si es tipo complejo (navegación) y no string, probamos usar Name
@@ -111,7 +155,7 @@ namespace Template.BuildingBlocks.Application.Models.Specification
             return propertyName;
         }
 
-        private static Expression GetNestedPropertyExpression(Expression expression, string propertyPath)
+        private static Result<Expression> GetNestedPropertyExpression(Expression expression, string propertyPath)
         {
             foreach (var member in propertyPath.Split('.'))
             {
@@ -121,8 +165,7 @@ namespace Template.BuildingBlocks.Application.Models.Specification
 
                 if (propertyInfo == null)
                 {
-                    throw new BadRequestException(
-                        $"Property '{member}' was not found on type '{expression.Type.Name}'.");
+                    return QueryErrors.UnknownProperty(member, expression.Type.Name);
                 }
 
                 expression = Expression.Property(expression, propertyInfo);
@@ -150,9 +193,9 @@ namespace Template.BuildingBlocks.Application.Models.Specification
             }
         }
 
-        private void BuildCriteria(List<Field> fields)
+        private Result BuildCriteria(List<Field> fields)
         {
-            fields.ForEach(field =>
+            foreach (var field in fields)
             {
                 Expression<Func<TEntity, bool>> expression;
                 var type = field.PropertyInfo.PropertyType;
@@ -163,8 +206,20 @@ namespace Template.BuildingBlocks.Application.Models.Specification
                     var min = array.GetValue(0);
                     var max = array.GetValue(1);
 
-                    var convertedMin = string.IsNullOrEmpty((string?)min) ? null : ConvertToType(type, min);
-                    var convertedMax = string.IsNullOrEmpty((string?)max) ? null : ConvertToType(type, max);
+                    var minResult = ConvertBound(type, min);
+                    if (minResult.IsFailure)
+                    {
+                        return minResult.Error;
+                    }
+
+                    var maxResult = ConvertBound(type, max);
+                    if (maxResult.IsFailure)
+                    {
+                        return maxResult.Error;
+                    }
+
+                    var convertedMin = minResult.Value;
+                    var convertedMax = maxResult.Value;
 
                     if (convertedMax is DateTimeOffset dateTime)
                     {
@@ -175,15 +230,26 @@ namespace Template.BuildingBlocks.Application.Models.Specification
                 }
                 else
                 {
-                    var value = ConvertToType(field.PropertyInfo.PropertyType, field.Values);
-                    expression = ExpressionBuilder.BuildContainsOrEqualsExpression<TEntity>(value, field.PropertyInfo);
+                    var valueResult = ConvertToType(field.PropertyInfo.PropertyType, field.Values);
+                    if (valueResult.IsFailure)
+                    {
+                        return valueResult.Error;
+                    }
+
+                    expression = ExpressionBuilder.BuildContainsOrEqualsExpression<TEntity>(valueResult.Value!, field.PropertyInfo);
                 }
 
                 CombineCriteria(expression, field.Exclude);
-            });
+            }
+
+            return Result.Success();
         }
 
-        public object? ConvertToType(Type type, object value)
+        /// <summary>An empty range bound ("..max" or "min..") means "unbounded".</summary>
+        private static Result<object?> ConvertBound(Type type, object? bound)
+            => string.IsNullOrEmpty((string?)bound) ? Converted(null) : ConvertToType(type, bound);
+
+        private static Result<object?> ConvertToType(Type type, object? value)
         {
             // Null o vacío
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
@@ -191,11 +257,11 @@ namespace Template.BuildingBlocks.Application.Models.Specification
                 // Si es nullable o referencia → null
                 if (!type.IsValueType || Nullable.GetUnderlyingType(type) != null)
                 {
-                    return null;
+                    return Converted(null);
                 }
 
                 // Value type no nullable → default(T)
-                return Activator.CreateInstance(type);
+                return Converted(Activator.CreateInstance(type));
             }
 
             // Arrays (ej: value = string[] desde querystring)
@@ -206,25 +272,30 @@ namespace Template.BuildingBlocks.Application.Models.Specification
 
                 for (var i = 0; i < valueArray.Length; i++)
                 {
-                    var item = valueArray.GetValue(i);
-                    convertedArray.SetValue(ConvertSingleValue(elementType, item), i);
+                    var itemResult = ConvertSingleValue(elementType, valueArray.GetValue(i));
+                    if (itemResult.IsFailure)
+                    {
+                        return itemResult;
+                    }
+
+                    convertedArray.SetValue(itemResult.Value, i);
                 }
 
-                return convertedArray;
+                return Converted(convertedArray);
             }
 
             // Valor simple
             return ConvertSingleValue(type, value);
         }
 
-        private object? ConvertSingleValue(Type type, object? value)
+        private static Result<object?> ConvertSingleValue(Type type, object? value)
         {
             var targetType = Nullable.GetUnderlyingType(type) ?? type;
 
             // Si ya es del tipo correcto, devuélvelo
             if (value != null && targetType.IsInstanceOfType(value))
             {
-                return value;
+                return Converted(value);
             }
 
             var stringValue = value?.ToString() ?? string.Empty;
@@ -232,83 +303,75 @@ namespace Template.BuildingBlocks.Application.Models.Specification
             // Tipos básicos con TryParse (evita excepciones costosas)
             if (targetType == typeof(int))
             {
-                if (int.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var i))
-                    return i;
-                return ThrowConversionError(targetType, stringValue);
+                return int.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var i)
+                    ? Converted(i)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(decimal))
             {
-                if (decimal.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
-                    return d;
-                return ThrowConversionError(targetType, stringValue);
+                return decimal.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)
+                    ? Converted(d)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(double))
             {
-                if (double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
-                    return d;
-                return ThrowConversionError(targetType, stringValue);
+                return double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var d)
+                    ? Converted(d)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(float))
             {
-                if (float.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var f))
-                    return f;
-                return ThrowConversionError(targetType, stringValue);
+                return float.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var f)
+                    ? Converted(f)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(bool))
             {
-                if (bool.TryParse(stringValue, out var b))
-                    return b;
-                return ThrowConversionError(targetType, stringValue);
+                return bool.TryParse(stringValue, out var b)
+                    ? Converted(b)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(DateTimeOffset))
             {
-                if (DateTimeOffset.TryParse(
+                return DateTimeOffset.TryParse(
                         stringValue,
                         CultureInfo.InvariantCulture,
                         DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
-                        out var dto))
-                {
-                    return dto;
-                }
-
-                return ThrowConversionError(targetType, stringValue);
+                        out var dto)
+                    ? Converted(dto)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(DateTime))
             {
-                if (DateTime.TryParse(
+                return DateTime.TryParse(
                         stringValue,
                         CultureInfo.InvariantCulture,
                         DateTimeStyles.AssumeLocal,
-                        out var dt))
-                {
-                    return dt;
-                }
-
-                return ThrowConversionError(targetType, stringValue);
+                        out var dt)
+                    ? Converted(dt)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType.IsEnum)
             {
-                try
-                {
-                    return Enum.Parse(targetType, stringValue, ignoreCase: true);
-                }
-                catch
-                {
-                    return ThrowConversionError(targetType, stringValue);
-                }
+                return Enum.TryParse(targetType, stringValue, ignoreCase: true, out var enumValue)
+                    ? Converted(enumValue)
+                    : InvalidValue(targetType, stringValue);
             }
 
             if (targetType == typeof(string))
             {
-                return stringValue;
+                return Converted(stringValue);
             }
+
+            // Las conversiones siguientes solo exponen APIs que lanzan excepciones:
+            // se capturan aquí y se devuelven como error de validación.
 
             // TypeConverter cacheado para tipos complejos
             var converter = _typeConverterCache.GetOrAdd(targetType, t => TypeDescriptor.GetConverter(t));
@@ -317,11 +380,11 @@ namespace Template.BuildingBlocks.Application.Models.Specification
             {
                 try
                 {
-                    return converter.ConvertFrom(null, CultureInfo.InvariantCulture, stringValue);
+                    return Converted(converter.ConvertFrom(null, CultureInfo.InvariantCulture, stringValue));
                 }
-                catch
+                catch (Exception)
                 {
-                    return ThrowConversionError(targetType, stringValue);
+                    return InvalidValue(targetType, stringValue);
                 }
             }
 
@@ -334,16 +397,21 @@ namespace Template.BuildingBlocks.Application.Models.Specification
 
                 if (nameProperty != null)
                 {
+                    var nameResult = ConvertSingleValue(nameProperty.PropertyType, stringValue);
+                    if (nameResult.IsFailure)
+                    {
+                        return InvalidValue(targetType, stringValue);
+                    }
+
                     try
                     {
                         var instance = Activator.CreateInstance(targetType)!;
-                        var convertedName = ConvertSingleValue(nameProperty.PropertyType, stringValue);
-                        nameProperty.SetValue(instance, convertedName);
-                        return instance;
+                        nameProperty.SetValue(instance, nameResult.Value);
+                        return Converted(instance);
                     }
-                    catch
+                    catch (Exception)
                     {
-                        return ThrowConversionError(targetType, stringValue);
+                        return InvalidValue(targetType, stringValue);
                     }
                 }
             }
@@ -351,17 +419,17 @@ namespace Template.BuildingBlocks.Application.Models.Specification
             // Último fallback: Convert.ChangeType
             try
             {
-                return Convert.ChangeType(stringValue, targetType, CultureInfo.InvariantCulture);
+                return Converted(Convert.ChangeType(stringValue, targetType, CultureInfo.InvariantCulture));
             }
-            catch
+            catch (Exception)
             {
-                return ThrowConversionError(targetType, stringValue);
+                return InvalidValue(targetType, stringValue);
             }
         }
 
-        private static object ThrowConversionError(Type targetType, string value)
-        {
-            throw new BadRequestException($"Value '{value}' is not valid for type '{targetType.Name}'.");
-        }
+        private static Result<object?> Converted(object? value) => Result.Success(value);
+
+        private static Result<object?> InvalidValue(Type targetType, string value)
+            => Result.Failure<object?>(QueryErrors.InvalidValue(value, targetType.Name));
     }
 }

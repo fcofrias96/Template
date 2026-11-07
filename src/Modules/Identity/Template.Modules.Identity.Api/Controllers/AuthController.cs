@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Template.Modules.Identity.Application.Dtos.Auth;
 using Template.Modules.Identity.Application.Dtos.Token;
 using Template.BuildingBlocks.Application.Models.Wrappers;
+using Template.BuildingBlocks.Web.Extensions;
 using Template.Modules.Identity.Application.Contracts.Services;
 using Template.Modules.Identity.Application.Settings;
 
@@ -58,12 +59,13 @@ namespace Template.Modules.Identity.Api.Controllers
             [FromBody] LoginDto loginDTO,
             CancellationToken cancellationToken)
         {
-            var response = await _authService.LoginAsync(loginDTO, cancellationToken);
+            var result = await _authService.LoginAsync(loginDTO, cancellationToken);
 
-            var cookieOptions = GetCookieOptions();
-            Response.Cookies.Append("refreshToken", response!.Data!.RefreshToken, cookieOptions);
-
-            return Ok(response);
+            return result.Match(response =>
+            {
+                Response.Cookies.Append("refreshToken", response.RefreshToken, GetCookieOptions());
+                return Ok(new ApiResponse<AuthenticationResponseDto>(response));
+            });
         }
 
         /// <summary>
@@ -85,12 +87,13 @@ namespace Template.Modules.Identity.Api.Controllers
             CancellationToken cancellationToken)
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var response = await _authService.RefreshTokenAsync(refreshToken, cancellationToken);
+            var result = await _authService.RefreshTokenAsync(refreshToken, cancellationToken);
 
-            var cookieOptions = GetCookieOptions();
-            Response.Cookies.Append("refreshToken", response!.Data!.RefreshToken, cookieOptions);
-
-            return Ok(response);
+            return result.Match(response =>
+            {
+                Response.Cookies.Append("refreshToken", response.RefreshToken, GetCookieOptions());
+                return Ok(new ApiResponse<RefreshTokenResponseDto>(response));
+            });
         }
 
         /// <summary>
@@ -109,8 +112,8 @@ namespace Template.Modules.Identity.Api.Controllers
         public async Task<ActionResult<ApiResponse>> LogoutAsync(CancellationToken cancellationToken)
         {
             Response.Cookies.Delete("refreshToken");
-            var response = await _authService.LogoutAsync(cancellationToken);
-            return Ok(response);
+            var result = await _authService.LogoutAsync(cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         /// <summary>
