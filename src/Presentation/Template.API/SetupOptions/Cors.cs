@@ -14,10 +14,11 @@ namespace Template.Api.SetupOptions
             return options =>
             {
                 options.AddPolicy("CorsPolicy", policy =>
-                    policy.WithOrigins(allowedOrigins)
-                          .AllowAnyMethod()
-                          .AllowAnyHeader()
-                          .AllowCredentials());
+                       policy.WithOrigins(allowedOrigins)
+                      .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+                      .WithHeaders("Content-Type", "Authorization", "x-time-zone", "x-app-key", "x-platform", "x-app-version")
+                      .AllowCredentials()
+                      .SetPreflightMaxAge(TimeSpan.FromHours(1)));
             };
         }
     }
