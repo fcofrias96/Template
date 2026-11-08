@@ -35,7 +35,7 @@ namespace Template.Modules.Identity.Infrastructure.Repositories
                     ResourceId = rp.Permission.ResourceId,
                     ActionId = rp.Permission.ActionId
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
         
