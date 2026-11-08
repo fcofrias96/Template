@@ -25,6 +25,7 @@ namespace Template.Modules.Identity.Application.Services
         private readonly IAuthLinkService _authLinkService;
         private readonly IAuthEmailService _authEmailService;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IAccessTokenRevocationService _accessTokenRevocationService;
         private readonly JwtSettings _jwtSettings;
 
         public AuthService(
@@ -35,8 +36,10 @@ namespace Template.Modules.Identity.Application.Services
             IJwtTokenService jwtTokenService,
             IAuthLinkService authLinkService,
             IAuthEmailService authEmailService,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IAccessTokenRevocationService accessTokenRevocationService)
         {
+            _accessTokenRevocationService = accessTokenRevocationService;
             _jwtSettings = jwtSettings.Value;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -227,6 +230,18 @@ namespace Template.Modules.Identity.Application.Services
             return new ApiResponse("Logged out successfully");
         }
 
+        public async Task<Result<ApiResponse>> RevokeTokensAsync(int userId, CancellationToken cancellationToken)
+        {
+            var userResult = await FindUserByIdAsync(userId, cancellationToken);
+            if (userResult.IsFailure)
+            {
+                return userResult.Error;
+            }
+
+            await RevokeTokenAsync(userResult.Value, cancellationToken);
+            return new ApiResponse($"Tokens revoked for user {userId}.");
+        }
+
         public async Task<Result<AuthenticationResponseDto>> LoginAsync(LoginDto loginDto, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -380,6 +395,9 @@ namespace Template.Modules.Identity.Application.Services
 
         // ---------- Helpers privados ----------
 
+        /// <summary>
+        /// Revokes the refresh token (persisted) and every access token issued so far (cached until they expire).
+        /// </summary>
         private async Task RevokeTokenAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
             user.IsTokenRevoked = true;
@@ -387,6 +405,8 @@ namespace Template.Modules.Identity.Application.Services
 
             cancellationToken.ThrowIfCancellationRequested();
             await _userManager.UpdateAsync(user);
+
+            _accessTokenRevocationService.Revoke(user.Id);
         }
 
         private async Task<Result<ApplicationUser>> FindUserByIdAsync(int userId, CancellationToken cancellationToken)

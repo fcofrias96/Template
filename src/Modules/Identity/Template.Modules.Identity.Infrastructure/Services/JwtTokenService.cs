@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -32,22 +33,29 @@ public class JwtTokenService : IJwtTokenService
         CancellationToken cancellationToken = default)
     {
         var authData = await _userAuthCacheService.GetUserAuthDataAsync(user, cancellationToken);
-        var claims = GenerateClaims(user, authData.Roles);
+        var issuedAt = DateTime.UtcNow;
+        var claims = GenerateClaims(user, authData.Roles, issuedAt);
 
         var jwtSecurityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.LoginTokenDurationInMinutes),
+            expires: issuedAt.AddMinutes(_jwtSettings.LoginTokenDurationInMinutes),
             signingCredentials: _signingCredentials);
 
         return (jwtSecurityToken, authData.Roles);
     }
 
-    private static IEnumerable<Claim> GenerateClaims(ApplicationUser user, IReadOnlyList<string> roles)
+    private static IEnumerable<Claim> GenerateClaims(ApplicationUser user, IReadOnlyList<string> roles, DateTime issuedAt)
     {
         yield return new Claim(JwtRegisteredClaimNames.Sub, user.PublicId.ToString());
         yield return new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
+
+        // Compared with the user's revocation time (IAccessTokenRevocationService).
+        yield return new Claim(
+            JwtRegisteredClaimNames.Iat,
+            EpochTime.GetIntDate(issuedAt).ToString(CultureInfo.InvariantCulture),
+            ClaimValueTypes.Integer64);
 
         // Needed by [Authorize(Roles = ...)] endpoints such as UsersController.
         foreach (var role in roles)

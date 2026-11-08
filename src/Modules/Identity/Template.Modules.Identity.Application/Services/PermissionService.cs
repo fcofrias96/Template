@@ -14,25 +14,25 @@ namespace Template.Modules.Identity.Application.Services
     public class PermissionService : BaseService<Permission>, IPermissionService
     {
         private readonly IPermissionRepository _permissionRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserIdResolver _userIdResolver;
         private readonly ICacheService _cache;
         private readonly TimeSpan _permissionsTtl = TimeSpan.FromMinutes(5);
 
         public PermissionService(
             IPermissionRepository permissionRepositoryAsync,
-            IUserRepository userRepositoryAsync,
+            IUserIdResolver userIdResolver,
             ICacheService cache,
             IHttpContextAccessor httpContext)
             : base(permissionRepositoryAsync, cache, httpContext)
         {
             _permissionRepository = permissionRepositoryAsync;
             _cache = cache;
-            _userRepository = userRepositoryAsync;
+            _userIdResolver = userIdResolver;
         }
 
         public async Task<bool> HasPermissionAsync(string userPublicId, int resourceId, int actionId, CancellationToken cancellationToken)
         {
-            var userId = await GetInternalUserIdAsync(userPublicId, cancellationToken);
+            var userId = await _userIdResolver.GetInternalUserIdAsync(userPublicId, cancellationToken);
             if(userId is null) return false;
 
             var cacheKey = IdentityCacheKeys.UserPermissions(userId.Value);
@@ -69,31 +69,6 @@ namespace Template.Modules.Identity.Application.Services
         {
             var userIdClaim = user.FindFirstValue("UserId");
             return int.TryParse(userIdClaim, out var userId) ? userId : 0;
-        }
-
-        private async Task<int?> GetInternalUserIdAsync(string userPublicId, CancellationToken cancellationToken)
-        {
-            if (!Guid.TryParse(userPublicId, out var publicId))
-            {
-                return null;
-            }
-
-            var cacheKey = IdentityCacheKeys.InternalUserId(publicId);
-
-            var cachedUserId = _cache.Get<int?>(cacheKey);
-            if (cachedUserId.HasValue)
-            {
-                return cachedUserId.Value;
-            }
-
-            var userId = await _userRepository.GetIdByPublicIdAsync(publicId, cancellationToken);
-
-            if (userId.HasValue)
-            {
-                _cache.Set(cacheKey, userId.Value, TimeSpan.FromDays(1));
-            }
-
-            return userId;
         }
 
     }

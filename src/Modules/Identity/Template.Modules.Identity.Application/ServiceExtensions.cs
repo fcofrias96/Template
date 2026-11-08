@@ -16,6 +16,8 @@ namespace Template.Modules.Identity.Application
                     .AddScoped<IAuthEmailService, AuthEmailService>()
                     .AddScoped<IAuthService, AuthService>()
                     .AddScoped<IMenuService, MenuService>()
+                    .AddScoped<IUserIdResolver, UserIdResolver>()
+                    .AddScoped<IAccessTokenRevocationService, AccessTokenRevocationService>()
 
                     // Public contract consumed by other modules ([Permission] attribute).
                     .AddScoped<IPermissionChecker, PermissionChecker>();

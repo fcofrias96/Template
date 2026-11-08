@@ -16,7 +16,8 @@ namespace Template.Api.Middlewares
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken)
+        // Extra InvokeAsync parameters are resolved from DI, so the request's token comes from context.RequestAborted.
+        public async Task InvokeAsync(HttpContext context)
         {
             try
             {
@@ -38,7 +39,8 @@ namespace Template.Api.Middlewares
                 {
                     // 499 no está “oficial” en ASP.NET, pero es común para client closed request
                     context.Response.StatusCode = StatusCodes.Status499ClientClosedRequest;
-                    await context.Response.WriteAsync("Request was cancelled.", cancellationToken);
+                    // Not RequestAborted: it is already cancelled here, so the write would throw.
+                    await context.Response.WriteAsync("Request was cancelled.");
                 }
 
                 return;
@@ -131,7 +133,7 @@ namespace Template.Api.Middlewares
                     context.Response.StatusCode = statusCode;
                     context.Response.ContentType = "application/problem+json";
 
-                    await context.Response.WriteAsJsonAsync(problem, cancellationToken);
+                    await context.Response.WriteAsJsonAsync(problem, context.RequestAborted);
                 }
                 else
                 {

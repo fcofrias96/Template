@@ -142,6 +142,16 @@ namespace Template.Modules.Identity.Infrastructure
                 };
                 options.Events = new JwtBearerEvents()
                 {
+                    // Signature and lifetime are valid at this point; reject tokens revoked before they expired.
+                    OnTokenValidated = async (context) =>
+                    {
+                        var revocationService = context.HttpContext.RequestServices.GetRequiredService<IAccessTokenRevocationService>();
+
+                        if (await revocationService.IsRevokedAsync(context.Principal!, context.HttpContext.RequestAborted))
+                        {
+                            context.Fail("The access token has been revoked.");
+                        }
+                    },
                     OnChallenge = async (context) =>
                     {
                         var statusCode = StatusCodes.Status401Unauthorized;

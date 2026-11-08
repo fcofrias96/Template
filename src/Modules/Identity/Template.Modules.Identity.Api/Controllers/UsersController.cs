@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Template.Modules.Identity.Contracts.Authorization;
 using Template.Modules.Identity.Application.Dtos.Users;
@@ -18,10 +19,27 @@ namespace Template.Modules.Identity.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userServiceAsync;
+        private readonly IAuthService _authService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IAuthService authService)
         {
             _userServiceAsync = userService;
+            _authService = authService;
+        }
+
+        /// <summary>
+        /// Revokes the user's access tokens and refresh token: requests with a token issued before this call get
+        /// 401, and the user has to log in again.
+        /// </summary>
+        /// <response code="200">Tokens revoked.</response>
+        /// <response code="404">If the user does not exist.</response>
+        [HttpPost("{id}/revoke-token")]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApiResponse>> RevokeTokenAsync(int id, CancellationToken cancellationToken)
+        {
+            var result = await _authService.RevokeTokensAsync(id, cancellationToken);
+            return result.Match(response => Ok(response));
         }
 
         [HttpDelete("{id}")]

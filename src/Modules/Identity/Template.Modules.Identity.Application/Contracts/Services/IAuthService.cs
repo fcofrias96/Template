@@ -27,5 +27,8 @@ namespace Template.Modules.Identity.Application.Contracts.Services
         Task<Result<RefreshTokenResponseDto>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken);
 
         Task<Result<ApiResponse>> LogoutAsync(CancellationToken cancellationToken);
+
+        /// <summary>Revokes the user's current access tokens and refresh token, forcing a new login.</summary>
+        Task<Result<ApiResponse>> RevokeTokensAsync(int userId, CancellationToken cancellationToken);
     }
 }
