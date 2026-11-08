@@ -21,7 +21,7 @@ namespace Template.BuildingBlocks.Application.Services.Base
         private readonly IBaseRepository<TEntity> _repositoryAsync;
         private readonly IHttpContextAccessor _httpContext;
 
-        protected virtual TimeSpan ListDataTtl => TimeSpan.FromDays(1);
+        protected virtual TimeSpan ListDataTtl => TimeSpan.FromMinutes(5);
         protected virtual TimeSpan PageDataTtl => TimeSpan.FromMinutes(5);
         protected virtual string EntityName => typeof(TEntity).Name;
 

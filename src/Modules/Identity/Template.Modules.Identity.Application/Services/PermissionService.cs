@@ -16,7 +16,7 @@ namespace Template.Modules.Identity.Application.Services
         private readonly IPermissionRepository _permissionRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICacheService _cache;
-        private readonly TimeSpan _permissionsTtl = TimeSpan.FromDays(1);
+        private readonly TimeSpan _permissionsTtl = TimeSpan.FromMinutes(5);
 
         public PermissionService(
             IPermissionRepository permissionRepositoryAsync,
@@ -90,7 +90,7 @@ namespace Template.Modules.Identity.Application.Services
 
             if (userId.HasValue)
             {
-                _cache.Set(cacheKey, userId.Value, TimeSpan.FromDays(30));
+                _cache.Set(cacheKey, userId.Value, TimeSpan.FromDays(1));
             }
 
             return userId;
