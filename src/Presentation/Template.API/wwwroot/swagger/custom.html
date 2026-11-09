@@ -202,12 +202,6 @@
         }
 
         function logout() {
-            currentToken = null;
-            currentUser = null;
-
-            // Remover autorización de Swagger UI
-            window.ui.preauthorizeApiKey('Bearer', null);
-
             // Ocultar información del usuario
             document.getElementById('userInfo').classList.remove('visible');
             document.getElementById('loginButtons').style.display = 'flex';
@@ -219,7 +213,16 @@
                     'Authorization': 'Bearer ' + (currentToken || '')
                 },
                 credentials: 'include'
-            }).catch(err => console.log('Logout endpoint error:', err));
+            }).catch(err => console.log('Logout endpoint error:', err))
+            .then(()=> {{
+
+            currentToken = null;
+            currentUser = null;
+
+            // Remover autorización de Swagger UI
+            window.ui.preauthorizeApiKey('Bearer', null);
+            }})
+            ;
         }
     </script>
 </body>

@@ -26,6 +26,8 @@ namespace Template.Modules.Identity.Api.Controllers
         private readonly IAuthService _authService;
         private readonly JwtSettings _jwtSettings;
 
+        private readonly string _refreshToken = "refreshToken";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationController"/> class.
         /// </summary>
@@ -63,7 +65,7 @@ namespace Template.Modules.Identity.Api.Controllers
 
             return result.Match(response =>
             {
-                Response.Cookies.Append("refreshToken", response.RefreshToken, GetCookieOptions());
+                Response.Cookies.Append(_refreshToken, response.RefreshToken, GetCookieOptions());
                 return Ok(new ApiResponse<AuthenticationResponseDto>(response));
             });
         }
@@ -86,12 +88,12 @@ namespace Template.Modules.Identity.Api.Controllers
         public async Task<ActionResult<ApiResponse<RefreshTokenResponseDto>>> RefreshTokenAsync(
             CancellationToken cancellationToken)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            var refreshToken = Request.Cookies[_refreshToken];
             var result = await _authService.RefreshTokenAsync(refreshToken, cancellationToken);
 
             return result.Match(response =>
             {
-                Response.Cookies.Append("refreshToken", response.RefreshToken, GetCookieOptions());
+                Response.Cookies.Append(_refreshToken, response.RefreshToken, GetCookieOptions());
                 return Ok(new ApiResponse<RefreshTokenResponseDto>(response));
             });
         }
@@ -111,7 +113,7 @@ namespace Template.Modules.Identity.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ApiResponse>> LogoutAsync(CancellationToken cancellationToken)
         {
-            Response.Cookies.Delete("refreshToken");
+            Response.Cookies.Delete(_refreshToken);
             var result = await _authService.LogoutAsync(cancellationToken);
             return result.Match(response => Ok(response));
         }
