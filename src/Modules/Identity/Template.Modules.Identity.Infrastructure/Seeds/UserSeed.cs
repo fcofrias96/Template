@@ -4,7 +4,7 @@ namespace Template.Modules.Identity.Infrastructure.Seeds
 {
     /// <summary>
     /// Every value is a constant: seed data is baked into the migrations, so anything generated at runtime
-    /// (Guid.NewGuid, password salts) would make the model differ from the snapshot on every build.
+    /// (Guid.CreateVersion7, password salts) would make the model differ from the snapshot on every build.
     /// </summary>
     public static class UserSeed
     {

@@ -49,7 +49,7 @@ public class JwtTokenService : IJwtTokenService
     private static IEnumerable<Claim> GenerateClaims(ApplicationUser user, IReadOnlyList<string> roles, DateTime issuedAt)
     {
         yield return new Claim(JwtRegisteredClaimNames.Sub, user.PublicId.ToString());
-        yield return new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
+        yield return new Claim(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString());
 
         // Compared with the user's revocation time (IAccessTokenRevocationService).
         yield return new Claim(

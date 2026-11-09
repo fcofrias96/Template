@@ -25,7 +25,7 @@ namespace Template.BuildingBlocks.Tests
         [Fact]
         public async Task Soft_delete_works_for_a_detached_entity()
         {
-            var databaseName = Guid.NewGuid().ToString();
+            var databaseName = Guid.CreateVersion7().ToString();
             int id;
 
             await using (var seed = CreateContext(databaseName))
@@ -80,7 +80,7 @@ namespace Template.BuildingBlocks.Tests
 
         private static TestDbContext CreateContext(string? databaseName = null)
             => new(new DbContextOptionsBuilder<TestDbContext>()
-                .UseInMemoryDatabase(databaseName ?? Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(databaseName ?? Guid.CreateVersion7().ToString())
                 .Options);
 
         private sealed class Product : EntityBase

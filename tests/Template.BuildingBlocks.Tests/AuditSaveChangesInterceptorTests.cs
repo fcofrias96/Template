@@ -179,7 +179,7 @@ namespace Template.BuildingBlocks.Tests
                 registerExtra?.Invoke(services);
 
                 // Unique module name => isolated in-memory database per test.
-                services.AddModuleDbContext<TestDbContext>(configuration, $"Test{Guid.NewGuid():N}", "test");
+                services.AddModuleDbContext<TestDbContext>(configuration, $"Test{Guid.CreateVersion7():N}", "test");
 
                 if (configureAudit is not null)
                 {

@@ -5,7 +5,7 @@ namespace Template.Modules.Identity.Domain.Entities
 {
     public class ApplicationUser : IdentityUser<int>, IEntityBase
     {
-        public Guid PublicId { get; set; } = Guid.NewGuid();
+        public Guid PublicId { get; set; } = Guid.CreateVersion7();
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string RefreshToken { get; set; }
